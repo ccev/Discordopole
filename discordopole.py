@@ -3,11 +3,14 @@ import json
 from discord.ext import commands
 import aiomysql
 import asyncio
+import os
 
-from mondetails import details
-import queries
-import config
+from util.mondetails import details
+import util.queries
+import util.config
 
+config = util.config
+queries = util.queries
 config = config.create_config("config.ini")
 bot = commands.Bot(command_prefix=config['prefix'], case_insensitive=1)
 
