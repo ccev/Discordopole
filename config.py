@@ -41,9 +41,6 @@ def create_config(config_path):
     config['db_pass'] = config_raw.get(
         'DB',
         'PASSWORD')
-    config['db_portal_dbname'] = config_raw.get(
-        'DB',
-        'PORTAL_DB_NAME')
     config['db_dbname'] = config_raw.get(
         'DB',
         'SCANNER_DB_NAME')
