@@ -29,10 +29,10 @@ async def pokemon(ctx, stat_name):
     embed.set_footer(text=f"{locale['loading']} {mon.name} Stats", icon_url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
     message = await ctx.send(embed=embed)
 
-    shiny_count = await queries.get_shiny_count(mon.id)
+    shiny_count = await queries.get_shiny_count(mon.id, config)
 
     if shiny_count > 0:
-        shiny_total = await queries.get_shiny_total(mon.id)
+        shiny_total = await queries.get_shiny_total(mon.id, config)
         shiny_odds = int(round((shiny_total / shiny_count), 0))
         text = text + f"{locale['shinies']}: **1:{shiny_odds}** ({shiny_count:_}/{shiny_total:_})\n"
     else:
@@ -43,7 +43,7 @@ async def pokemon(ctx, stat_name):
 
     print(f"     [1/3] Shiny Data for {mon.name} Stats")
 
-    scan_numbers = await queries.get_scan_numbers(mon.id)
+    scan_numbers = await queries.get_scan_numbers(mon.id, config)
     for scanned, hundos, zeros, nineties in scan_numbers:
         scanned_total = int(scanned)
         if scanned_total > 0:
@@ -79,7 +79,7 @@ async def pokemon(ctx, stat_name):
 
     print(f"     [2/3] Scan Data for {mon.name} Stats")
 
-    big_numbers = await queries.get_big_numbers(mon.id)
+    big_numbers = await queries.get_big_numbers(mon.id, config)
     for mons, found, boosted in big_numbers:
         mon_total = int(mons)
         if found is not None:

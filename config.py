@@ -24,4 +24,28 @@ def create_config(config_path):
         'Commands',
         'POKEMON_ALIASES'))
 
+
+    # DB #
+    config['db_scan_schema'] = config_raw.get(
+        'DB',
+        'SCANNER_DB_SCHEMA')
+    config['db_host'] = config_raw.get(
+        'DB',
+        'HOST')
+    config['db_port'] = config_raw.getint(
+        'DB',
+        'PORT')
+    config['db_user'] = config_raw.get(
+        'DB',
+        'USER')
+    config['db_pass'] = config_raw.get(
+        'DB',
+        'PASSWORD')
+    config['db_portal_dbname'] = config_raw.get(
+        'DB',
+        'PORTAL_DB_NAME')
+    config['db_dbname'] = config_raw.get(
+        'DB',
+        'SCANNER_DB_NAME')
+
     return config
