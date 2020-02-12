@@ -37,3 +37,12 @@ class details(object):
         self.name = result_name
         self.id = int(result_id)
         self.icon = f"https://raw.githubusercontent.com/whitewillem/PogoAssets/resized/no_border/pokemon_icon_{str(result_id).zfill(3)}_00.png"
+
+    def id(mon_id, lang):
+        if not lang == "de":
+            lang = "en"
+        data = ast.literal_eval(open(f"data/mon_names/{lang}.txt", "r").read())
+        for aname, aid in data.items():
+            if str(aid) == str(mon_id):
+                mon_name = aname.title()
+        return mon_name

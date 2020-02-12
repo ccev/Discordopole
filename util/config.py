@@ -5,7 +5,7 @@ import os
 def create_config(config_path):
     config = dict()
     config_raw = ConfigParser()
-    config_raw.read("default.ini")
+    config_raw.read("config/default.ini")
     config_raw.read(config_path)
 
     # Config #

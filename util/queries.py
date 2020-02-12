@@ -64,3 +64,14 @@ async def get_big_numbers(mon_id, config):
 
     await cursor_big_numbers.close()
     return big_numbers
+
+async def get_active_raids_5(config):
+    cursor_raids = await connect_db(config)
+    if config['db_scan_schema'] == "mad":
+        await cursor_raids.execute(f"SELECT Unix_timestamp(Convert_tz(start, '+00:00', @@global.time_zone)) AS starts, Unix_timestamp(Convert_tz(end, '+00:00', @@global.time_zone)) AS ends, latitude, longitude, pokemon_id, move_1, move_2, name, is_ex_raid_eligible FROM gym LEFT JOIN gymdetails ON gym.gym_id = gymdetails.gym_id LEFT JOIN raid ON gym.gym_id = raid.gym_id WHERE name IS NOT NULL AND end > UTC_TIMESTAMP() AND level = 5 ORDER BY end;")
+    #elif config['db_scan_schema'] == "rdm":
+        #query_big_count = "select count(id), sum(pokemon_id = {mon_id}), sum(weather > 0 and pokemon_id = {mon_id}) from pokemon"
+    raids = await cursor_raids.fetchall()
+
+    await cursor_raids.close()
+    return raids

@@ -4,22 +4,95 @@ from discord.ext import commands
 import aiomysql
 import asyncio
 import os
+from itertools import islice
+from datetime import datetime
 
 from util.mondetails import details
 import util.queries
 import util.config
 
-config = util.config
+MAX_MOVE_IN_LIST = 291
 queries = util.queries
-config = config.create_config("config.ini")
+config = util.config.create_config("config/config.ini")
 bot = commands.Bot(command_prefix=config['prefix'], case_insensitive=1)
 
 with open(f"data/dts/{config['language']}.json") as localejson:
     locale = json.load(localejson)
 
-@bot.event
-async def on_ready():
-    print("Connected to Discord. Ready to take commands.")
+with open("config/boards.json", "r") as f:
+    boards = json.load(f)
+
+with open(f"data/moves/{config['language']}.json") as f:
+    moves = json.load(f)
+
+async def board_loop():
+    while not bot.is_closed():
+        for board in boards['raids']:
+            channel = await bot.fetch_channel(board["channel_id"])
+            message = await channel.fetch_message(board["message_id"])
+            text = ""
+            raids = await queries.get_active_raids_5(config)
+            for start, end, lat, lon, mon_id, move_1, move_2, name, ex in islice(raids, 23):
+                start = datetime.fromtimestamp(start).strftime('%H:%M')
+                end = datetime.fromtimestamp(end).strftime('%H:%M')
+                ex_emote = ""
+                #if ex == 1:
+                #    ex_emote = "<:expass:665229079284285459> "
+                if not mon_id is None:
+                    mon_name = details.id(mon_id, config['language'])
+                    if move_1 > MAX_MOVE_IN_LIST:
+                        move_1 = "?"
+                    else:
+                        move_1 = moves[str(move_1)]["name"]
+                    if move_2 > MAX_MOVE_IN_LIST:
+                        move_2 = "?"
+                    else:
+                        move_2 = moves[str(move_2)]["name"]
+                    text = text + f"{ex_emote}**{name}**: Bis {end}\n**{mon_name}** - *{move_1} / {move_2}*\n\n"
+                
+            embed = discord.Embed(title="Raids", description=text)
+
+            await message.edit(embed=embed)
+            await asyncio.sleep(1)
+        await asyncio.sleep(20)
+
+@bot.group(pass_context=True)
+async def board(ctx):
+    if ctx.invoked_subcommand is None:
+        await ctx.send("`create/delete`")
+
+@board.group(pass_context=True)
+async def create(ctx):
+    if ctx.invoked_subcommand is None:
+        print("Creating an empty Board")
+        await ctx.message.delete()
+        embed = discord.Embed(title="Empty board", description="")
+        message = await ctx.send(embed=embed)
+        embed.description = f"Channel ID: `{message.channel.id}`\nMessage ID: `{message.id}`\n"
+        await message.edit(embed=embed)
+        print("Done creating an empty Board")
+
+@create.command(pass_context=True)
+async def raid(ctx, levels):
+    print("Creating Raid Board")
+    await ctx.message.delete()
+
+    embed = discord.Embed(title="Raid Board", description="")
+    message = await ctx.send(embed=embed)
+
+    with open("config/boards.json", "r") as f:
+        boards = json.load(f)
+    
+    level_list = list(levels.split(','))
+    level_list = list(map(int, level_list))
+    boards['raids'].append({"channel_id": message.channel.id, "message_id": message.id, "levels": level_list})
+
+    with open("config/boards.json", "w") as f:
+        f.write(json.dumps(boards, indent=4))
+
+    embed.description = f"Succesfully created this Raid Board.\n\n```Levels: {levels}\nChannel ID: {message.channel.id}\nMessage ID: {message.id}```\nNow restart Discordopole to see this message being filled."
+    await message.edit(embed=embed)
+    print("Wrote Raid Board to config/boards/raids.json")
 
 @bot.command(pass_context=True, aliases=config['pokemon_aliases'])
 async def pokemon(ctx, stat_name):
@@ -113,5 +186,10 @@ async def pokemon(ctx, stat_name):
 
     print(f"     [3/3] Total Data for {mon.name} Stats")
     print(f"Done with {mon.name} Stats.")
+
+@bot.event
+async def on_ready():
+    print("Connected to Discord. Ready to take commands.")
+    bot.loop.create_task(board_loop())
 
 bot.run(config['bot_token'])
