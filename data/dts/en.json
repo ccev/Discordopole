@@ -9,5 +9,8 @@
     "total_found": "🗺️ Total",
     "loading": "Loading",
     "decimal_dot": ".",
-    "decimal_comma": ","
+    "decimal_comma": ",",
+    "until": "until",
+    "time_format_hm": "%I:%M %p",
+    "raids": "Raids"
 }

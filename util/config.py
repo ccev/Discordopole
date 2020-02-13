@@ -18,6 +18,10 @@ def create_config(config_path):
     config['prefix'] = config_raw.get(
         'Config',
         'PREFIX')
+    config['admins'] = config_raw.get(
+        'Config',
+        'ADMINS')
+    config['admins'] = list(map(int, list(config['admins'].split(','))))
 
 
     # Commands #

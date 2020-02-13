@@ -25,19 +25,32 @@ with open("config/boards.json", "r") as f:
 with open(f"data/moves/{config['language']}.json") as f:
     moves = json.load(f)
 
+with open("config/geofence.json") as f:
+    geofences = json.load(f)
+
+def get_area_coords(areaname):
+    for area in geofences:
+        if area['name'].lower() == areaname.lower():
+            stringfence = ""
+            for coordinates in area['path']:
+                stringfence = f"{stringfence}{coordinates[0]} {coordinates[1]},"
+            stringfence = f"{stringfence}{area['path'][0][0]} {area['path'][0][1]}"
+            return stringfence
+
 async def board_loop():
     while not bot.is_closed():
         for board in boards['raids']:
             channel = await bot.fetch_channel(board["channel_id"])
             message = await channel.fetch_message(board["message_id"])
+            area = get_area_coords(board["area"])
             text = ""
-            raids = await queries.get_active_raids_5(config)
+            raids = await queries.get_active_raids(config, area, board["levels"])
             for start, end, lat, lon, mon_id, move_1, move_2, name, ex in islice(raids, 23):
-                start = datetime.fromtimestamp(start).strftime('%H:%M')
-                end = datetime.fromtimestamp(end).strftime('%H:%M')
+                #start = datetime.fromtimestamp(start).strftime(locale['time_format_hm'])
+                end = datetime.fromtimestamp(end).strftime(locale['time_format_hm'])
                 ex_emote = ""
-                #if ex == 1:
-                #    ex_emote = "<:expass:665229079284285459> "
+                if ex == 1:
+                    ex_emote = "<:expass:665229079284285459> "
                 if not mon_id is None:
                     mon_name = details.id(mon_id, config['language'])
                     if move_1 > MAX_MOVE_IN_LIST:
@@ -48,9 +61,9 @@ async def board_loop():
                         move_2 = "?"
                     else:
                         move_2 = moves[str(move_2)]["name"]
-                    text = text + f"{ex_emote}**{name}**: Bis {end}\n**{mon_name}** - *{move_1} / {move_2}*\n\n"
+                    text = text + f"{ex_emote}**{name}**: {locale['until']} {end}\n**{mon_name}** - *{move_1} / {move_2}*\n\n"
                 
-            embed = discord.Embed(title="Raids", description=text)
+            embed = discord.Embed(title=locale['raids'], description=text, timestamp=datetime.utcnow())
 
             await message.edit(embed=embed)
             await asyncio.sleep(1)
@@ -58,11 +71,15 @@ async def board_loop():
 
 @bot.group(pass_context=True)
 async def board(ctx):
+    if not ctx.message.author.id in config['admins']:
+        return
     if ctx.invoked_subcommand is None:
         await ctx.send("`create/delete`")
 
 @board.group(pass_context=True)
 async def create(ctx):
+    if not ctx.message.author.id in config['admins']:
+        return
     if ctx.invoked_subcommand is None:
         print("Creating an empty Board")
         await ctx.message.delete()
@@ -73,7 +90,9 @@ async def create(ctx):
         print("Done creating an empty Board")
 
 @create.command(pass_context=True)
-async def raid(ctx, levels):
+async def raid(ctx, area, levels):
+    if not ctx.message.author.id in config['admins']:
+        return
     print("Creating Raid Board")
     await ctx.message.delete()
 
@@ -85,12 +104,13 @@ async def raid(ctx, levels):
     
     level_list = list(levels.split(','))
     level_list = list(map(int, level_list))
-    boards['raids'].append({"channel_id": message.channel.id, "message_id": message.id, "levels": level_list})
+    boards['raids'].append({"channel_id": message.channel.id, "message_id": message.id, "area": area, "levels": level_list})
 
     with open("config/boards.json", "w") as f:
         f.write(json.dumps(boards, indent=4))
 
-    embed.description = f"Succesfully created this Raid Board.\n\n```Levels: {levels}\nChannel ID: {message.channel.id}\nMessage ID: {message.id}```\nNow restart Discordopole to see this message being filled."
+    embed.title = "Succesfully created this Raid Board"
+    embed.description = f"Now restart Discordopole to see this message being filled\n\n```Area: {area}\nLevels: {levels}\nChannel ID: {message.channel.id}\nMessage ID: {message.id}```"
     await message.edit(embed=embed)
     print("Wrote Raid Board to config/boards/raids.json")
 
