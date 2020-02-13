@@ -48,22 +48,25 @@ async def board_loop():
             area = get_area_coords(board["area"])
             text = ""
             raids = await queries.get_active_raids(config, area, board["levels"])
-            for start, end, lat, lon, mon_id, move_1, move_2, name, ex, level in islice(raids, 23):
-                end = datetime.fromtimestamp(end).strftime(locale['time_format_hm'])
-                ex_emote = ""
-                if ex == 1:
-                    ex_emote = f"{custom_emotes['ex_eligible']} "
-                if not mon_id is None:
-                    mon_name = details.id(mon_id, config['language'])
-                    if move_1 > MAX_MOVE_IN_LIST:
-                        move_1 = "?"
-                    else:
-                        move_1 = moves[str(move_1)]["name"]
-                    if move_2 > MAX_MOVE_IN_LIST:
-                        move_2 = "?"
-                    else:
-                        move_2 = moves[str(move_2)]["name"]
-                    text = text + f"{ex_emote}**{name}**: {locale['until']} {end}\n**{mon_name}** - *{move_1} / {move_2}*\n\n"
+            if not raids:
+                text = locale["empty_board"]
+            else:
+                for start, end, lat, lon, mon_id, move_1, move_2, name, ex, level in islice(raids, 23):
+                    end = datetime.fromtimestamp(end).strftime(locale['time_format_hm'])
+                    ex_emote = ""
+                    if ex == 1:
+                        ex_emote = f"{custom_emotes['ex_eligible']} "
+                    if not mon_id is None:
+                        mon_name = details.id(mon_id, config['language'])
+                        if move_1 > MAX_MOVE_IN_LIST:
+                            move_1 = "?"
+                        else:
+                            move_1 = moves[str(move_1)]["name"]
+                        if move_2 > MAX_MOVE_IN_LIST:
+                            move_2 = "?"
+                        else:
+                            move_2 = moves[str(move_2)]["name"]
+                        text = text + f"{ex_emote}**{name}**: {locale['until']} {end}\n**{mon_name}** - *{move_1} / {move_2}*\n\n"
                 
             embed = discord.Embed(title=locale['raids'], description=text, timestamp=datetime.utcnow())
 
@@ -75,15 +78,18 @@ async def board_loop():
             area = get_area_coords(board["area"])
             text = ""
             raids = await queries.get_active_raids(config, area, board["levels"])
-            for start, end, lat, lon, mon_id, move_1, move_2, name, ex, level in islice(raids, 23):
-                start = datetime.fromtimestamp(start).strftime(locale['time_format_hm'])
-                end = datetime.fromtimestamp(end).strftime(locale['time_format_hm'])
-                ex_emote = ""
-                if ex == 1:
-                    ex_emote = f"{custom_emotes['ex_eligible']} "
-                if mon_id is None:
-                    egg_emote = custom_emotes[f"raid_egg_level_{level}"]
-                    text = text + f"{egg_emote} {ex_emote}**{name}**: {start}  –  {end}\n"
+            if not raids:
+                text = locale["empty_board"]
+            else:
+                for start, end, lat, lon, mon_id, move_1, move_2, name, ex, level in islice(raids, 23):
+                    start = datetime.fromtimestamp(start).strftime(locale['time_format_hm'])
+                    end = datetime.fromtimestamp(end).strftime(locale['time_format_hm'])
+                    ex_emote = ""
+                    if ex == 1:
+                        ex_emote = f"{custom_emotes['ex_eligible']} "
+                    if mon_id is None:
+                        egg_emote = custom_emotes[f"raid_egg_level_{level}"]
+                        text = text + f"{egg_emote} {ex_emote}**{name}**: {start}  –  {end}\n"
                 
             embed = discord.Embed(title=locale['eggs'], description=text, timestamp=datetime.utcnow())
 

@@ -13,5 +13,6 @@
     "until": "until",
     "time_format_hm": "%-I:%M %p",
     "raids": "Raids",
-    "eggs": "Eggs"
+    "eggs": "Eggs",
+    "empty_board": "[Nothing to see here. Come back later]"
 }
