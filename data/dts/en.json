@@ -11,6 +11,6 @@
     "decimal_dot": ".",
     "decimal_comma": ",",
     "until": "until",
-    "time_format_hm": "%I:%M %p",
+    "time_format_hm": "%-I:%M %p",
     "raids": "Raids"
 }
