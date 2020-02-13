@@ -28,6 +28,9 @@ with open(f"data/moves/{config['language']}.json") as f:
 with open("config/geofence.json") as f:
     geofences = json.load(f)
 
+with open("config/emotes.json") as f:
+    custom_emotes = json.load(f)
+
 def get_area_coords(areaname):
     for area in geofences:
         if area['name'].lower() == areaname.lower():
@@ -45,12 +48,11 @@ async def board_loop():
             area = get_area_coords(board["area"])
             text = ""
             raids = await queries.get_active_raids(config, area, board["levels"])
-            for start, end, lat, lon, mon_id, move_1, move_2, name, ex in islice(raids, 23):
-                #start = datetime.fromtimestamp(start).strftime(locale['time_format_hm'])
+            for start, end, lat, lon, mon_id, move_1, move_2, name, ex, level in islice(raids, 23):
                 end = datetime.fromtimestamp(end).strftime(locale['time_format_hm'])
                 ex_emote = ""
                 if ex == 1:
-                    ex_emote = "<:expass:665229079284285459> "
+                    ex_emote = f"{custom_emotes['ex_eligible']} "
                 if not mon_id is None:
                     mon_name = details.id(mon_id, config['language'])
                     if move_1 > MAX_MOVE_IN_LIST:
@@ -64,6 +66,26 @@ async def board_loop():
                     text = text + f"{ex_emote}**{name}**: {locale['until']} {end}\n**{mon_name}** - *{move_1} / {move_2}*\n\n"
                 
             embed = discord.Embed(title=locale['raids'], description=text, timestamp=datetime.utcnow())
+
+            await message.edit(embed=embed)
+            await asyncio.sleep(1)
+        for board in boards['eggs']:
+            channel = await bot.fetch_channel(board["channel_id"])
+            message = await channel.fetch_message(board["message_id"])
+            area = get_area_coords(board["area"])
+            text = ""
+            raids = await queries.get_active_raids(config, area, board["levels"])
+            for start, end, lat, lon, mon_id, move_1, move_2, name, ex, level in islice(raids, 23):
+                start = datetime.fromtimestamp(start).strftime(locale['time_format_hm'])
+                end = datetime.fromtimestamp(end).strftime(locale['time_format_hm'])
+                ex_emote = ""
+                if ex == 1:
+                    ex_emote = f"{custom_emotes['ex_eligible']} "
+                if mon_id is None:
+                    egg_emote = custom_emotes[f"raid_egg_level_{level}"]
+                    text = text + f"{egg_emote} {ex_emote}**{name}**: {start}  –  {end}\n"
+                
+            embed = discord.Embed(title=locale['eggs'], description=text, timestamp=datetime.utcnow())
 
             await message.edit(embed=embed)
             await asyncio.sleep(1)
@@ -112,7 +134,32 @@ async def raid(ctx, area, levels):
     embed.title = "Succesfully created this Raid Board"
     embed.description = f"Now restart Discordopole to see this message being filled\n\n```Area: {area}\nLevels: {levels}\nChannel ID: {message.channel.id}\nMessage ID: {message.id}```"
     await message.edit(embed=embed)
-    print("Wrote Raid Board to config/boards/raids.json")
+    print("Wrote Raid Board to config/boards.json")
+
+@create.command(pass_context=True)
+async def egg(ctx, area, levels):
+    if not ctx.message.author.id in config['admins']:
+        return
+    print("Creating Egg Board")
+    await ctx.message.delete()
+
+    embed = discord.Embed(title="Egg Board", description="")
+    message = await ctx.send(embed=embed)
+
+    with open("config/boards.json", "r") as f:
+        boards = json.load(f)
+    
+    level_list = list(levels.split(','))
+    level_list = list(map(int, level_list))
+    boards['eggs'].append({"channel_id": message.channel.id, "message_id": message.id, "area": area, "levels": level_list})
+
+    with open("config/boards.json", "w") as f:
+        f.write(json.dumps(boards, indent=4))
+
+    embed.title = "Succesfully created this Egg Board"
+    embed.description = f"Now restart Discordopole to see this message being filled\n\n```Area: {area}\nLevels: {levels}\nChannel ID: {message.channel.id}\nMessage ID: {message.id}```"
+    await message.edit(embed=embed)
+    print("Wrote Raid Board to config/boards.json")
 
 @bot.command(pass_context=True, aliases=config['pokemon_aliases'])
 async def pokemon(ctx, stat_name):
