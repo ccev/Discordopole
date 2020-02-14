@@ -47,7 +47,7 @@ async def board_loop():
             message = await channel.fetch_message(board["message_id"])
             area = get_area_coords(board["area"])
             text = ""
-            raids = await queries.get_active_raids(config, area, board["levels"])
+            raids = await queries.get_active_raids(config, area, board["levels"], board["timezone"])
             if not raids:
                 text = locale["empty_board"]
             else:
@@ -56,7 +56,7 @@ async def board_loop():
                     ex_emote = ""
                     if ex == 1:
                         ex_emote = f"{custom_emotes['ex_eligible']} "
-                    if not mon_id is None and mon_id > 0:
+                    if not mon_id is None:
                         mon_name = details.id(mon_id, config['language'])
                         if move_1 > MAX_MOVE_IN_LIST:
                             move_1 = "?"
@@ -71,13 +71,15 @@ async def board_loop():
             embed = discord.Embed(title=locale['raids'], description=text, timestamp=datetime.utcnow())
 
             await message.edit(embed=embed)
-            await asyncio.sleep(1)
+            await asyncio.sleep(board["wait"])
+        await asyncio.sleep(5)
+
         for board in boards['eggs']:
             channel = await bot.fetch_channel(board["channel_id"])
             message = await channel.fetch_message(board["message_id"])
             area = get_area_coords(board["area"])
             text = ""
-            raids = await queries.get_active_raids(config, area, board["levels"])
+            raids = await queries.get_active_raids(config, area, board["levels"], board["timezone"])
             if not raids:
                 text = locale["empty_board"]
             else:
@@ -87,15 +89,14 @@ async def board_loop():
                     ex_emote = ""
                     if ex == 1:
                         ex_emote = f"{custom_emotes['ex_eligible']} "
-                    if mon_id is None or mon_id ==0:
+                    if mon_id is None:
                         egg_emote = custom_emotes[f"raid_egg_level_{level}"]
                         text = text + f"{egg_emote} {ex_emote}**{name}**: {start}  –  {end}\n"
                 
             embed = discord.Embed(title=locale['eggs'], description=text, timestamp=datetime.utcnow())
 
             await message.edit(embed=embed)
-            await asyncio.sleep(1)
-        await asyncio.sleep(20)
+            await asyncio.sleep(board["wait"])
 
 @bot.group(pass_context=True)
 async def board(ctx):
@@ -122,7 +123,6 @@ async def raid(ctx, area, levels):
     if not ctx.message.author.id in config['admins']:
         return
     print("Creating Raid Board")
-    await ctx.message.delete()
 
     embed = discord.Embed(title="Raid Board", description="")
     message = await ctx.send(embed=embed)
@@ -132,7 +132,21 @@ async def raid(ctx, area, levels):
     
     level_list = list(levels.split(','))
     level_list = list(map(int, level_list))
-    boards['raids'].append({"channel_id": message.channel.id, "message_id": message.id, "area": area, "levels": level_list})
+
+    if all(i > 5 or i < 1 for i in level_list):
+        embed.description = "Couldn't create Raid Board. Try chosing other levels."
+        await message.edit(embed=embed)
+        return
+    areaexist = False
+    for areag in geofences:
+        if areag['name'].lower() == area.lower():
+            areaexist = True
+    if not areaexist:
+        embed.description = "Couldn't find that area. Try again."
+        await message.edit(embed=embed)
+        return
+    await ctx.message.delete()
+    boards['raids'].append({"channel_id": message.channel.id, "message_id": message.id, "area": area, "timezone": config['timezone'], "wait": 15, "levels": level_list})
 
     with open("config/boards.json", "w") as f:
         f.write(json.dumps(boards, indent=4))
@@ -147,7 +161,6 @@ async def egg(ctx, area, levels):
     if not ctx.message.author.id in config['admins']:
         return
     print("Creating Egg Board")
-    await ctx.message.delete()
 
     embed = discord.Embed(title="Egg Board", description="")
     message = await ctx.send(embed=embed)
@@ -157,7 +170,21 @@ async def egg(ctx, area, levels):
     
     level_list = list(levels.split(','))
     level_list = list(map(int, level_list))
-    boards['eggs'].append({"channel_id": message.channel.id, "message_id": message.id, "area": area, "levels": level_list})
+
+    if all(i > 5 or i < 1 for i in level_list):
+        embed.description = "Couldn't create Egg Board. Try chosing other levels."
+        await message.edit(embed=embed)
+        return
+    areaexist = False
+    for areag in geofences:
+        if areag['name'].lower() == area.lower():
+            areaexist = True
+    if not areaexist:
+        embed.description = "Couldn't find that area. Try again."
+        await message.edit(embed=embed)
+        return
+    await ctx.message.delete()
+    boards['eggs'].append({"channel_id": message.channel.id, "message_id": message.id, "area": area, "timezone": config['timezone'], "wait": 15, "levels": level_list})
 
     with open("config/boards.json", "w") as f:
         f.write(json.dumps(boards, indent=4))

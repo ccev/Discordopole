@@ -15,6 +15,9 @@ def create_config(config_path):
     config['language'] = config_raw.get(
         'Config',
         'LANGUAGE')
+    config['timezone'] = config_raw.get(
+        'Config',
+        'TIMEZONE_OFFSET')
     config['prefix'] = config_raw.get(
         'Config',
         'PREFIX')
