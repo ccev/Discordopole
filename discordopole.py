@@ -56,7 +56,7 @@ async def board_loop():
                     ex_emote = ""
                     if ex == 1:
                         ex_emote = f"{custom_emotes['ex_eligible']} "
-                    if not mon_id is None:
+                    if not mon_id is None and mon_id > 0:
                         mon_name = details.id(mon_id, config['language'])
                         if move_1 > MAX_MOVE_IN_LIST:
                             move_1 = "?"
@@ -89,7 +89,7 @@ async def board_loop():
                     ex_emote = ""
                     if ex == 1:
                         ex_emote = f"{custom_emotes['ex_eligible']} "
-                    if mon_id is None:
+                    if mon_id is None or mon_id == 0:
                         egg_emote = custom_emotes[f"raid_egg_level_{level}"]
                         text = text + f"{egg_emote} {ex_emote}**{name}**: {start}  –  {end}\n"
                 
