@@ -42,7 +42,7 @@ class details(object):
         if not lang == "de":
             lang = "en"
         data = ast.literal_eval(open(f"data/mon_names/{lang}.txt", "r").read())
-        mon_name = ""
+        mon_name = "?"
         for aname, aid in data.items():
             if str(aid) == str(mon_id):
                 mon_name = aname.title()
