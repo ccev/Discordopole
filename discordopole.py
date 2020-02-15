@@ -2,6 +2,7 @@ import discord
 import json
 from discord.ext import commands
 import aiomysql
+import aiohttp
 import asyncio
 import os
 from itertools import islice
@@ -51,11 +52,11 @@ async def board_loop():
             if not raids:
                 text = locale["empty_board"]
             else:
-                for start, end, lat, lon, mon_id, move_1, move_2, name, ex, level in islice(raids, 23):
+                for start, end, lat, lon, mon_id, move_1, move_2, name, ex, level in islice(raids, 21):
                     end = datetime.fromtimestamp(end).strftime(locale['time_format_hm'])
                     ex_emote = ""
                     if ex == 1:
-                        ex_emote = f"{custom_emotes['ex_eligible']} "
+                        ex_emote = f"{custom_emotes['ex_pass']} "
                     if not mon_id is None and mon_id > 0:
                         mon_name = details.id(mon_id, config['language'])
                         if move_1 > MAX_MOVE_IN_LIST:
@@ -88,9 +89,9 @@ async def board_loop():
                     end = datetime.fromtimestamp(end).strftime(locale['time_format_hm'])
                     ex_emote = ""
                     if ex == 1:
-                        ex_emote = f"{custom_emotes['ex_eligible']} "
+                        ex_emote = f"{custom_emotes['ex_pass']} "
                     if mon_id is None or mon_id == 0:
-                        egg_emote = custom_emotes[f"raid_egg_level_{level}"]
+                        egg_emote = custom_emotes[f"raid_egg_{level}"]
                         text = text + f"{egg_emote} {ex_emote}**{name}**: {start}  –  {end}\n"
                 
             embed = discord.Embed(title=locale['eggs'], description=text, timestamp=datetime.utcnow())
@@ -193,6 +194,59 @@ async def egg(ctx, area, levels):
     embed.description = f"Now restart Discordopole to see this message being filled\n\n```Area: {area}\nLevels: {levels}\nChannel ID: {message.channel.id}\nMessage ID: {message.id}```"
     await message.edit(embed=embed)
     print("Wrote Raid Board to config/boards.json")
+
+@bot.group(pass_context=True)
+async def get(ctx):
+    if not ctx.message.author.id in config['admins']:
+        return
+    if ctx.invoked_subcommand is None:
+        await ctx.send("Be more specific")
+
+async def download_url(url):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            return await response.read()
+
+@get.command(pass_context=True)
+async def emotes(ctx):
+    if not ctx.message.author.id in config['admins']:
+        return
+
+    needed_emote_names = ["ex_pass", "raid_egg_1", "raid_egg_2", "raid_egg_3", "raid_egg_4", "raid_egg_5"]
+    emotejson = json.loads("{}")
+    
+    embed = discord.Embed(title="Importing emotes will overwrite all custom emotes in this Server!", description="Please make sure you're currently in a server dedicated to host Discordopole emotes.\n\nTo continue, please say the name of this Server.")
+    message = await ctx.send(embed=embed)
+    def check(m):
+        return m.content == ctx.guild.name and m.author == ctx.author and m.channel == ctx.channel
+    try:
+        confirm = await bot.wait_for('message', check=check, timeout=60)
+    except:
+        await ctx.send("Aborting Emote import.")
+        await message.delete()
+        return
+    await confirm.delete()
+    embed = discord.Embed(title="Importing Emotes. Please Wait", description="")
+    await message.edit(embed=embed)
+    existing_emotes = await ctx.guild.fetch_emojis()
+    for emote in existing_emotes:
+        await emote.delete()
+        embed.description = f"{embed.description}Removed Emote `{emote.name}`\n"
+        await message.edit(embed=embed)
+    embed.description = ""
+
+    for emote_name in needed_emote_names:
+        image = await download_url(f"https://raw.githubusercontent.com/ccev/dp_emotes/master/{emote_name}.png")
+        emote = await ctx.guild.create_custom_emoji(name=emote_name, image=image)
+        emote_ref = f"<:{emote.name}:{emote.id}>"
+        embed.description = f"{embed.description}{emote_ref} `{emote_ref}`\n"
+        await message.edit(embed=embed)
+
+        emotejson.update({emote_name: emote_ref})
+    embed.title = "Done importing Emotes"
+    await message.edit(embed=embed)
+    with open("config/emotes.json", "w") as f:
+        f.write(json.dumps(emotejson, indent=4))
 
 @bot.command(pass_context=True, aliases=config['pokemon_aliases'])
 async def pokemon(ctx, stat_name):
