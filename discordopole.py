@@ -272,7 +272,7 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None):
     else:
         timespan = dateparser.parse(timespan)
         footer_text = f"{footer_text}, {locale['since']} {timespan.strftime(locale['time_format_dhm'])}"
-        loading = footer_text
+        loading = ""
 
 
     embed = discord.Embed(title=f"{mon.name}", description=text)
