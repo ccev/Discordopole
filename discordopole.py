@@ -7,6 +7,8 @@ import asyncio
 import os
 from itertools import islice
 from datetime import datetime
+import dateparser
+from dateutil.relativedelta import relativedelta
 
 from util.mondetails import details
 import util.queries
@@ -32,23 +34,27 @@ with open("config/geofence.json") as f:
 with open("config/emotes.json") as f:
     custom_emotes = json.load(f)
 
-def get_area_coords(areaname):
+def get_area(areaname):
+    stringfence = "-100 -100, -100 100, 100 100, 100 -100, -100 -100"
+    namefence = locale['all']
     for area in geofences:
         if area['name'].lower() == areaname.lower():
+            namefence = area['name'].capitalize()
             stringfence = ""
             for coordinates in area['path']:
                 stringfence = f"{stringfence}{coordinates[0]} {coordinates[1]},"
             stringfence = f"{stringfence}{area['path'][0][0]} {area['path'][0][1]}"
-            return stringfence
+    area_list = [stringfence, namefence]
+    return area_list
 
 async def board_loop():
     while not bot.is_closed():
         for board in boards['raids']:
             channel = await bot.fetch_channel(board["channel_id"])
             message = await channel.fetch_message(board["message_id"])
-            area = get_area_coords(board["area"])
+            area = get_area(board["area"])
             text = ""
-            raids = await queries.get_active_raids(config, area, board["levels"], board["timezone"])
+            raids = await queries.get_active_raids(config, area[0], board["levels"], board["timezone"])
             if not raids:
                 text = locale["empty_board"]
             else:
@@ -78,9 +84,9 @@ async def board_loop():
         for board in boards['eggs']:
             channel = await bot.fetch_channel(board["channel_id"])
             message = await channel.fetch_message(board["message_id"])
-            area = get_area_coords(board["area"])
+            area = get_area(board["area"])
             text = ""
-            raids = await queries.get_active_raids(config, area, board["levels"], board["timezone"])
+            raids = await queries.get_active_raids(config, area[0], board["levels"], board["timezone"])
             if not raids:
                 text = locale["empty_board"]
             else:
@@ -249,20 +255,35 @@ async def emotes(ctx):
         f.write(json.dumps(emotejson, indent=4))
 
 @bot.command(pass_context=True, aliases=config['pokemon_aliases'])
-async def pokemon(ctx, stat_name):
+async def pokemon(ctx, stat_name, areaname = "", *, timespan = None):
     mon = details(stat_name, config['language'])
     print(f"Generating {mon.name} Stats...")
 
+    footer_text = ""
     text = ""
-    embed = discord.Embed(title=mon.name, description=text)
+    loading = f"{locale['loading']} {mon.name} Stats"
+
+    area = get_area(areaname)
+    if not area[1] == locale['all']:
+        footer_text = area[1]
+        loading = f"{loading} • "
+    if timespan is None:
+        timespan = datetime(2010, 1, 1, 0, 0)
+    else:
+        timespan = dateparser.parse(timespan)
+        footer_text = f"{footer_text}, {locale['since']} {timespan.strftime(locale['time_format_dhm'])}"
+        loading = footer_text
+
+
+    embed = discord.Embed(title=f"{mon.name}", description=text)
     embed.set_thumbnail(url=mon.icon)
-    embed.set_footer(text=f"{locale['loading']} {mon.name} Stats", icon_url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
+    embed.set_footer(text=f"{loading}{footer_text}", icon_url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
     message = await ctx.send(embed=embed)
 
-    shiny_count = await queries.get_shiny_count(mon.id, config)
+    shiny_count = await queries.get_shiny_count(mon.id, area[0], timespan, config)
 
     if shiny_count > 0:
-        shiny_total = await queries.get_shiny_total(mon.id, config)
+        shiny_total = await queries.get_shiny_total(mon.id, area[0], timespan, config)
         shiny_odds = int(round((shiny_total / shiny_count), 0))
         text = text + f"{locale['shinies']}: **1:{shiny_odds}** ({shiny_count:_}/{shiny_total:_})\n"
     else:
@@ -273,7 +294,7 @@ async def pokemon(ctx, stat_name):
 
     print(f"     [1/3] Shiny Data for {mon.name} Stats")
 
-    scan_numbers = await queries.get_scan_numbers(mon.id, config)
+    scan_numbers = await queries.get_scan_numbers(mon.id, area[0], timespan, config)
     for scanned, hundos, zeros, nineties in scan_numbers:
         scanned_total = int(scanned)
         if scanned_total > 0:
@@ -309,7 +330,7 @@ async def pokemon(ctx, stat_name):
 
     print(f"     [2/3] Scan Data for {mon.name} Stats")
 
-    big_numbers = await queries.get_big_numbers(mon.id, config)
+    big_numbers = await queries.get_big_numbers(mon.id, area[0], timespan, config)
     for mons, found, boosted in big_numbers:
         mon_total = int(mons)
         if found is not None:
@@ -335,7 +356,7 @@ async def pokemon(ctx, stat_name):
         text = text + f"{locale['weatherboost']}: **0%**\n{locale['scanned']}: **0**\n\n{locale['total_found']}: **0**"
 
     embed.description = text.replace("_", ".")
-    embed.set_footer(text="")
+    embed.set_footer(text=footer_text)
     await message.edit(embed=embed)
 
     print(f"     [3/3] Total Data for {mon.name} Stats")

@@ -12,7 +12,10 @@
     "decimal_comma": ".",
     "until": "Bis",
     "time_format_hm": "%H:%M",
+    "time_format_dhm": "%d.%m.%Y %H:%M",
     "raids": "Raids",
     "eggs": "Eier",
-    "empty_board": "`[Nichts zu sehen. Komm später wieder]`"
+    "empty_board": "`[Nichts zu sehen. Komm später wieder]`",
+    "all": "Alle",
+    "since": "seit"
 }
