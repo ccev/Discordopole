@@ -7,7 +7,10 @@
     "weatherboost": "☁️ Weather Boost",
     "scanned": "🤖 IV Scanned",
     "total_found": "🗺️ Total",
+    "total": "🗺️ Total",
     "loading": "Loading",
+    "loading_gym_stats": "Loading Gym Stats",
+    "gym_stats": "Gym Stats",
     "decimal_dot": ".",
     "decimal_comma": ",",
     "until": "until",
@@ -17,5 +20,6 @@
     "eggs": "Eggs",
     "empty_board": "`[Nothing to see here. Come back later]`",
     "all": "All",
-    "since": "since"
+    "since": "since",
+    "ex_gyms": "EX Gyms"
 }

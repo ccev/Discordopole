@@ -80,3 +80,14 @@ async def get_active_raids(config, area, level_list, tz_offset):
 
     await cursor_raids.close()
     return raids
+
+async def get_gym_stats(config, area):
+    cursor_gym_stats = await connect_db(config)
+    if config['db_scan_schema'] == "mad":
+        await cursor_gym_stats.execute(f"select count(gym_id), sum(team_id = 0), sum(team_id = 1), sum(team_id=2), sum(team_id=3), sum(is_ex_raid_eligible = 1) from gym where ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
+    elif config['db_scan_schema'] == "rdm":
+        print("sorry rdm")
+    gym_stats = await cursor_gym_stats.fetchall()
+
+    await cursor_gym_stats.close()
+    return gym_stats

@@ -7,7 +7,10 @@
     "weatherboost": "☁️ Wetterboost",
     "scanned": "🤖 Auf IV gescannt",
     "total_found": "🗺️ Insgesamt gefunden",
+    "total": "🗺️ Insgesamt",
     "loading": "Lade",
+    "loading_gym_stats": "Lade Arena Stats",
+    "gym_stats": "Arena Stats",
     "decimal_dot": ",",
     "decimal_comma": ".",
     "until": "Bis",
@@ -17,5 +20,6 @@
     "eggs": "Eier",
     "empty_board": "`[Nichts zu sehen. Komm später wieder]`",
     "all": "Alle",
-    "since": "seit"
+    "since": "seit",
+    "ex_gyms": "EX Arenen"
 }

@@ -31,12 +31,18 @@ def create_config(config_path):
     config['emote_repo'] = config_raw.get(
         'Config',
         'EMOTE_REPO')
+    config['host_channel'] = config_raw.get(
+        'Config',
+        'TRASH_CHANNEL')
 
 
     # Commands #
     config['pokemon_aliases'] = json.loads(config_raw.get(
         'Commands',
         'POKEMON_ALIASES'))
+    config['gyms_aliases'] = json.loads(config_raw.get(
+        'Commands',
+        'GYMS_ALIASES'))
 
 
     # DB #

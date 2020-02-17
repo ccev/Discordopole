@@ -1,14 +1,16 @@
 import discord
 import json
-from discord.ext import commands
 import aiomysql
 import aiohttp
 import asyncio
 import os
+import dateparser
+import matplotlib.pyplot as plt
+
+from dateutil.relativedelta import relativedelta
 from itertools import islice
 from datetime import datetime
-import dateparser
-from dateutil.relativedelta import relativedelta
+from discord.ext import commands
 
 from util.mondetails import details
 import util.queries
@@ -220,7 +222,7 @@ async def emotes(ctx):
     if not ctx.message.author.id in config['admins']:
         return
 
-    needed_emote_names = ["ex_pass", "raid_egg_1", "raid_egg_2", "raid_egg_3", "raid_egg_4", "raid_egg_5"]
+    needed_emote_names = ["ex_pass", "raid_egg_1", "raid_egg_2", "raid_egg_3", "raid_egg_4", "raid_egg_5", "gym_blue", "gym_red", "gym_yellow", "blank"]
     emotejson = json.loads("{}")
     
     embed = discord.Embed(title="Importing emotes will overwrite all custom emotes in this Server!", description="Please make sure you're currently in a server dedicated to host Discordopole emotes.\n\nTo continue, please say the name of this Server.")
@@ -367,6 +369,61 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None):
 
     print(f"     [3/3] Total Data for {mon.name} Stats")
     print(f"Done with {mon.name} Stats.")
+
+@bot.command(pass_context=True, aliases=config['gyms_aliases'])
+async def gyms(ctx, areaname = ""):
+    footer_text = ""
+    text = ""
+    loading = locale['loading_gym_stats']
+
+    area = get_area(areaname)
+    if not area[1] == locale['all']:
+        footer_text = area[1]
+        loading = f"{loading} • {footer_text}"
+
+    embed = discord.Embed(title=locale['gym_stats'], description=text)
+    embed.set_footer(text=loading, icon_url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
+    message = await ctx.send(embed=embed)
+
+    gym_stats = await queries.get_gym_stats(config, area[0])
+
+    for total, neutral, mystic, valor, instinct, ex in gym_stats:
+        total_count = int(total)
+        white_count = int(neutral)
+        blue_count = int(mystic)
+        red_count = int(valor)
+        yellow_count = int(instinct)
+        ex_count = int(ex)
+
+    if total_count > 0:
+        ex_odds = str(int(round((ex_count / total_count * 100), 0))).replace(".", locale['decimal_dot'])
+
+    text = text + f"{custom_emotes['gym_blue']}**{blue_count}**{custom_emotes['blank']}{custom_emotes['gym_red']}**{red_count}**{custom_emotes['blank']}{custom_emotes['gym_yellow']}**{yellow_count}**\n\n{locale['total']}: **{total_count}**\n{custom_emotes['ex_pass']} {locale['ex_gyms']}: **{ex_count}** ({ex_odds}%)"
+
+    embed.description=text
+    await message.edit(embed=embed)
+
+    # Pie chart
+    sizes = [white_count, blue_count, red_count, yellow_count]
+    colors = ['lightgrey', '#42a5f5', '#ef5350', '#fdd835']
+    plt.pie(sizes, labels=None, colors=colors, autopct='', startangle=120, wedgeprops={"edgecolor":"black", 'linewidth':5, 'linestyle': 'solid', 'antialiased': True})
+    plt.axis('equal')
+    plt.gca().set_axis_off()
+    plt.subplots_adjust(top = 1, bottom = 0, right = 1, left = 0, hspace = 0, wspace = 0)
+    plt.margins(0,0)
+    plt.gca().xaxis.set_major_locator(plt.NullLocator())
+    plt.gca().yaxis.set_major_locator(plt.NullLocator())
+    plt.savefig('temp_gym_stats.png', transparent=True, bbox_inches = 'tight', pad_inches = 0)
+
+    channel = await bot.fetch_channel(config['host_channel'])
+    image_msg = await channel.send(file=discord.File("temp_gym_stats.png"))
+    os.remove("temp_gym_stats.png")
+
+    embed.set_footer(text="")
+    embed.description=text
+    embed.set_thumbnail(url=image_msg.attachments[0].url)
+    embed.set_footer(text=footer_text)
+    await message.edit(embed=embed)
 
 @bot.event
 async def on_ready():
