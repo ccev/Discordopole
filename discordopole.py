@@ -271,8 +271,12 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None):
         timespan = datetime(2010, 1, 1, 0, 0)
     else:
         timespan = dateparser.parse(timespan)
-        footer_text = f"{footer_text}, {locale['since']} {timespan.strftime(locale['time_format_dhm'])}"
         loading = ""
+        if area[1] == locale['all']:
+            footer_text = f"{(locale['since']).capitalize()} {timespan.strftime(locale['time_format_dhm'])}"
+        else:
+            footer_text = f"{footer_text}, {locale['since']} {timespan.strftime(locale['time_format_dhm'])}"
+        
 
 
     embed = discord.Embed(title=f"{mon.name}", description=text)
