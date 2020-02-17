@@ -2,7 +2,7 @@ import ast
 import difflib
 
 class details(object):
-    def __init__(self, mon_name, lang):
+    def __init__(self, mon_name, repo, lang):
         if not lang == "de":
             lang = "en"
         data = ast.literal_eval(open(f"data/mon_names/{lang}.txt", "r").read())
@@ -36,7 +36,7 @@ class details(object):
 
         self.name = result_name
         self.id = int(result_id)
-        self.icon = f"https://raw.githubusercontent.com/whitewillem/PogoAssets/resized/no_border/pokemon_icon_{str(result_id).zfill(3)}_00.png"
+        self.icon = f"{repo}pokemon_icon_{str(result_id).zfill(3)}_00.png"
 
     def id(mon_id, lang):
         if not lang == "de":

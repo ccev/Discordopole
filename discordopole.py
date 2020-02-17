@@ -242,7 +242,7 @@ async def emotes(ctx):
     embed.description = ""
 
     for emote_name in needed_emote_names:
-        image = await download_url(f"https://raw.githubusercontent.com/ccev/dp_emotes/master/{emote_name}.png")
+        image = await download_url(f"{config['emote_repo']}{emote_name}.png")
         emote = await ctx.guild.create_custom_emoji(name=emote_name, image=image)
         emote_ref = f"<:{emote.name}:{emote.id}>"
         embed.description = f"{embed.description}{emote_ref} `{emote_ref}`\n"
@@ -256,7 +256,7 @@ async def emotes(ctx):
 
 @bot.command(pass_context=True, aliases=config['pokemon_aliases'])
 async def pokemon(ctx, stat_name, areaname = "", *, timespan = None):
-    mon = details(stat_name, config['language'])
+    mon = details(stat_name, config['mon_icon_repo'], config['language'])
     print(f"Generating {mon.name} Stats...")
 
     footer_text = ""

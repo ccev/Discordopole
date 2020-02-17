@@ -25,6 +25,12 @@ def create_config(config_path):
         'Config',
         'ADMINS')
     config['admins'] = list(map(int, list(config['admins'].split(','))))
+    config['mon_icon_repo'] = config_raw.get(
+        'Config',
+        'POKEMON_ICON_REPO')
+    config['emote_repo'] = config_raw.get(
+        'Config',
+        'EMOTE')
 
 
     # Commands #
