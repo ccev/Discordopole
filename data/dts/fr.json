@@ -1,0 +1,21 @@
+{
+    "shinies": "✨ Chromatiques",
+    "hundos": "💯 Hundos",
+    "rarity": "🔍 Rareté",
+    "90": "🙂 90 %+",
+    "0": "🗑️ 0 %",
+    "weatherboost": "☁️ Boost Météo",
+    "scanned": "🤖 IV Scanné",
+    "total_found": "🗺️ Total",
+    "loading": "Chargement",
+    "decimal_dot": ",",
+    "decimal_comma": ".",
+    "until": "jusqu'à",
+    "time_format_hm": "%H h %M",
+    "time_format_dhm": "%d.%m.%Y %H:%M",
+    "raids": "Raids",
+    "eggs": "Œufs",
+    "empty_board": "`[Il n'y a rien à voir ici. Reviens plus tard.]`",
+    "all": "Tous",
+    "since": "depuis"
+}
