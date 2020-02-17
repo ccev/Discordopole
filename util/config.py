@@ -30,7 +30,7 @@ def create_config(config_path):
         'POKEMON_ICON_REPO')
     config['emote_repo'] = config_raw.get(
         'Config',
-        'EMOTE')
+        'EMOTE_REPO')
 
 
     # Commands #
