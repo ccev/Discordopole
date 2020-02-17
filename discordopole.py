@@ -76,6 +76,7 @@ async def board_loop():
                         text = text + f"{ex_emote}**{name}**: {locale['until']} {end}\n**{mon_name}** - *{move_1} / {move_2}*\n\n"
                 
             embed = discord.Embed(title=locale['raids'], description=text, timestamp=datetime.utcnow())
+            embed.set_footer(text=area[1])
 
             await message.edit(embed=embed)
             await asyncio.sleep(board["wait"])
@@ -101,6 +102,7 @@ async def board_loop():
                         text = text + f"{egg_emote} {ex_emote}**{name}**: {start}  –  {end}\n"
                 
             embed = discord.Embed(title=locale['eggs'], description=text, timestamp=datetime.utcnow())
+            embed.set_footer(text=area[1])
 
             await message.edit(embed=embed)
             await asyncio.sleep(board["wait"])
