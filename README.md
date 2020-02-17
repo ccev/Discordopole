@@ -2,6 +2,5 @@
 
 wip
 
-cp default.ini config.ini
-
+cp -r config_example config
 hf
