@@ -398,7 +398,7 @@ async def gyms(ctx, areaname = ""):
     if total_count > 0:
         ex_odds = str(int(round((ex_count / total_count * 100), 0))).replace(".", locale['decimal_dot'])
 
-    text = text + f"{custom_emotes['gym_blue']}**{blue_count}**{custom_emotes['blank']}{custom_emotes['gym_red']}**{red_count}**{custom_emotes['blank']}{custom_emotes['gym_yellow']}**{yellow_count}**\n\n{locale['total']}: **{total_count}**\n{custom_emotes['ex_pass']} {locale['ex_gyms']}: **{ex_count}** ({ex_odds}%)"
+    text = f"{custom_emotes['gym_blue']}**{blue_count}**{custom_emotes['blank']}{custom_emotes['gym_red']}**{red_count}**{custom_emotes['blank']}{custom_emotes['gym_yellow']}**{yellow_count}**\n\n{locale['total']}: **{total_count}**\n{custom_emotes['ex_pass']} {locale['ex_gyms']}: **{ex_count}** ({ex_odds}%)"
 
     embed.description=text
     await message.edit(embed=embed)
@@ -413,17 +413,18 @@ async def gyms(ctx, areaname = ""):
     plt.margins(0,0)
     plt.gca().xaxis.set_major_locator(plt.NullLocator())
     plt.gca().yaxis.set_major_locator(plt.NullLocator())
-    plt.savefig('temp_gym_stats.png', transparent=True, bbox_inches = 'tight', pad_inches = 0)
+    plt.savefig('gym_stats.png', transparent=True, bbox_inches = 'tight', pad_inches = 0)
 
     channel = await bot.fetch_channel(config['host_channel'])
-    image_msg = await channel.send(file=discord.File("temp_gym_stats.png"))
-    os.remove("temp_gym_stats.png")
+    image_msg = await channel.send(file=discord.File("gym_stats.png"))
+    image = image_msg.attachments[0].url
 
     embed.set_footer(text="")
     embed.description=text
-    embed.set_thumbnail(url=image_msg.attachments[0].url)
+    embed.set_thumbnail(url=image)
     embed.set_footer(text=footer_text)
     await message.edit(embed=embed)
+    os.remove("gym_stats.png")
 
 @bot.event
 async def on_ready():
