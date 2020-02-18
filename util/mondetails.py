@@ -22,8 +22,8 @@ class details(object):
         if result[1] < 0.76:
 
             for pname in data.keys():
-                if pname.lower().startswith(name.lower()):
-                    result = [pname, difflib.SequenceMatcher(None, pname.lower(), name.lower()).ratio()]
+                if pname.lower().startswith(mon_name.lower()):
+                    result = [pname, difflib.SequenceMatcher(None, pname.lower(), mon_name.lower()).ratio()]
                     break
 
         result_id = data[result[0]]
