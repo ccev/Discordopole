@@ -21,5 +21,6 @@
     "empty_board": "`[Nothing to see here. Come back later]`",
     "all": "All",
     "since": "since",
-    "ex_gyms": "EX Gyms"
+    "ex_gyms": "EX Gyms",
+    "active_raids": "Active Raids"
 }

@@ -222,7 +222,7 @@ async def emotes(ctx):
     if not ctx.message.author.id in config['admins']:
         return
 
-    needed_emote_names = ["ex_pass", "raid_egg_1", "raid_egg_2", "raid_egg_3", "raid_egg_4", "raid_egg_5", "gym_blue", "gym_red", "gym_yellow", "blank"]
+    needed_emote_names = ["ex_pass", "raid_egg_1", "raid_egg_2", "raid_egg_3", "raid_egg_4", "raid_egg_5", "gym_blue", "gym_red", "gym_yellow", "blank", "raid"]
     emotejson = json.loads("{}")
     
     embed = discord.Embed(title="Importing emotes will overwrite all custom emotes in this Server!", description="Please make sure you're currently in a server dedicated to host Discordopole emotes.\n\nTo continue, please say the name of this Server.")
@@ -387,18 +387,19 @@ async def gyms(ctx, areaname = ""):
 
     gym_stats = await queries.get_gym_stats(config, area[0])
 
-    for total, neutral, mystic, valor, instinct, ex in gym_stats:
+    for total, neutral, mystic, valor, instinct, ex, raids in gym_stats:
         total_count = int(total)
         white_count = int(neutral)
         blue_count = int(mystic)
         red_count = int(valor)
         yellow_count = int(instinct)
         ex_count = int(ex)
+        raid_count = int(raids)
 
     if total_count > 0:
         ex_odds = str(int(round((ex_count / total_count * 100), 0))).replace(".", locale['decimal_dot'])
 
-    text = f"{custom_emotes['gym_blue']}**{blue_count}**{custom_emotes['blank']}{custom_emotes['gym_red']}**{red_count}**{custom_emotes['blank']}{custom_emotes['gym_yellow']}**{yellow_count}**\n\n{locale['total']}: **{total_count}**\n{custom_emotes['ex_pass']} {locale['ex_gyms']}: **{ex_count}** ({ex_odds}%)"
+    text = f"{custom_emotes['gym_blue']}**{blue_count}**{custom_emotes['blank']}{custom_emotes['gym_red']}**{red_count}**{custom_emotes['blank']}{custom_emotes['gym_yellow']}**{yellow_count}**\n\n{locale['total']}: **{total_count}**\n{custom_emotes['ex_pass']} {locale['ex_gyms']}: **{ex_count}** ({ex_odds}%)\n\n{custom_emotes['raid']} {locale['active_raids']}: **{raid_count}**"
 
     embed.description=text
     await message.edit(embed=embed)

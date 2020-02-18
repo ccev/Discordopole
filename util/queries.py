@@ -84,9 +84,9 @@ async def get_active_raids(config, area, level_list, tz_offset):
 async def get_gym_stats(config, area):
     cursor_gym_stats = await connect_db(config)
     if config['db_scan_schema'] == "mad":
-        await cursor_gym_stats.execute(f"select count(gym_id), sum(team_id = 0), sum(team_id = 1), sum(team_id=2), sum(team_id=3), sum(is_ex_raid_eligible = 1) from gym where ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
+        await cursor_gym_stats.execute(f"select count(gym_id), sum(team_id = 0), sum(team_id = 1), sum(team_id=2), sum(team_id=3), sum(is_ex_raid_eligible = 1), (select count(gym_id) from raid where end >= utc_timestamp() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))) from gym where ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
     elif config['db_scan_schema'] == "rdm":
-        await cursor_gym_stats.execute(f"select count(id), sum(team_id = 0), sum(team_id = 1), sum(team_id=2), sum(team_id=3), sum(ex_raid_eligible = 1) from gym where ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon))")
+        await cursor_gym_stats.execute(f"select count(id), sum(team_id = 0), sum(team_id = 1), sum(team_id=2), sum(team_id=3), sum(ex_raid_eligible = 1), sum(raid_end_timestamp > UNIX_TIMESTAMP()) from gym where ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon))")
     gym_stats = await cursor_gym_stats.fetchall()
 
     await cursor_gym_stats.close()
