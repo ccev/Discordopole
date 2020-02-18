@@ -44,7 +44,7 @@ async def get_shiny_total(mon_id, area, time, config):
 async def get_scan_numbers(mon_id, area, time, config):
     cursor_scan_numbers = await connect_db(config)
     if config['db_scan_schema'] == "mad":
-        query_hundo_count = f"select count(pokemon_id) as scanned, SUM(individual_attack = 15 AND individual_defense = 15 AND individual_stamina = 15) AS iv100, SUM(individual_attack = 0 AND individual_defense = 0 AND individual_stamina = 0) AS iv0, SUM(individual_attack + individual_defense + individual_stamina >= 41) AS iv90 from pokemon where pokemon_id = {mon_id} and individual_attack IS NOT NULL AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude)) AND disappear_time > '{time}'"
+        query_hundo_count = f"select count(pokemon_id) as scanned, SUM(individual_attack = 15 AND individual_defense = 15 AND individual_stamina = 15) AS iv100, SUM(individual_attack = 0 AND individual_defense = 0 AND individual_stamina = 0) AS iv0, SUM(individual_attack + individual_defense + individual_stamina >= 41) AS iv90 from pokemon where pokemon_id = {mon_id} and individual_attack IS NOT NULL AND disappear_time > '{time}' AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))"
     elif config['db_scan_schema'] == "rdm":
         query_hundo_count = f"select count(id) as scanned, SUM(iv = 100) AS iv100, SUM(iv = 0) AS iv0, SUM(iv > 90) AS iv90 from pokemon where id = {mon_id} and atk_iv IS NOT NULL AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon))"
     await cursor_scan_numbers.execute(query_hundo_count)
@@ -56,7 +56,7 @@ async def get_scan_numbers(mon_id, area, time, config):
 async def get_big_numbers(mon_id, area, time, config):
     cursor_big_numbers = await connect_db(config)
     if config['db_scan_schema'] == "mad":
-        query_big_count = f"select count(pokemon_id), sum(pokemon_id = {mon_id}), sum(weather_boosted_condition > 0 and pokemon_id = {mon_id}) from pokemon WHERE ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude)) AND disappear_time > '{time}'"
+        query_big_count = f"select count(pokemon_id), sum(pokemon_id = {mon_id}), sum(weather_boosted_condition > 0 and pokemon_id = {mon_id}) from pokemon WHERE disappear_time > '{time}' AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))"
     elif config['db_scan_schema'] == "rdm":
         query_big_count = f"select count(id), sum(pokemon_id = {mon_id}), sum(weather > 0 and pokemon_id = {mon_id}) from pokemon WHERE ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon))"
     await cursor_big_numbers.execute(query_big_count)
@@ -86,7 +86,7 @@ async def get_gym_stats(config, area):
     if config['db_scan_schema'] == "mad":
         await cursor_gym_stats.execute(f"select count(gym_id), sum(team_id = 0), sum(team_id = 1), sum(team_id=2), sum(team_id=3), sum(is_ex_raid_eligible = 1) from gym where ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
     elif config['db_scan_schema'] == "rdm":
-        print("sorry rdm")
+        await cursor_gym_stats.execute(f"select count(id), sum(team_id = 0), sum(team_id = 1), sum(team_id=2), sum(team_id=3), sum(ex_raid_eligible = 1) from gym where ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon))")
     gym_stats = await cursor_gym_stats.fetchall()
 
     await cursor_gym_stats.close()
