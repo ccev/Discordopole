@@ -25,7 +25,7 @@ with open(f"data/dts/{config['language']}.json") as localejson:
     locale = json.load(localejson)
 
 with open("config/boards.json", "r") as f:
-    boards = json.load(f)
+    bot.boards = json.load(f)
 
 with open(f"data/moves/{config['language']}.json") as f:
     moves = json.load(f)
@@ -34,7 +34,7 @@ with open("config/geofence.json") as f:
     geofences = json.load(f)
 
 with open("config/emotes.json") as f:
-    custom_emotes = json.load(f)
+    bot.custom_emotes = json.load(f)
 
 def get_area(areaname):
     stringfence = "-100 -100, -100 100, 100 100, 100 -100, -100 -100"
@@ -51,7 +51,7 @@ def get_area(areaname):
 
 async def board_loop():
     while not bot.is_closed():
-        for board in boards['raids']:
+        for board in bot.boards['raids']:
             channel = await bot.fetch_channel(board["channel_id"])
             message = await channel.fetch_message(board["message_id"])
             area = get_area(board["area"])
@@ -64,7 +64,7 @@ async def board_loop():
                     end = datetime.fromtimestamp(end).strftime(locale['time_format_hm'])
                     ex_emote = ""
                     if ex == 1:
-                        ex_emote = f"{custom_emotes['ex_pass']} "
+                        ex_emote = f"{bot.custom_emotes['ex_pass']} "
                     if not mon_id is None and mon_id > 0:
                         mon_name = details.id(mon_id, config['language'])
                         if move_1 > MAX_MOVE_IN_LIST:
@@ -84,7 +84,7 @@ async def board_loop():
             await asyncio.sleep(board["wait"])
         await asyncio.sleep(5)
 
-        for board in boards['eggs']:
+        for board in bot.boards['eggs']:
             channel = await bot.fetch_channel(board["channel_id"])
             message = await channel.fetch_message(board["message_id"])
             area = get_area(board["area"])
@@ -98,9 +98,9 @@ async def board_loop():
                     end = datetime.fromtimestamp(end).strftime(locale['time_format_hm'])
                     ex_emote = ""
                     if ex == 1:
-                        ex_emote = f"{custom_emotes['ex_pass']} "
+                        ex_emote = f"{bot.custom_emotes['ex_pass']} "
                     if mon_id is None or mon_id == 0:
-                        egg_emote = custom_emotes[f"raid_egg_{level}"]
+                        egg_emote = bot.custom_emotes[f"raid_egg_{level}"]
                         text = text + f"{egg_emote} {ex_emote}**{name}**: {start}  –  {end}\n"
                 
             embed = discord.Embed(title=locale['eggs'], description=text, timestamp=datetime.utcnow())
@@ -137,9 +137,6 @@ async def raid(ctx, area, levels):
 
     embed = discord.Embed(title="Raid Board", description="")
     message = await ctx.send(embed=embed)
-
-    with open("config/boards.json", "r") as f:
-        boards = json.load(f)
     
     level_list = list(levels.split(','))
     level_list = list(map(int, level_list))
@@ -157,13 +154,13 @@ async def raid(ctx, area, levels):
         await message.edit(embed=embed)
         return
     await ctx.message.delete()
-    boards['raids'].append({"channel_id": message.channel.id, "message_id": message.id, "area": area, "timezone": config['timezone'], "wait": 15, "levels": level_list})
+    bot.boards['raids'].append({"channel_id": message.channel.id, "message_id": message.id, "area": area, "timezone": config['timezone'], "wait": 15, "levels": level_list})
 
     with open("config/boards.json", "w") as f:
-        f.write(json.dumps(boards, indent=4))
+        f.write(json.dumps(bot.boards, indent=4))
 
     embed.title = "Succesfully created this Raid Board"
-    embed.description = f"Now restart Discordopole to see this message being filled\n\n```Area: {area}\nLevels: {levels}\nChannel ID: {message.channel.id}\nMessage ID: {message.id}```"
+    embed.description = f"You'll see this message being filled in soon\n\n```Area: {area}\nLevels: {levels}\nChannel ID: {message.channel.id}\nMessage ID: {message.id}```"
     await message.edit(embed=embed)
     print("Wrote Raid Board to config/boards.json")
 
@@ -175,9 +172,6 @@ async def egg(ctx, area, levels):
 
     embed = discord.Embed(title="Egg Board", description="")
     message = await ctx.send(embed=embed)
-
-    with open("config/boards.json", "r") as f:
-        boards = json.load(f)
     
     level_list = list(levels.split(','))
     level_list = list(map(int, level_list))
@@ -195,13 +189,13 @@ async def egg(ctx, area, levels):
         await message.edit(embed=embed)
         return
     await ctx.message.delete()
-    boards['eggs'].append({"channel_id": message.channel.id, "message_id": message.id, "area": area, "timezone": config['timezone'], "wait": 15, "levels": level_list})
+    bot.boards['eggs'].append({"channel_id": message.channel.id, "message_id": message.id, "area": area, "timezone": config['timezone'], "wait": 15, "levels": level_list})
 
     with open("config/boards.json", "w") as f:
-        f.write(json.dumps(boards, indent=4))
+        f.write(json.dumps(bot.boards, indent=4))
 
     embed.title = "Succesfully created this Egg Board"
-    embed.description = f"Now restart Discordopole to see this message being filled\n\n```Area: {area}\nLevels: {levels}\nChannel ID: {message.channel.id}\nMessage ID: {message.id}```"
+    embed.description = f"You'll see this message being filled in soon\n\n```Area: {area}\nLevels: {levels}\nChannel ID: {message.channel.id}\nMessage ID: {message.id}```"
     await message.edit(embed=embed)
     print("Wrote Raid Board to config/boards.json")
 
@@ -257,6 +251,7 @@ async def emotes(ctx):
     await message.edit(embed=embed)
     with open("config/emotes.json", "w") as f:
         f.write(json.dumps(emotejson, indent=4))
+    bot.custom_emotes = emotejson
 
 @bot.command(pass_context=True, aliases=config['pokemon_aliases'])
 async def pokemon(ctx, stat_name, areaname = "", *, timespan = None):
@@ -399,7 +394,7 @@ async def gyms(ctx, areaname = ""):
     if total_count > 0:
         ex_odds = str(int(round((ex_count / total_count * 100), 0))).replace(".", locale['decimal_dot'])
 
-    text = f"{custom_emotes['gym_blue']}**{blue_count}**{custom_emotes['blank']}{custom_emotes['gym_red']}**{red_count}**{custom_emotes['blank']}{custom_emotes['gym_yellow']}**{yellow_count}**\n\n{locale['total']}: **{total_count}**\n{custom_emotes['ex_pass']} {locale['ex_gyms']}: **{ex_count}** ({ex_odds}%)\n\n{custom_emotes['raid']} {locale['active_raids']}: **{raid_count}**"
+    text = f"{bot.custom_emotes['gym_blue']}**{blue_count}**{bot.custom_emotes['blank']}{bot.custom_emotes['gym_red']}**{red_count}**{bot.custom_emotes['blank']}{bot.custom_emotes['gym_yellow']}**{yellow_count}**\n\n{locale['total']}: **{total_count}**\n{bot.custom_emotes['ex_pass']} {locale['ex_gyms']}: **{ex_count}** ({ex_odds}%)\n\n{bot.custom_emotes['raid']} {locale['active_raids']}: **{raid_count}**"
 
     embed.description=text
     await message.edit(embed=embed)
