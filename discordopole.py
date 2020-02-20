@@ -52,62 +52,73 @@ def get_area(areaname):
 async def board_loop():
     while not bot.is_closed():
         for board in bot.boards['raids']:
-            channel = await bot.fetch_channel(board["channel_id"])
-            message = await channel.fetch_message(board["message_id"])
-            area = get_area(board["area"])
-            text = ""
-            raids = await queries.get_active_raids(config, area[0], board["levels"], board["timezone"])
-            if not raids:
-                text = locale["empty_board"]
-            else:
-                for start, end, lat, lon, mon_id, move_1, move_2, name, ex, level in islice(raids, 21):
-                    end = datetime.fromtimestamp(end).strftime(locale['time_format_hm'])
-                    ex_emote = ""
-                    if ex == 1:
-                        ex_emote = f"{bot.custom_emotes['ex_pass']} "
-                    if not mon_id is None and mon_id > 0:
-                        mon_name = details.id(mon_id, config['language'])
-                        if move_1 > MAX_MOVE_IN_LIST:
-                            move_1 = "?"
-                        else:
-                            move_1 = moves[str(move_1)]["name"]
-                        if move_2 > MAX_MOVE_IN_LIST:
-                            move_2 = "?"
-                        else:
-                            move_2 = moves[str(move_2)]["name"]
-                        text = text + f"{ex_emote}**{name}**: {locale['until']} {end}\n**{mon_name}** - *{move_1} / {move_2}*\n\n"
-                
-            embed = discord.Embed(title=locale['raids'], description=text, timestamp=datetime.utcnow())
-            embed.set_footer(text=area[1])
+            try:
+                channel = await bot.fetch_channel(board["channel_id"])
+                message = await channel.fetch_message(board["message_id"])
+                area = get_area(board["area"])
+                text = ""
+                raids = await queries.get_active_raids(config, area[0], board["levels"], board["timezone"])
+                if not raids:
+                    text = locale["empty_board"]
+                else:
+                    for start, end, lat, lon, mon_id, move_1, move_2, name, ex, level in islice(raids, 21):
+                        end = datetime.fromtimestamp(end).strftime(locale['time_format_hm'])
+                        ex_emote = ""
+                        if ex == 1:
+                            ex_emote = f"{bot.custom_emotes['ex_pass']} "
+                        if not mon_id is None and mon_id > 0:
+                            mon_name = details.id(mon_id, config['language'])
+                            if move_1 > MAX_MOVE_IN_LIST:
+                                move_1 = "?"
+                            else:
+                                move_1 = moves[str(move_1)]["name"]
+                            if move_2 > MAX_MOVE_IN_LIST:
+                                move_2 = "?"
+                            else:
+                                move_2 = moves[str(move_2)]["name"]
+                            text = text + f"{ex_emote}**{name}**: {locale['until']} {end}\n**{mon_name}** - *{move_1} / {move_2}*\n\n"
+                    
+                embed = discord.Embed(title=locale['raids'], description=text, timestamp=datetime.utcnow())
+                embed.set_footer(text=area[1])
 
-            await message.edit(embed=embed)
-            await asyncio.sleep(board["wait"])
-        await asyncio.sleep(5)
-
+                await message.edit(embed=embed)
+                await asyncio.sleep(board["wait"])
+            except Exception as err:              
+                print(err)
+                print("Error while updating Raid Board. Skipping it.")
+                await asyncio.sleep(5)
+            
         for board in bot.boards['eggs']:
-            channel = await bot.fetch_channel(board["channel_id"])
-            message = await channel.fetch_message(board["message_id"])
-            area = get_area(board["area"])
-            text = ""
-            raids = await queries.get_active_raids(config, area[0], board["levels"], board["timezone"])
-            if not raids:
-                text = locale["empty_board"]
-            else:
-                for start, end, lat, lon, mon_id, move_1, move_2, name, ex, level in islice(raids, 23):
-                    start = datetime.fromtimestamp(start).strftime(locale['time_format_hm'])
-                    end = datetime.fromtimestamp(end).strftime(locale['time_format_hm'])
-                    ex_emote = ""
-                    if ex == 1:
-                        ex_emote = f"{bot.custom_emotes['ex_pass']} "
-                    if mon_id is None or mon_id == 0:
-                        egg_emote = bot.custom_emotes[f"raid_egg_{level}"]
-                        text = text + f"{egg_emote} {ex_emote}**{name}**: {start}  –  {end}\n"
-                
-            embed = discord.Embed(title=locale['eggs'], description=text, timestamp=datetime.utcnow())
-            embed.set_footer(text=area[1])
+            try:
+                channel = await bot.fetch_channel(board["channel_id"])
+                message = await channel.fetch_message(board["message_id"])
+                area = get_area(board["area"])
+                text = ""
+                raids = await queries.get_active_raids(config, area[0], board["levels"], board["timezone"])
+                if not raids:
+                    text = locale["empty_board"]
+                else:
+                    for start, end, lat, lon, mon_id, move_1, move_2, name, ex, level in islice(raids, 23):
+                        start = datetime.fromtimestamp(start).strftime(locale['time_format_hm'])
+                        end = datetime.fromtimestamp(end).strftime(locale['time_format_hm'])
+                        ex_emote = ""
+                        if ex == 1:
+                            ex_emote = f"{bot.custom_emotes['ex_pass']} "
+                        if mon_id is None or mon_id == 0:
+                            egg_emote = bot.custom_emotes[f"raid_egg_{level}"]
+                            text = text + f"{egg_emote} {ex_emote}**{name}**: {start}  –  {end}\n"
+                    
+                embed = discord.Embed(title=locale['eggs'], description=text, timestamp=datetime.utcnow())
+                embed.set_footer(text=area[1])
 
-            await message.edit(embed=embed)
-            await asyncio.sleep(board["wait"])
+                await message.edit(embed=embed)
+                await asyncio.sleep(board["wait"])
+            except Exception as err:
+                print(err)
+                print("Error while updating Egg Board. Skipping it.")
+                await asyncio.sleep(5)
+        
+        await asyncio.sleep(1)
 
 @bot.group(pass_context=True)
 async def board(ctx):
@@ -146,12 +157,11 @@ async def delete(ctx, deleted_message_id):
                 channel = await bot.fetch_channel(board["channel_id"])
                 message = await channel.fetch_message(deleted_message_id)
                 await message.delete()
+                await ctx.send("Successfully deleted Board.")
     
     if not message_found:
         await ctx.send("Couldn't find a board with that Message ID.")
         return
-    
-    
 
 @create.command(pass_context=True)
 async def raid(ctx, area, levels):
