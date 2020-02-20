@@ -4,6 +4,18 @@ This project is still under heavy development. So clone with confidence and join
 
 python3.6 will work. not tested with other version. definitely not compatible with older versions
 
+![Raid Board](https://i.imgur.com/I4sqYny.png)
+
+A Raid Board
+
+![Gym Stats](https://i.imgur.com/GD9O5xA.png)
+
+Gym Stats
+
+![Mon Stats](https://i.imgur.com/d2ryvcY.png)
+
+Pokemon Stats
+
 ## Setup
 
 - `cp -r config_example config` to copy the config_example folder to a folder named config
