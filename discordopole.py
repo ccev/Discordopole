@@ -129,6 +129,30 @@ async def create(ctx):
         await message.edit(embed=embed)
         print("Done creating an empty Board")
 
+@board.command(pass_context=True)
+async def delete(ctx, deleted_message_id):
+    if not ctx.message.author.id in config['admins']:
+        return
+    message_found = False
+    for board_type in bot.boards:
+        for board in bot.boards[board_type]:
+            if int(deleted_message_id) == board['message_id']:
+                message_found = True
+                bot.boards[board_type].remove(board)
+
+                with open("config/boards.json", "w") as f:
+                    f.write(json.dumps(bot.boards, indent=4))
+
+                channel = await bot.fetch_channel(board["channel_id"])
+                message = await channel.fetch_message(deleted_message_id)
+                await message.delete()
+    
+    if not message_found:
+        await ctx.send("Couldn't find a board with that Message ID.")
+        return
+    
+    
+
 @create.command(pass_context=True)
 async def raid(ctx, area, levels):
     if not ctx.message.author.id in config['admins']:
