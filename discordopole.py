@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 from dateutil.relativedelta import relativedelta
 from itertools import islice
 from datetime import datetime
+from datetime import date
 from discord.ext import commands
 
 from util.mondetails import details
@@ -311,7 +312,6 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None):
             footer_text = f"{footer_text}, {locale['since']} {timespan.strftime(locale['time_format_dhm'])}"
         
 
-
     embed = discord.Embed(title=f"{mon.name}", description=text)
     embed.set_thumbnail(url=mon.icon)
     embed.set_footer(text=f"{loading}{footer_text}", icon_url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
@@ -368,7 +368,7 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None):
     print(f"     [2/3] Scan Data for {mon.name} Stats")
 
     big_numbers = await queries.get_big_numbers(mon.id, area[0], timespan, config)
-    for mons, found, boosted in big_numbers:
+    for mons, found, boosted, time in big_numbers:
         mon_total = int(mons)
         if found is not None:
             found_count = int(found)
@@ -377,22 +377,26 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None):
             found_count = 0
             boosted_count = 0
 
+    days = (date.today() - (big_numbers[0][3]).date()).days
+
     if found_count > 0:
         mon_odds = int(round((mon_total / found_count), 0))
-        text = text.replace(f"\n{locale['90']}", f"{locale['rarity']}: **1:{mon_odds}**\n\n{locale['90']}")
+        mon_rate = str(round((found_count / days), 1)).replace(".", locale['decimal_dot'])
 
-        boosted_odds = str(round((boosted_count / found_count * 100), 1)).replace(".", ",")
+        text = text.replace(f"\n{locale['90']}", f"{locale['rarity']}: **1:{mon_odds}**\n{locale['rate']}: **{mon_rate}/{locale['day']}**\n\n{locale['90']}")
+
+        boosted_odds = str(round((boosted_count / found_count * 100), 1)).replace(".", locale['decimal_dot'])
         text = text + f"{locale['weatherboost']}: **{boosted_odds}%**\n"
 
-        scanned_odds = str(round((scanned_total / found_count * 100), 1)).replace(".", ",")
+        scanned_odds = str(round((scanned_total / found_count * 100), 1)).replace(".", locale['decimal_dot'])
         text = text + f"{locale['scanned']}: **{scanned_odds}%**\n\n"
 
         text = text + f"{locale['total_found']}: **{found_count:_}**"
     else:
-        text = text.replace(f"\n{locale['90']}", f"{locale['rarity']}: **0**\n\n{locale['90']}")
+        text = text.replace(f"\n{locale['90']}", f"{locale['rarity']}: **0**\n{locale['rate']}: **0/{locale['day']}**\n\n{locale['90']}")
         text = text + f"{locale['weatherboost']}: **0%**\n{locale['scanned']}: **0**\n\n{locale['total_found']}: **0**"
 
-    embed.description = text.replace("_", ".")
+    embed.description = text.replace("_", locale['decimal_comma'])
     embed.set_footer(text=footer_text)
     await message.edit(embed=embed)
 

@@ -56,9 +56,9 @@ async def get_scan_numbers(mon_id, area, time, config):
 async def get_big_numbers(mon_id, area, time, config):
     cursor_big_numbers = await connect_db(config)
     if config['db_scan_schema'] == "mad":
-        query_big_count = f"select count(pokemon_id), sum(pokemon_id = {mon_id}), sum(weather_boosted_condition > 0 and pokemon_id = {mon_id}) from pokemon WHERE disappear_time > '{time}' AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))"
+        query_big_count = f"select count(pokemon_id), sum(pokemon_id = {mon_id}), sum(weather_boosted_condition > 0 and pokemon_id = {mon_id}), disappear_time from pokemon WHERE disappear_time > '{time}' AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude)) ORDER BY disappear_time"
     elif config['db_scan_schema'] == "rdm":
-        query_big_count = f"select count(id), sum(pokemon_id = {mon_id}), sum(weather > 0 and pokemon_id = {mon_id}) from pokemon WHERE ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon))"
+        query_big_count = f"select count(id), sum(pokemon_id = {mon_id}), sum(weather > 0 and pokemon_id = {mon_id}), FROM_UNIXTIME(first_seen_timestamp) from pokemon WHERE ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon)) ORDER BY first_seen_timestamp"
     await cursor_big_numbers.execute(query_big_count)
     big_numbers = await cursor_big_numbers.fetchall()
 
