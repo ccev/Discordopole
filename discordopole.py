@@ -131,6 +131,7 @@ async def board(ctx):
 @board.group(pass_context=True)
 async def create(ctx):
     if not ctx.message.author.id in config['admins']:
+        print(f"@{ctx.author.name} tried to create an empty Board but is no Admin")
         return
     if ctx.invoked_subcommand is None:
         print("Creating an empty Board")
@@ -144,6 +145,7 @@ async def create(ctx):
 @board.command(pass_context=True)
 async def delete(ctx, deleted_message_id):
     if not ctx.message.author.id in config['admins']:
+        print(f"@{ctx.author.name} tried to create a delete a Board but is no Admin")
         return
     message_found = False
     for board_type in bot.boards:
@@ -167,6 +169,7 @@ async def delete(ctx, deleted_message_id):
 @create.command(pass_context=True)
 async def raid(ctx, area, levels):
     if not ctx.message.author.id in config['admins']:
+        print(f"@{ctx.author.name} tried to create a Raid Board but is no Admin")
         return
     print("Creating Raid Board")
 
@@ -202,6 +205,7 @@ async def raid(ctx, area, levels):
 @create.command(pass_context=True)
 async def egg(ctx, area, levels):
     if not ctx.message.author.id in config['admins']:
+        print(f"@{ctx.author.name} tried to create a Egg Board but is no Admin")
         return
     print("Creating Egg Board")
 
@@ -249,7 +253,10 @@ async def download_url(url):
 @get.command(pass_context=True)
 async def emotes(ctx):
     if not ctx.message.author.id in config['admins']:
+        print(f"@{ctx.author.name} tried to import emotes but is no Admin")
         return
+
+    print(f"@{ctx.author.name} wants to import emotes in Server {ctx.guild.name}. Waiting for confirmation")
 
     needed_emote_names = ["ex_pass", "raid_egg_1", "raid_egg_2", "raid_egg_3", "raid_egg_4", "raid_egg_5", "gym_blue", "gym_red", "gym_yellow", "blank", "raid"]
     emotejson = json.loads("{}")
@@ -263,7 +270,9 @@ async def emotes(ctx):
     except:
         await ctx.send("Aborting Emote import.")
         await message.delete()
+        print("No confirmation after 60 seconds. Aborting emote import.")
         return
+    print("Server name matched. Deleting all emotes now.")
     await confirm.delete()
     embed = discord.Embed(title="Importing Emotes. Please Wait", description="")
     await message.edit(embed=embed)
@@ -273,6 +282,7 @@ async def emotes(ctx):
         embed.description = f"{embed.description}Removed Emote `{emote.name}`\n"
         await message.edit(embed=embed)
     embed.description = ""
+    print(f"Done. Now importing all needed emotes from repo {config['emote_repo']}")
 
     for emote_name in needed_emote_names:
         image = await download_url(f"{config['emote_repo']}{emote_name}.png")
@@ -288,10 +298,11 @@ async def emotes(ctx):
         f.write(json.dumps(emotejson, indent=4))
     bot.custom_emotes = emotejson
 
+    print("All emotes imported.")
+
 @bot.command(pass_context=True, aliases=config['pokemon_aliases'])
 async def pokemon(ctx, stat_name, areaname = "", *, timespan = None):
     mon = details(stat_name, config['mon_icon_repo'], config['language'])
-    print(f"Generating {mon.name} Stats...")
 
     footer_text = ""
     text = ""
@@ -310,7 +321,8 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None):
             footer_text = f"{(locale['since']).capitalize()} {timespan.strftime(locale['time_format_dhm'])}"
         else:
             footer_text = f"{footer_text}, {locale['since']} {timespan.strftime(locale['time_format_dhm'])}"
-        
+
+    print(f"@{ctx.author.name} requested {mon.name} stats for area {area[1]}")    
 
     embed = discord.Embed(title=f"{mon.name}", description=text)
     embed.set_thumbnail(url=mon.icon)
@@ -378,6 +390,8 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None):
             boosted_count = 0
 
     days = (date.today() - (big_numbers[0][3]).date()).days
+    if days < 1:
+        days = 1
 
     if found_count > 0:
         mon_odds = int(round((mon_total / found_count), 0))
@@ -413,6 +427,8 @@ async def gyms(ctx, areaname = ""):
     if not area[1] == locale['all']:
         footer_text = area[1]
         loading = f"{loading} • {footer_text}"
+
+    print(f"@{ctx.author.name} requested gym stats for area {area[1]}")
 
     embed = discord.Embed(title=locale['gym_stats'], description=text)
     embed.set_footer(text=loading, icon_url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
@@ -459,6 +475,7 @@ async def gyms(ctx, areaname = ""):
     embed.set_footer(text=footer_text)
     await message.edit(embed=embed)
     os.remove("gym_stats.png")
+    print("Done with Gym Stats")
 
 @bot.event
 async def on_ready():
