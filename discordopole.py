@@ -119,6 +119,68 @@ async def board_loop():
                 print("Error while updating Egg Board. Skipping it.")
                 await asyncio.sleep(5)
         
+        for board in bot.boards['stats']:
+            #try:
+            channel = await bot.fetch_channel(board["channel_id"])
+            message = await channel.fetch_message(board["message_id"])
+            area = get_area(board["area"])
+            text = ""
+
+            if "mon_active" in board['type']:
+                mon_active = await queries.statboard_mon_active(config, area[0])
+                if not "mon_today" in board['type']:
+                    text = f"{text}{bot.custom_emotes['pokeball']} {mon_active[0][0]:,} {locale['active_pokemon']}\n\n"
+
+            if "mon_today" in board['type']:
+                mon_today = await queries.statboard_mon_today(config, area[0])
+                if "mon_active" in board['type']:
+                    text = f"{text}{bot.custom_emotes['pokeball']} {mon_active[0][0]:,} {locale['active_pokemon']} | {mon_today[0][0]:,} {locale['today']}\n\n"
+                else:
+                    text = f"{text}{bot.custom_emotes['pokeball']} {mon_today[0][0]:,} {locale['pokemon_seen_today']}\n\n"
+            
+            if "gym_amount" in board['type']:
+                gym_amount = await queries.statboard_gym_amount(config, area[0])
+                text = f"{text}{bot.custom_emotes['gym_white']} {gym_amount[0][0]:,} {locale['total_gyms']}\n"
+
+            if "raid_active" in board['type']:
+                raid_active = await queries.statboard_raid_active(config, area[0])
+                text = f"{text}{bot.custom_emotes['raid']} {raid_active[0][0]:,} {locale['active_raids']}\n"
+            
+            if "gym_teams" in board['type']:
+                gym_teams = await queries.statboard_gym_teams(config, area[0])
+                text = f"{text}{bot.custom_emotes['gym_blue']}**{gym_teams[0][1]}**{bot.custom_emotes['blank']}{bot.custom_emotes['gym_red']}**{gym_teams[0][2]}**{bot.custom_emotes['blank']}{bot.custom_emotes['gym_yellow']}**{gym_teams[0][3]}**\n"
+
+            if "stop_amount" in board['type']:
+                stop_amount = await queries.statboard_stop_amount(config, area[0])
+                text = f"{text}\n{bot.custom_emotes['pokestop']} {stop_amount[0][0]:,} {locale['total_stops']}\n"
+
+            if "quest_active" in board['type']:
+                quest_active = await queries.statboard_quest_active(config, area[0])
+                text = f"{text}🔎 {locale['quests']}: {quest_active[0][0]:,}\n"
+
+            if "grunt_active" in board['type']:
+                grunt_active = await queries.statboard_grunt_active(config, area[0])
+                if not "leader_active" in board['type']:
+                    text = f"{text}{bot.custom_emotes['grunt_female']} {grunt_active[0][0]:,} {locale['active_grunts']}"
+
+            if "leader_active" in board['type']:
+                leader_active = await queries.statboard_leader_active(config, area[0])
+                if "grunt_active" in board['type']:
+                    text = f"{text}{bot.custom_emotes['grunt_female']} {grunt_active[0][0]:,} {locale['grunts']} | {bot.custom_emotes['cliff']} {leader_active[0][0]:,} {locale['leaders']}"
+                else:
+                    text = f"{text}{bot.custom_emotes['cliff']} {leader_active[0][0]:,} {locale['leaders']}"
+
+                
+            embed = discord.Embed(title=locale['stats'], description=text.replace(",", locale['decimal_comma']), timestamp=datetime.utcnow())
+            embed.set_footer(text=area[1])
+
+            await message.edit(embed=embed)
+            await asyncio.sleep(board["wait"])
+            """except Exception as err:
+                print(err)
+                print("Error while updating Stat Board. Skipping it.")
+                await asyncio.sleep(5)"""
+        
         await asyncio.sleep(1)
 
 @bot.group(pass_context=True)
@@ -238,6 +300,61 @@ async def egg(ctx, area, levels):
     await message.edit(embed=embed)
     print("Wrote Raid Board to config/boards.json")
 
+@create.command(pass_context=True)
+async def stats(ctx, area, *, types):
+    if not ctx.message.author.id in config['admins']:
+        print(f"@{ctx.author.name} tried to create a Raid Board but is no Admin")
+        return
+    print("Creating Stat Board")
+
+    embed = discord.Embed(title="Stat Board", description="")
+    message = await ctx.send(embed=embed)
+    
+    stat_list = list(types.split(','))
+    stats = list()
+    for stat in stat_list:
+        if "mon" in stat:
+            if "active" in stat:
+                stats.append("mon_active")
+            elif "today" in stat:
+                stats.append("mon_today")
+        elif "gym" in stat:
+            if "amount" in stat:
+                stats.append("gym_amount")
+            elif "team" in stat:
+                stats.append("gym_teams")
+        elif "raid" in stat:
+            #if "active" in stat:
+            stats.append("raid_active")
+        elif "stop" in stat:
+            stats.append("stop_amount")
+        elif "grunt" in stat:
+            #if "active" in stat:
+            stats.append("grunt_active")
+        elif "leader" in stat:
+            stats.append("leader_active")
+        elif "quest" in stat:
+            stats.append("quest_active")
+
+    areaexist = False
+    for areag in geofences:
+        if areag['name'].lower() == area.lower():
+            areaexist = True
+    if not areaexist:
+        embed.description = "Couldn't find that area. Try again."
+        await message.edit(embed=embed)
+        return
+    await ctx.message.delete()
+    bot.boards['stats'].append({"channel_id": message.channel.id, "message_id": message.id, "area": area, "timezone": config['timezone'], "wait": 15, "type": stats})
+
+    with open("config/boards.json", "w") as f:
+        f.write(json.dumps(bot.boards, indent=4))
+
+    embed.title = "Succesfully created this Stat Board"
+    embed.description = f"You'll see this message being filled in soon\n\n```Area: {area}\nStats: {stats}\nChannel ID: {message.channel.id}\nMessage ID: {message.id}```"
+    await message.edit(embed=embed)
+    print("Wrote Stat Board to config/boards.json")
+
 @bot.group(pass_context=True)
 async def get(ctx):
     if not ctx.message.author.id in config['admins']:
@@ -258,7 +375,7 @@ async def emotes(ctx):
 
     print(f"@{ctx.author.name} wants to import emotes in Server {ctx.guild.name}. Waiting for confirmation")
 
-    needed_emote_names = ["ex_pass", "raid_egg_1", "raid_egg_2", "raid_egg_3", "raid_egg_4", "raid_egg_5", "gym_blue", "gym_red", "gym_yellow", "blank", "raid"]
+    needed_emote_names = ["ex_pass", "raid_egg_1", "raid_egg_2", "raid_egg_3", "raid_egg_4", "raid_egg_5", "gym_blue", "gym_red", "gym_yellow", "gym_white", "blank", "raid", "cliff", "grunt_female", "pokeball", "pokestop"]
     emotejson = json.loads("{}")
     
     embed = discord.Embed(title="Importing emotes will overwrite all custom emotes in this Server!", description="Please make sure you're currently in a server dedicated to host Discordopole emotes.\n\nTo continue, please say the name of this Server.")

@@ -56,9 +56,9 @@ async def get_scan_numbers(mon_id, area, starttime, endtime, config):
 async def get_big_numbers(mon_id, area, starttime, endtime, config):
     cursor_big_numbers = await connect_db(config)
     if config['db_scan_schema'] == "mad":
-        query_big_count = f"select count(pokemon_id), sum(pokemon_id = {mon_id}), sum(weather_boosted_condition > 0 and pokemon_id = {mon_id}), disappear_time from pokemon WHERE disappear_time > '{starttime}' AND disappear_time < '{endtime}' AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude)) ORDER BY disappear_time"
+        query_big_count = f"select count(pokemon_id), sum(pokemon_id = {mon_id}), sum(weather_boosted_condition > 0 and pokemon_id = {mon_id}), min(disappear_time) from pokemon WHERE disappear_time > '{starttime}' AND disappear_time < '{endtime}' AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))"
     elif config['db_scan_schema'] == "rdm":
-        query_big_count = f"select count(id), sum(pokemon_id = {mon_id}), sum(weather > 0 and pokemon_id = {mon_id}), FROM_UNIXTIME(first_seen_timestamp) from pokemon WHERE ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon)) AND first_seen_timestamp > UNIX_TIMESTAMP('{starttime}') AND first_seen_timestamp < UNIX_TIMESTAMP('{endtime}') ORDER BY first_seen_timestamp"
+        query_big_count = f"select count(id), sum(pokemon_id = {mon_id}), sum(weather > 0 and pokemon_id = {mon_id}), FROM_UNIXTIME(min(first_seen_timestamp)) from pokemon WHERE ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon)) AND first_seen_timestamp > UNIX_TIMESTAMP('{starttime}') AND first_seen_timestamp < UNIX_TIMESTAMP('{endtime}')"
     await cursor_big_numbers.execute(query_big_count)
     big_numbers = await cursor_big_numbers.fetchall()
 
@@ -91,3 +91,102 @@ async def get_gym_stats(config, area):
 
     await cursor_gym_stats.close()
     return gym_stats
+
+async def statboard_mon_active(config, area):
+    cursor_statboard_mon_active = await connect_db(config)
+    if config['db_scan_schema'] == "mad":
+        await cursor_statboard_mon_active.execute(f"select count(pokemon_id) from pokemon where disappear_time > utc_timestamp() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
+    elif config['db_scan_schema'] == "rdm":
+        await cursor_statboard_mon_active.execute(f"")
+    statboard_mon_active = await cursor_statboard_mon_active.fetchall()
+
+    await cursor_statboard_mon_active.close()
+    return statboard_mon_active
+
+async def statboard_mon_today(config, area):
+    cursor_statboard_mon_today = await connect_db(config)
+    if config['db_scan_schema'] == "mad":
+        await cursor_statboard_mon_today.execute(f"select count(pokemon_id) from pokemon where disappear_time > utc_date() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
+    elif config['db_scan_schema'] == "rdm":
+        await cursor_statboard_mon_today.execute(f"")
+    statboard_mon_today = await cursor_statboard_mon_today.fetchall()
+
+    await cursor_statboard_mon_today.close()
+    return statboard_mon_today
+
+async def statboard_gym_amount(config, area):
+    cursor_statboard_gym_amount = await connect_db(config)
+    if config['db_scan_schema'] == "mad":
+        await cursor_statboard_gym_amount.execute(f"select count(gym_id) from gym where ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
+    elif config['db_scan_schema'] == "rdm":
+        await cursor_statboard_gym_amount.execute(f"")
+    statboard_gym_amount = await cursor_statboard_gym_amount.fetchall()
+
+    await cursor_statboard_gym_amount.close()
+    return statboard_gym_amount
+
+async def statboard_gym_teams(config, area):
+    cursor_statboard_gym_teams = await connect_db(config)
+    if config['db_scan_schema'] == "mad":
+        await cursor_statboard_gym_teams.execute(f"select sum(team_id = 0), sum(team_id = 1), sum(team_id=2), sum(team_id=3) from gym where ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
+    elif config['db_scan_schema'] == "rdm":
+        await cursor_statboard_gym_teams.execute(f"")
+    statboard_gym_teams = await cursor_statboard_gym_teams.fetchall()
+
+    await cursor_statboard_gym_teams.close()
+    return statboard_gym_teams
+
+async def statboard_raid_active(config, area):
+    cursor_statboard_raid_active = await connect_db(config)
+    if config['db_scan_schema'] == "mad":
+        await cursor_statboard_raid_active.execute(f"select count(raid.gym_id) from gym left join raid on gym.gym_id = raid.gym_id where end >= utc_timestamp() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
+    elif config['db_scan_schema'] == "rdm":
+        await cursor_statboard_raid_active.execute(f"")
+    statboard_raid_active = await cursor_statboard_raid_active.fetchall()
+
+    await cursor_statboard_raid_active.close()
+    return statboard_raid_active
+
+async def statboard_stop_amount(config, area):
+    cursor_statboard_stop_amount = await connect_db(config)
+    if config['db_scan_schema'] == "mad":
+        await cursor_statboard_stop_amount.execute(f"select count(pokestop_id) from pokestop where ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
+    elif config['db_scan_schema'] == "rdm":
+        await cursor_statboard_stop_amount.execute(f"")
+    statboard_stop_amount = await cursor_statboard_stop_amount.fetchall()
+
+    await cursor_statboard_stop_amount.close()
+    return statboard_stop_amount
+
+async def statboard_grunt_active(config, area):
+    cursor_statboard_grunt_active = await connect_db(config)
+    if config['db_scan_schema'] == "mad":
+        await cursor_statboard_grunt_active.execute(f"select count(pokestop_id) from pokestop where incident_expiration > UTC_TIMESTAMP() AND incident_grunt_type < 41 OR incident_grunt_type > 44 and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
+    elif config['db_scan_schema'] == "rdm":
+        await cursor_statboard_grunt_active.execute(f"")
+    statboard_grunt_active = await cursor_statboard_grunt_active.fetchall()
+
+    await cursor_statboard_grunt_active.close()
+    return statboard_grunt_active
+
+async def statboard_leader_active(config, area):
+    cursor_statboard_leader_active = await connect_db(config)
+    if config['db_scan_schema'] == "mad":
+        await cursor_statboard_leader_active.execute(f"select count(pokestop_id) from pokestop where incident_expiration > UTC_TIMESTAMP() AND incident_grunt_type >= 41 AND incident_grunt_type <= 44 and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
+    elif config['db_scan_schema'] == "rdm":
+        await cursor_statboard_leader_active.execute(f"")
+    statboard_leader_active = await cursor_statboard_leader_active.fetchall()
+
+    await cursor_statboard_leader_active.close()
+    return statboard_leader_active
+
+async def statboard_quest_active(config, area):
+    cursor_statboard_quest_active = await connect_db(config)
+    if config['db_scan_schema'] == "mad":
+        await cursor_statboard_quest_active.execute(f"select count(GUID) from pokestop left join trs_quest on pokestop.pokestop_id = trs_quest.GUID where quest_timestamp > UNIX_TIMESTAMP(CURDATE()) and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
+    elif config['db_scan_schema'] == "rdm":
+        await cursor_statboard_quest_active.execute(f"")
+    statboard_quest_active = await cursor_statboard_quest_active.fetchall()
+
+    await cursor_statboard_quest_active.close()
+    return statboard_quest_active

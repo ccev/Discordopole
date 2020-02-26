@@ -9,6 +9,8 @@
     "scanned": "🤖 Auf IV gescannt",
     "total_found": "🗺️ Insgesamt gefunden",
     "total": "🗺️ Insgesamt",
+    "total_gyms": "Arenen insgesamt",
+    "total_stops": "Pokéstops insgesamt",
     "day": "Tag",
     "loading": "Lade",
     "loading_gym_stats": "Lade Arena Stats",
@@ -25,6 +27,14 @@
     "since": "seit",
     "ex_gyms": "EX Arenen",
     "active_raids": "Aktive Raids",
+    "active_pokemon": "Aktive Pokémon",
+    "active_grunts": "Aktive Rüpel",
     "between": "zwischen",
-    "and": "und"
+    "and": "und",
+    "stats": "Statistiken",
+    "today": "heute",
+    "pokemon_seen_today": "Pokémon heute gesehen",
+    "quests": "Quests",
+    "grunts": "Rüpel",
+    "leaders": "Bosse"
 }

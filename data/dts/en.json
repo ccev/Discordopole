@@ -9,6 +9,8 @@
     "scanned": "🤖 IV Scanned",
     "total_found": "🗺️ Total",
     "total": "🗺️ Total",
+    "total_gyms": "Total Gyms",
+    "total_stops": "Total Pokéstops",
     "day": "day",
     "loading": "Loading",
     "loading_gym_stats": "Loading Gym Stats",
@@ -25,6 +27,14 @@
     "since": "since",
     "ex_gyms": "EX Gyms",
     "active_raids": "Active Raids",
+    "active_pokemon": "Active Pokémon",
+    "active_grunts": "Active Rüpel",
     "between": "between",
-    "and": "and"
+    "and": "and",
+    "stats": "Statistics",
+    "today": "today",
+    "pokemon_seen_today": "Pokémon seen today",
+    "quests": "Quests",
+    "grunts": "Grunts",
+    "leaders": "Leaders"
 }
