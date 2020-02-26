@@ -313,14 +313,23 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None):
         footer_text = area[1]
         loading = f"{loading} • "
     if timespan is None:
-        timespan = datetime(2010, 1, 1, 0, 0)
+        timespan = list([datetime(2010, 1, 1, 0, 0), datetime.now()])
     else:
-        timespan = dateparser.parse(timespan)
         loading = ""
-        if area[1] == locale['all']:
-            footer_text = f"{(locale['since']).capitalize()} {timespan.strftime(locale['time_format_dhm'])}"
+
+        if "-" in timespan:
+            timespan = list(timespan.split('-'))
+            for i in [0, 1]:
+                timespan[i] = dateparser.parse(timespan[i])
+
+            footer_text = f"{(locale['between']).capitalize()} {timespan[0].strftime(locale['time_format_dhm'])} {locale['and']} {timespan[1].strftime(locale['time_format_dhm'])}"
         else:
-            footer_text = f"{footer_text}, {locale['since']} {timespan.strftime(locale['time_format_dhm'])}"
+            timespan = list([dateparser.parse(timespan), datetime.now()])
+
+            if area[1] == locale['all']:
+                footer_text = f"{(locale['since']).capitalize()} {timespan[0].strftime(locale['time_format_dhm'])}"
+            else:
+                footer_text = f"{footer_text}, {locale['since']} {timespan[0].strftime(locale['time_format_dhm'])}"
 
     print(f"@{ctx.author.name} requested {mon.name} stats for area {area[1]}")    
 
@@ -329,10 +338,10 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None):
     embed.set_footer(text=f"{loading}{footer_text}", icon_url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
     message = await ctx.send(embed=embed)
 
-    shiny_count = await queries.get_shiny_count(mon.id, area[0], timespan, config)
+    shiny_count = await queries.get_shiny_count(mon.id, area[0], timespan[0], timespan[1], config)
 
     if shiny_count > 0:
-        shiny_total = await queries.get_shiny_total(mon.id, area[0], timespan, config)
+        shiny_total = await queries.get_shiny_total(mon.id, area[0], timespan[0], timespan[1], config)
         shiny_odds = int(round((shiny_total / shiny_count), 0))
         text = text + f"{locale['shinies']}: **1:{shiny_odds}** ({shiny_count:_}/{shiny_total:_})\n"
     else:
@@ -343,7 +352,7 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None):
 
     print(f"     [1/3] Shiny Data for {mon.name} Stats")
 
-    scan_numbers = await queries.get_scan_numbers(mon.id, area[0], timespan, config)
+    scan_numbers = await queries.get_scan_numbers(mon.id, area[0], timespan[0], timespan[1], config)
     for scanned, hundos, zeros, nineties in scan_numbers:
         scanned_total = int(scanned)
         if scanned_total > 0:
@@ -379,7 +388,7 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None):
 
     print(f"     [2/3] Scan Data for {mon.name} Stats")
 
-    big_numbers = await queries.get_big_numbers(mon.id, area[0], timespan, config)
+    big_numbers = await queries.get_big_numbers(mon.id, area[0], timespan[0], timespan[1], config)
     for mons, found, boosted, time in big_numbers:
         mon_total = int(mons)
         if found is not None:
@@ -389,7 +398,7 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None):
             found_count = 0
             boosted_count = 0
 
-    days = (date.today() - (big_numbers[0][3]).date()).days
+    days = (timespan[1].date() - (big_numbers[0][3]).date()).days
     if days < 1:
         days = 1
 

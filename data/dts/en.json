@@ -24,5 +24,7 @@
     "all": "All",
     "since": "since",
     "ex_gyms": "EX Gyms",
-    "active_raids": "Active Raids"
+    "active_raids": "Active Raids",
+    "between": "between",
+    "and": "and"
 }
