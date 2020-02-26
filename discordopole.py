@@ -129,22 +129,22 @@ async def board_loop():
                 if "mon_active" in board['type']:
                     mon_active = await queries.statboard_mon_active(config, area[0])
                     if not "mon_today" in board['type']:
-                        text = f"{text}{bot.custom_emotes['pokeball']} {mon_active[0][0]:,} {locale['active_pokemon']}\n\n"
+                        text = f"{text}{bot.custom_emotes['pokeball']} **{mon_active[0][0]:,}** {locale['active_pokemon']}\n\n"
 
                 if "mon_today" in board['type']:
                     mon_today = await queries.statboard_mon_today(config, area[0])
                     if "mon_active" in board['type']:
-                        text = f"{text}{bot.custom_emotes['pokeball']} {mon_active[0][0]:,} {locale['active_pokemon']} | {mon_today[0][0]:,} {locale['today']}\n\n"
+                        text = f"{text}{bot.custom_emotes['pokeball']} **{mon_active[0][0]:,}** {locale['active_pokemon']} | **{mon_today[0][0]:,}** {locale['today']}\n\n"
                     else:
-                        text = f"{text}{bot.custom_emotes['pokeball']} {mon_today[0][0]:,} {locale['pokemon_seen_today']}\n\n"
+                        text = f"{text}{bot.custom_emotes['pokeball']} **{mon_today[0][0]:,}** {locale['pokemon_seen_today']}\n\n"
                 
                 if "gym_amount" in board['type']:
                     gym_amount = await queries.statboard_gym_amount(config, area[0])
-                    text = f"{text}{bot.custom_emotes['gym_white']} {gym_amount[0][0]:,} {locale['total_gyms']}\n"
+                    text = f"{text}{bot.custom_emotes['gym_white']} **{gym_amount[0][0]:,}** {locale['total_gyms']}\n"
 
                 if "raid_active" in board['type']:
                     raid_active = await queries.statboard_raid_active(config, area[0])
-                    text = f"{text}{bot.custom_emotes['raid']} {raid_active[0][0]:,} {locale['active_raids']}\n"
+                    text = f"{text}{bot.custom_emotes['raid']} **{raid_active[0][0]:,}** {locale['active_raids']}\n"
                 
                 if "gym_teams" in board['type']:
                     gym_teams = await queries.statboard_gym_teams(config, area[0])
@@ -152,23 +152,23 @@ async def board_loop():
 
                 if "stop_amount" in board['type']:
                     stop_amount = await queries.statboard_stop_amount(config, area[0])
-                    text = f"{text}\n{bot.custom_emotes['pokestop']} {stop_amount[0][0]:,} {locale['total_stops']}\n"
+                    text = f"{text}\n{bot.custom_emotes['pokestop']} **{stop_amount[0][0]:,}** {locale['total_stops']}\n"
 
                 if "quest_active" in board['type']:
                     quest_active = await queries.statboard_quest_active(config, area[0])
-                    text = f"{text}🔎 {locale['quests']}: {quest_active[0][0]:,}\n"
+                    text = f"{text}🔎 {locale['quests']}: **{quest_active[0][0]:,}**\n"
 
                 if "grunt_active" in board['type']:
                     grunt_active = await queries.statboard_grunt_active(config, area[0])
                     if not "leader_active" in board['type']:
-                        text = f"{text}{bot.custom_emotes['grunt_female']} {grunt_active[0][0]:,} {locale['active_grunts']}"
+                        text = f"{text}{bot.custom_emotes['grunt_female']} **{grunt_active[0][0]:,}** {locale['active_grunts']}"
 
                 if "leader_active" in board['type']:
                     leader_active = await queries.statboard_leader_active(config, area[0])
                     if "grunt_active" in board['type']:
-                        text = f"{text}{bot.custom_emotes['grunt_female']} {grunt_active[0][0]:,} {locale['grunts']} | {bot.custom_emotes['cliff']} {leader_active[0][0]:,} {locale['leaders']}"
+                        text = f"{text}{bot.custom_emotes['grunt_female']} **{grunt_active[0][0]:,}** {locale['grunts']} | {bot.custom_emotes['cliff']} **{leader_active[0][0]:,}** {locale['leaders']}"
                     else:
-                        text = f"{text}{bot.custom_emotes['cliff']} {leader_active[0][0]:,} {locale['leaders']}"
+                        text = f"{text}{bot.custom_emotes['cliff']} **{leader_active[0][0]:,}** {locale['leaders']}"
 
                     
                 embed = discord.Embed(title=locale['stats'], description=text.replace(",", locale['decimal_comma']), timestamp=datetime.utcnow())
