@@ -120,66 +120,66 @@ async def board_loop():
                 await asyncio.sleep(5)
         
         for board in bot.boards['stats']:
-            #try:
-            channel = await bot.fetch_channel(board["channel_id"])
-            message = await channel.fetch_message(board["message_id"])
-            area = get_area(board["area"])
-            text = ""
+            try:
+                channel = await bot.fetch_channel(board["channel_id"])
+                message = await channel.fetch_message(board["message_id"])
+                area = get_area(board["area"])
+                text = ""
 
-            if "mon_active" in board['type']:
-                mon_active = await queries.statboard_mon_active(config, area[0])
-                if not "mon_today" in board['type']:
-                    text = f"{text}{bot.custom_emotes['pokeball']} {mon_active[0][0]:,} {locale['active_pokemon']}\n\n"
-
-            if "mon_today" in board['type']:
-                mon_today = await queries.statboard_mon_today(config, area[0])
                 if "mon_active" in board['type']:
-                    text = f"{text}{bot.custom_emotes['pokeball']} {mon_active[0][0]:,} {locale['active_pokemon']} | {mon_today[0][0]:,} {locale['today']}\n\n"
-                else:
-                    text = f"{text}{bot.custom_emotes['pokeball']} {mon_today[0][0]:,} {locale['pokemon_seen_today']}\n\n"
-            
-            if "gym_amount" in board['type']:
-                gym_amount = await queries.statboard_gym_amount(config, area[0])
-                text = f"{text}{bot.custom_emotes['gym_white']} {gym_amount[0][0]:,} {locale['total_gyms']}\n"
+                    mon_active = await queries.statboard_mon_active(config, area[0])
+                    if not "mon_today" in board['type']:
+                        text = f"{text}{bot.custom_emotes['pokeball']} {mon_active[0][0]:,} {locale['active_pokemon']}\n\n"
 
-            if "raid_active" in board['type']:
-                raid_active = await queries.statboard_raid_active(config, area[0])
-                text = f"{text}{bot.custom_emotes['raid']} {raid_active[0][0]:,} {locale['active_raids']}\n"
-            
-            if "gym_teams" in board['type']:
-                gym_teams = await queries.statboard_gym_teams(config, area[0])
-                text = f"{text}{bot.custom_emotes['gym_blue']}**{gym_teams[0][1]}**{bot.custom_emotes['blank']}{bot.custom_emotes['gym_red']}**{gym_teams[0][2]}**{bot.custom_emotes['blank']}{bot.custom_emotes['gym_yellow']}**{gym_teams[0][3]}**\n"
-
-            if "stop_amount" in board['type']:
-                stop_amount = await queries.statboard_stop_amount(config, area[0])
-                text = f"{text}\n{bot.custom_emotes['pokestop']} {stop_amount[0][0]:,} {locale['total_stops']}\n"
-
-            if "quest_active" in board['type']:
-                quest_active = await queries.statboard_quest_active(config, area[0])
-                text = f"{text}🔎 {locale['quests']}: {quest_active[0][0]:,}\n"
-
-            if "grunt_active" in board['type']:
-                grunt_active = await queries.statboard_grunt_active(config, area[0])
-                if not "leader_active" in board['type']:
-                    text = f"{text}{bot.custom_emotes['grunt_female']} {grunt_active[0][0]:,} {locale['active_grunts']}"
-
-            if "leader_active" in board['type']:
-                leader_active = await queries.statboard_leader_active(config, area[0])
-                if "grunt_active" in board['type']:
-                    text = f"{text}{bot.custom_emotes['grunt_female']} {grunt_active[0][0]:,} {locale['grunts']} | {bot.custom_emotes['cliff']} {leader_active[0][0]:,} {locale['leaders']}"
-                else:
-                    text = f"{text}{bot.custom_emotes['cliff']} {leader_active[0][0]:,} {locale['leaders']}"
-
+                if "mon_today" in board['type']:
+                    mon_today = await queries.statboard_mon_today(config, area[0])
+                    if "mon_active" in board['type']:
+                        text = f"{text}{bot.custom_emotes['pokeball']} {mon_active[0][0]:,} {locale['active_pokemon']} | {mon_today[0][0]:,} {locale['today']}\n\n"
+                    else:
+                        text = f"{text}{bot.custom_emotes['pokeball']} {mon_today[0][0]:,} {locale['pokemon_seen_today']}\n\n"
                 
-            embed = discord.Embed(title=locale['stats'], description=text.replace(",", locale['decimal_comma']), timestamp=datetime.utcnow())
-            embed.set_footer(text=area[1])
+                if "gym_amount" in board['type']:
+                    gym_amount = await queries.statboard_gym_amount(config, area[0])
+                    text = f"{text}{bot.custom_emotes['gym_white']} {gym_amount[0][0]:,} {locale['total_gyms']}\n"
 
-            await message.edit(embed=embed)
-            await asyncio.sleep(board["wait"])
-            """except Exception as err:
+                if "raid_active" in board['type']:
+                    raid_active = await queries.statboard_raid_active(config, area[0])
+                    text = f"{text}{bot.custom_emotes['raid']} {raid_active[0][0]:,} {locale['active_raids']}\n"
+                
+                if "gym_teams" in board['type']:
+                    gym_teams = await queries.statboard_gym_teams(config, area[0])
+                    text = f"{text}{bot.custom_emotes['gym_blue']}**{gym_teams[0][1]}**{bot.custom_emotes['blank']}{bot.custom_emotes['gym_red']}**{gym_teams[0][2]}**{bot.custom_emotes['blank']}{bot.custom_emotes['gym_yellow']}**{gym_teams[0][3]}**\n"
+
+                if "stop_amount" in board['type']:
+                    stop_amount = await queries.statboard_stop_amount(config, area[0])
+                    text = f"{text}\n{bot.custom_emotes['pokestop']} {stop_amount[0][0]:,} {locale['total_stops']}\n"
+
+                if "quest_active" in board['type']:
+                    quest_active = await queries.statboard_quest_active(config, area[0])
+                    text = f"{text}🔎 {locale['quests']}: {quest_active[0][0]:,}\n"
+
+                if "grunt_active" in board['type']:
+                    grunt_active = await queries.statboard_grunt_active(config, area[0])
+                    if not "leader_active" in board['type']:
+                        text = f"{text}{bot.custom_emotes['grunt_female']} {grunt_active[0][0]:,} {locale['active_grunts']}"
+
+                if "leader_active" in board['type']:
+                    leader_active = await queries.statboard_leader_active(config, area[0])
+                    if "grunt_active" in board['type']:
+                        text = f"{text}{bot.custom_emotes['grunt_female']} {grunt_active[0][0]:,} {locale['grunts']} | {bot.custom_emotes['cliff']} {leader_active[0][0]:,} {locale['leaders']}"
+                    else:
+                        text = f"{text}{bot.custom_emotes['cliff']} {leader_active[0][0]:,} {locale['leaders']}"
+
+                    
+                embed = discord.Embed(title=locale['stats'], description=text.replace(",", locale['decimal_comma']), timestamp=datetime.utcnow())
+                embed.set_footer(text=area[1])
+
+                await message.edit(embed=embed)
+                await asyncio.sleep(board["wait"])
+            except Exception as err:
                 print(err)
                 print("Error while updating Stat Board. Skipping it.")
-                await asyncio.sleep(5)"""
+                await asyncio.sleep(5)
         
         await asyncio.sleep(1)
 
