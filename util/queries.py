@@ -139,13 +139,24 @@ async def statboard_gym_teams(config, area):
 async def statboard_raid_active(config, area):
     cursor_statboard_raid_active = await connect_db(config)
     if config['db_scan_schema'] == "mad":
-        await cursor_statboard_raid_active.execute(f"select count(raid.gym_id) from gym left join raid on gym.gym_id = raid.gym_id where end >= utc_timestamp() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
+        await cursor_statboard_raid_active.execute(f"select count(raid.gym_id) from gym left join raid on gym.gym_id = raid.gym_id where end >= utc_timestamp() and start <= utc_timestamp() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
     elif config['db_scan_schema'] == "rdm":
         await cursor_statboard_raid_active.execute(f"")
     statboard_raid_active = await cursor_statboard_raid_active.fetchall()
 
     await cursor_statboard_raid_active.close()
     return statboard_raid_active
+
+async def statboard_egg_active(config, area):
+    cursor_statboard_egg_active = await connect_db(config)
+    if config['db_scan_schema'] == "mad":
+        await cursor_statboard_egg_active.execute(f"select count(raid.gym_id) from gym left join raid on gym.gym_id = raid.gym_id where start > utc_timestamp() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
+    elif config['db_scan_schema'] == "rdm":
+        await cursor_statboard_egg_active.execute(f"")
+    statboard_egg_active = await cursor_statboard_egg_active.fetchall()
+
+    await cursor_statboard_egg_active.close()
+    return statboard_egg_active
 
 async def statboard_stop_amount(config, area):
     cursor_statboard_stop_amount = await connect_db(config)

@@ -144,7 +144,15 @@ async def board_loop():
 
                 if "raid_active" in board['type']:
                     raid_active = await queries.statboard_raid_active(config, area[0])
-                    text = f"{text}{bot.custom_emotes['raid']} **{raid_active[0][0]:,}** {locale['active_raids']}\n"
+                    if not "egg_active" in board['type']:
+                        text = f"{text}{bot.custom_emotes['raid']} **{raid_active[0][0]:,}** {locale['active_raids']}\n"
+
+                if "egg_active" in board['type']:
+                    egg_active = await queries.statboard_egg_active(config, area[0])
+                    if "raid_active" in board['type']:
+                        text = f"{text}{bot.custom_emotes['raid']} **{raid_active[0][0]:,}** {locale['active_raids']} | **{egg_active[0][0]:,}** {locale['eggs']}\n"
+                    else:
+                        text = f"{text}{bot.custom_emotes['raid_egg_1']} **{egg_active[0][0]:,}** {locale['active_eggs']}\n"
                 
                 if "gym_teams" in board['type']:
                     gym_teams = await queries.statboard_gym_teams(config, area[0])
@@ -156,7 +164,7 @@ async def board_loop():
 
                 if "quest_active" in board['type']:
                     quest_active = await queries.statboard_quest_active(config, area[0])
-                    text = f"{text}🔎 {locale['quests']}: **{quest_active[0][0]:,}**\n"
+                    text = f"{text}🔎 **{quest_active[0][0]:,}** {locale['quests']}\n"
 
                 if "grunt_active" in board['type']:
                     grunt_active = await queries.statboard_grunt_active(config, area[0])
@@ -303,7 +311,7 @@ async def egg(ctx, area, levels):
 @create.command(pass_context=True)
 async def stats(ctx, area, *, types):
     if not ctx.message.author.id in config['admins']:
-        print(f"@{ctx.author.name} tried to create a Raid Board but is no Admin")
+        print(f"@{ctx.author.name} tried to create a Stat Board but is no Admin")
         return
     print("Creating Stat Board")
 
@@ -326,6 +334,9 @@ async def stats(ctx, area, *, types):
         elif "raid" in stat:
             #if "active" in stat:
             stats.append("raid_active")
+        elif "egg" in stat:
+            #if "active" in stat:
+            stats.append("egg_active")
         elif "stop" in stat:
             stats.append("stop_amount")
         elif "grunt" in stat:
