@@ -62,12 +62,15 @@ async def board_loop():
                 if not raids:
                     text = locale["empty_board"]
                 else:
-                    for start, end, lat, lon, mon_id, move_1, move_2, name, ex, level in islice(raids, 21):
+                    count = 0
+                    for gym_id, start, end, lat, lon, mon_id, move_1, move_2, name, ex, level in raids:
                         end = datetime.fromtimestamp(end).strftime(locale['time_format_hm'])
                         ex_emote = ""
                         if ex == 1:
                             ex_emote = f"{bot.custom_emotes['ex_pass']} "
-                        if not mon_id is None and mon_id > 0:
+                        if not mon_id is None and mon_id > 0 and count < 21:
+                            count += 1
+
                             mon_name = details.id(mon_id, config['language'])
                             if move_1 > MAX_MOVE_IN_LIST:
                                 move_1 = "?"
@@ -99,13 +102,18 @@ async def board_loop():
                 if not raids:
                     text = locale["empty_board"]
                 else:
-                    for start, end, lat, lon, mon_id, move_1, move_2, name, ex, level in islice(raids, 23):
+                    count = 0
+                    for gym_id, start, end, lat, lon, mon_id, move_1, move_2, name, ex, level in raids:
                         start = datetime.fromtimestamp(start).strftime(locale['time_format_hm'])
                         end = datetime.fromtimestamp(end).strftime(locale['time_format_hm'])
                         ex_emote = ""
                         if ex == 1:
                             ex_emote = f"{bot.custom_emotes['ex_pass']} "
                         if mon_id is None or mon_id == 0:
+                            if count >= 23:
+                                continue
+                            count += 1
+
                             egg_emote = bot.custom_emotes[f"raid_egg_{level}"]
                             text = text + f"{egg_emote} {ex_emote}**{name}**: {start}  –  {end}\n"
                     
