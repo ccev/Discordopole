@@ -63,7 +63,7 @@ async def board_loop():
                     text = locale["empty_board"]
                 else:
                     count = 0
-                    for gym_id, start, end, lat, lon, mon_id, move_1, move_2, name, ex, level in raids:
+                    for start, end, lat, lon, mon_id, move_1, move_2, name, ex, level in raids:
                         end = datetime.fromtimestamp(end).strftime(locale['time_format_hm'])
                         ex_emote = ""
                         if ex == 1:
@@ -103,7 +103,7 @@ async def board_loop():
                     text = locale["empty_board"]
                 else:
                     count = 0
-                    for gym_id, start, end, lat, lon, mon_id, move_1, move_2, name, ex, level in raids:
+                    for start, end, lat, lon, mon_id, move_1, move_2, name, ex, level in raids:
                         start = datetime.fromtimestamp(start).strftime(locale['time_format_hm'])
                         end = datetime.fromtimestamp(end).strftime(locale['time_format_hm'])
                         ex_emote = ""
