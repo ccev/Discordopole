@@ -270,7 +270,7 @@ async def raid_channels():
                                 await message.edit(embed=embed, content="")
                                 await asyncio.sleep(1)
                         else:
-                            embed = get_raid_embed(mon_id, start, end, move_1, move_2, lat, lon, name, gym_img)
+                            embed = get_raid_embed(mon_id, start, end, move_1, move_2, lat, lon, name, gym_img, level)
                             message = await channel.send(embed=embed,content="")
                             cache[channel_id][str(gym_id)] =  [message.id, "raid"]
                             await asyncio.sleep(1)
