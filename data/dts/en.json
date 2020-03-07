@@ -17,7 +17,7 @@
     "gym_stats": "Gym Stats",
     "decimal_dot": ".",
     "decimal_comma": ",",
-    "until": "until",
+    "until": "ends",
     "time_format_hm": "%-I:%M %p",
     "time_format_dhm": "%m/%d/%Y %-I:%M %p",
     "raids": "Raids",
@@ -37,5 +37,8 @@
     "pokemon_seen_today": "Pokémon seen today",
     "quests": "Quests",
     "grunts": "Grunts",
-    "leaders": "Leaders"
+    "leaders": "Leaders",
+    "moves": "Moves",
+    "hatches_at": "Hatches at",
+    "lasts_until": "Lasts until"
 }

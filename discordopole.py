@@ -22,6 +22,11 @@ queries = util.queries
 config = util.config.create_config("config/config.ini")
 bot = commands.Bot(command_prefix=config['prefix'], case_insensitive=1)
 
+if not os.path.exists("data/raid_cache.json"):
+    f = open("data/raid_cache.json", 'w+')
+    f.write("{}")
+    f.close()
+
 with open(f"data/dts/{config['language']}.json") as localejson:
     locale = json.load(localejson)
 
@@ -62,15 +67,15 @@ async def board_loop():
                 if not raids:
                     text = locale["empty_board"]
                 else:
-                    count = 0
-                    for start, end, lat, lon, mon_id, move_1, move_2, name, ex, level in raids:
+                    length = 0
+                    for gym_id, start, end, lat, lon, mon_id, move_1, move_2, name, ex, level, gym_img in raids:
                         end = datetime.fromtimestamp(end).strftime(locale['time_format_hm'])
+                        if len(name) >= 30:
+                            name = name[0:27] + "..."
                         ex_emote = ""
                         if ex == 1:
                             ex_emote = f"{bot.custom_emotes['ex_pass']} "
-                        if not mon_id is None and mon_id > 0 and count < 21:
-                            count += 1
-
+                        if not mon_id is None and mon_id > 0:
                             mon_name = details.id(mon_id, config['language'])
                             if move_1 > MAX_MOVE_IN_LIST:
                                 move_1 = "?"
@@ -80,8 +85,14 @@ async def board_loop():
                                 move_2 = "?"
                             else:
                                 move_2 = moves[str(move_2)]["name"]
-                            text = text + f"{ex_emote}**{name}**: {locale['until']} {end}\n**{mon_name}** - *{move_1} / {move_2}*\n\n"
-                    
+
+                            entry = f"{ex_emote}**{name}**: {locale['until']} {end}\n**{mon_name}** - *{move_1} / {move_2}*\n\n"
+                            if length + len(entry) >= 2048:
+                                break
+                            else:
+                                text = text + entry
+                                length = length + len(entry)
+                        
                 embed = discord.Embed(title=locale['raids'], description=text, timestamp=datetime.utcnow())
                 embed.set_footer(text=area[1])
 
@@ -102,20 +113,23 @@ async def board_loop():
                 if not raids:
                     text = locale["empty_board"]
                 else:
-                    count = 0
-                    for start, end, lat, lon, mon_id, move_1, move_2, name, ex, level in raids:
+                    length = 0
+                    for gym_id, start, end, lat, lon, mon_id, move_1, move_2, name, ex, level, gym_img in raids:
                         start = datetime.fromtimestamp(start).strftime(locale['time_format_hm'])
                         end = datetime.fromtimestamp(end).strftime(locale['time_format_hm'])
+                        if len(name) >= 30:
+                            name = name[0:27] + "..."
                         ex_emote = ""
                         if ex == 1:
                             ex_emote = f"{bot.custom_emotes['ex_pass']} "
                         if mon_id is None or mon_id == 0:
-                            if count >= 23:
-                                continue
-                            count += 1
-
                             egg_emote = bot.custom_emotes[f"raid_egg_{level}"]
-                            text = text + f"{egg_emote} {ex_emote}**{name}**: {start}  –  {end}\n"
+                            entry = f"{egg_emote} {ex_emote}**{name}**: {start}  –  {end}\n"
+                            if length + len(entry) >= 2048:
+                                break
+                            else:
+                                text = text + entry
+                                length = length + len(entry)
                     
                 embed = discord.Embed(title=locale['eggs'], description=text, timestamp=datetime.utcnow())
                 embed.set_footer(text=area[1])
@@ -198,6 +212,94 @@ async def board_loop():
                 await asyncio.sleep(5)
         
         await asyncio.sleep(1)
+
+def get_raid_embed(mon_id, start, end, move_1, move_2, lat, lon, gym_name, gym_img, level):
+    #mon_name = details.id(mon_id, config['language'])
+    start = datetime.fromtimestamp(start).strftime(locale['time_format_hm'])
+    end = datetime.fromtimestamp(end).strftime(locale['time_format_hm'])
+
+    if len(gym_name) >= 30:
+        gym_name = gym_name[0:27] + "..."
+
+    if not mon_id is None and mon_id > 0:
+        if move_1 > MAX_MOVE_IN_LIST:
+            move_1 = "?"
+        else:
+            move_1 = moves[str(move_1)]["name"]
+        if move_2 > MAX_MOVE_IN_LIST:
+            move_2 = "?"
+        else:
+            move_2 = moves[str(move_2)]["name"]
+
+        embed = discord.Embed(description=f"{locale['until']} **{end}**\n{locale['moves']}: **{move_1}** | **{move_2}**\n\n[Google Maps](https://www.google.com/maps/search/?api=1&query={lat},{lon}) | [Apple Maps](https://maps.apple.com/maps?daddr={lat},{lon})")
+        embed.set_thumbnail(url=f"{config['mon_icon_repo']}pokemon_icon_{str(mon_id).zfill(3)}_00.png")
+        embed.set_author(name=gym_name, icon_url=gym_img)
+    else:
+        embed = discord.Embed(description=f"{locale['hatches_at']} **{start}**\n{locale['lasts_until']} **{end}**\n\n[Google Maps](https://www.google.com/maps/search/?api=1&query={lat},{lon}) | [Apple Maps](https://maps.apple.com/maps?daddr={lat},{lon})")
+        embed.set_thumbnail(url=f"{config['emote_repo']}raid_egg_{level}.png")
+        embed.set_author(name=gym_name, icon_url=gym_img)
+
+    return embed
+
+
+async def raid_channels():
+    while not bot.is_closed():
+        try:
+            for board in bot.boards['raid_channels']:
+                channel = await bot.fetch_channel(board["channel_id"])
+                channel_id = str(board['channel_id'])
+                area = get_area(board["area"])
+                raids = await queries.get_active_raids(config, area[0], board["levels"], board["timezone"])
+                raid_gyms = []
+                with open("data/raid_cache.json", "r") as f:
+                    cache = json.load(f)
+                
+                if not str(board['channel_id']) in cache:
+                    cache[channel_id] = {}
+
+                for gym_id, start, end, lat, lon, mon_id, move_1, move_2, name, ex, level, gym_img in raids:
+                    raid_gyms.append(gym_id)
+
+                    # Check if the Raid has hatched & edit (or send) accordingly
+                    if not mon_id is None and mon_id > 0:
+                        if str(gym_id) in cache[channel_id]:
+                            if cache[channel_id][gym_id][1] == "egg":
+                                cache[channel_id][gym_id][1] = "raid"
+                                embed = get_raid_embed(mon_id, start, end, move_1, move_2, lat, lon, name, gym_img, level)
+                                message = await channel.fetch_message(cache[channel_id][gym_id][0])
+                                await message.edit(embed=embed, content="")
+                                await asyncio.sleep(1)
+                        else:
+                            embed = get_raid_embed(mon_id, start, end, move_1, move_2, lat, lon, name, gym_img)
+                            message = await channel.send(embed=embed,content="")
+                            cache[channel_id][str(gym_id)] =  [message.id, "raid"]
+                            await asyncio.sleep(1)
+                        
+                    # Send messages for new eggs
+                    else:
+                        if not str(gym_id) in cache[channel_id]:
+                            embed = get_raid_embed(mon_id, start, end, move_1, move_2, lat, lon, name, gym_img, level)
+                            message = await channel.send(embed=embed, content="")
+                            cache[channel_id][str(gym_id)] =  [message.id, "egg"]
+                            await asyncio.sleep(1)
+
+                # Delete despawned Raids
+                for cached_raid, entry in list(cache[channel_id].items()):
+                    if not cached_raid in raid_gyms:
+                        message = await channel.fetch_message(entry[0])
+                        await message.delete()
+                        cache[channel_id].pop(cached_raid)
+                        await asyncio.sleep(1)
+                        
+                with open("data/raid_cache.json", "w") as f:
+                    f.write(json.dumps(cache, indent=4))    
+
+                await asyncio.sleep(board['wait'])
+            await asyncio.sleep(2)
+        except Exception as err:              
+            print(err)
+            print("Error while updating Raid Channel. Skipping it.")
+            await asyncio.sleep(5)
 
 @bot.group(pass_context=True)
 async def board(ctx):
@@ -626,5 +728,6 @@ async def gyms(ctx, areaname = ""):
 async def on_ready():
     print("Connected to Discord. Ready to take commands.")
     bot.loop.create_task(board_loop())
+    bot.loop.create_task(raid_channels())
 
 bot.run(config['bot_token'])

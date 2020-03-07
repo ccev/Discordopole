@@ -37,5 +37,8 @@
     "pokemon_seen_today": "Pokémon heute gesehen",
     "quests": "Quests",
     "grunts": "Rüpel",
-    "leaders": "Bosse"
+    "leaders": "Bosse",
+    "moves": "Attacken",
+    "hatches_at": "Schlüpft um",
+    "lasts_until": "Bleibt bis"
 }
