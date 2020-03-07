@@ -274,7 +274,7 @@ async def raid_channels():
                             message = await channel.send(embed=embed,content="")
                             cache[channel_id][str(gym_id)] =  [message.id, "raid"]
                             await asyncio.sleep(1)
-                        
+                         
                     # Send messages for new eggs
                     else:
                         if not str(gym_id) in cache[channel_id]:
@@ -636,11 +636,11 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None):
             found_count = 0
             boosted_count = 0
 
-    days = (timespan[1].date() - (big_numbers[0][3]).date()).days
-    if days < 1:
-        days = 1
-
     if found_count > 0:
+        days = (timespan[1].date() - (big_numbers[0][3]).date()).days
+        if days < 1:
+            days = 1
+
         mon_odds = int(round((mon_total / found_count), 0))
         mon_rate = str(round((found_count / days), 1)).replace(".", locale['decimal_dot'])
 
