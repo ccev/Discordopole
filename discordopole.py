@@ -188,7 +188,7 @@ async def board_loop():
                     quest_active = await queries.statboard_quest_active(config, area[0])
                     text = f"{text}🔎 **{quest_active[0][0]:,}** {locale['quests']}"
                     if "stop_amount" in board['type']:
-                        quest_ratio = str(int(round((quest_active / stop_amount * 100), 0))).replace(".", locale['decimal_dot'])
+                        quest_ratio = int(round((quest_active[0][0] / stop_amount[0][0] * 100), 0))
                         text = f"{text} ({quest_ratio}%)"
                     text = text + "\n"
 
