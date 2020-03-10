@@ -186,7 +186,11 @@ async def board_loop():
 
                 if "quest_active" in board['type']:
                     quest_active = await queries.statboard_quest_active(config, area[0])
-                    text = f"{text}🔎 **{quest_active[0][0]:,}** {locale['quests']}\n"
+                    text = f"{text}🔎 **{quest_active[0][0]:,}** {locale['quests']}"
+                    if "stop_amount" in board['type']:
+                        quest_ratio = str(int(round((quest_active / stop_amount * 100), 0))).replace(".", locale['decimal_dot'])
+                        text = f"{text} ({quest_ratio}%)"
+                    text = text + "\n"
 
                 if "grunt_active" in board['type']:
                     grunt_active = await queries.statboard_grunt_active(config, area[0])
@@ -489,45 +493,55 @@ async def download_url(url):
             return await response.read()
 
 @get.command(pass_context=True)
-async def emotes(ctx):
+async def emotes(ctx, quick_name=""):
     if not ctx.message.author.id in config['admins']:
         print(f"@{ctx.author.name} tried to import emotes but is no Admin")
         return
 
-    print(f"@{ctx.author.name} wants to import emotes in Server {ctx.guild.name}. Waiting for confirmation")
-
     needed_emote_names = ["ex_pass", "raid_egg_1", "raid_egg_2", "raid_egg_3", "raid_egg_4", "raid_egg_5", "gym_blue", "gym_red", "gym_yellow", "gym_white", "blank", "raid", "cliff", "grunt_female", "pokeball", "pokestop"]
     emotejson = json.loads("{}")
-    
-    embed = discord.Embed(title="Importing emotes will overwrite all custom emotes in this Server!", description="Please make sure you're currently in a server dedicated to host Discordopole emotes.\n\nTo continue, please say the name of this Server.")
-    message = await ctx.send(embed=embed)
-    def check(m):
-        return m.content == ctx.guild.name and m.author == ctx.author and m.channel == ctx.channel
-    try:
-        confirm = await bot.wait_for('message', check=check, timeout=60)
-    except:
-        await ctx.send("Aborting Emote import.")
-        await message.delete()
-        print("No confirmation after 60 seconds. Aborting emote import.")
-        return
-    print("Server name matched. Deleting all emotes now.")
-    await confirm.delete()
-    embed = discord.Embed(title="Importing Emotes. Please Wait", description="")
-    await message.edit(embed=embed)
+
+    if quick_name == ctx.guild.name:
+        print(f"@{ctx.author.name} wants to import emotes in Server {ctx.guild.name} and said the name directly")
+        embed = discord.Embed(title="Importing Emotes. Please Wait", description="")
+        message = await ctx.send(embed=embed)
+    else:
+        print(f"@{ctx.author.name} wants to import emotes in Server {ctx.guild.name}. Waiting for confirmation")
+        embed = discord.Embed(title="Importing emotes might overwrite some custom emotes in this Server!", description="Please make sure you don't care about this Server's emotes.\n\nTo continue, please say the name of this Server.")
+        message = await ctx.send(embed=embed)
+        def check(m):
+            return m.content == ctx.guild.name and m.author == ctx.author and m.channel == ctx.channel
+        try:
+            confirm = await bot.wait_for('message', check=check, timeout=60)
+        except:
+            await ctx.send("Aborting Emote import.")
+            await message.delete()
+            print("No confirmation after 60 seconds. Aborting emote import.")
+            return
+        print("Server name matched. Deleting all emotes now.")
+        await confirm.delete()
+        embed = discord.Embed(title="Importing Emotes. Please Wait", description="")
+        await message.edit(embed=embed)
+
     existing_emotes = await ctx.guild.fetch_emojis()
     for emote in existing_emotes:
-        await emote.delete()
-        embed.description = f"{embed.description}Removed Emote `{emote.name}`\n"
-        await message.edit(embed=embed)
+        if emote.name in needed_emote_names:
+            await emote.delete()
+            embed.description = f"{embed.description}Removed Emote `{emote.name}`\n"
+            await message.edit(embed=embed)
     embed.description = ""
     print(f"Done. Now importing all needed emotes from repo {config['emote_repo']}")
 
     for emote_name in needed_emote_names:
-        image = await download_url(f"{config['emote_repo']}{emote_name}.png")
-        emote = await ctx.guild.create_custom_emoji(name=emote_name, image=image)
-        emote_ref = f"<:{emote.name}:{emote.id}>"
-        embed.description = f"{embed.description}{emote_ref} `{emote_ref}`\n"
-        await message.edit(embed=embed)
+        try:
+            image = await download_url(f"{config['emote_repo']}{emote_name}.png")
+            emote = await ctx.guild.create_custom_emoji(name=emote_name, image=image)
+            emote_ref = f"<:{emote.name}:{emote.id}>"
+            embed.description = f"{embed.description}{emote_ref} `{emote_ref}`\n"
+            await message.edit(embed=embed)
+        except Exception as err:
+            print(err)
+            print(f"Error while importing emote {emote_name}")
 
         emotejson.update({emote_name: emote_ref})
     embed.title = "Done importing Emotes"
