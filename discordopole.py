@@ -16,6 +16,7 @@ from discord.ext import commands
 from util.mondetails import details
 import util.queries
 import util.config
+import util.update
 
 MAX_MOVE_IN_LIST = 291
 queries = util.queries
@@ -93,7 +94,7 @@ async def board_loop():
                                 text = text + entry
                                 length = length + len(entry)
                         
-                embed = discord.Embed(title=locale['raids'], description=text, timestamp=datetime.utcnow())
+                embed = discord.Embed(title=board['title'], description=text, timestamp=datetime.utcnow())
                 embed.set_footer(text=area[1])
 
                 await message.edit(embed=embed)
@@ -131,7 +132,7 @@ async def board_loop():
                                 text = text + entry
                                 length = length + len(entry)
                     
-                embed = discord.Embed(title=locale['eggs'], description=text, timestamp=datetime.utcnow())
+                embed = discord.Embed(title=board['title'], description=text, timestamp=datetime.utcnow())
                 embed.set_footer(text=area[1])
 
                 await message.edit(embed=embed)
@@ -205,7 +206,7 @@ async def board_loop():
                         text = f"{text}{bot.custom_emotes['cliff']} **{leader_active[0][0]:,}** {locale['leaders']}"
 
                     
-                embed = discord.Embed(title=locale['stats'], description=text.replace(",", locale['decimal_comma']), timestamp=datetime.utcnow())
+                embed = discord.Embed(title=board['title'], description=text.replace(",", locale['decimal_comma']), timestamp=datetime.utcnow())
                 embed.set_footer(text=area[1])
 
                 await message.edit(embed=embed)
@@ -333,6 +334,8 @@ async def delete(ctx, deleted_message_id):
         return
     message_found = False
     for board_type in bot.boards:
+        if board_type == "raid_channels":
+            continue
         for board in bot.boards[board_type]:
             if int(deleted_message_id) == board['message_id']:
                 message_found = True
@@ -376,7 +379,7 @@ async def raid(ctx, area, levels):
         await message.edit(embed=embed)
         return
     await ctx.message.delete()
-    bot.boards['raids'].append({"channel_id": message.channel.id, "message_id": message.id, "area": area, "timezone": config['timezone'], "wait": 15, "levels": level_list})
+    bot.boards['raids'].append({"channel_id": message.channel.id, "message_id": message.id, "title": locale['raids'], "area": area, "timezone": config['timezone'], "wait": 15, "levels": level_list})
 
     with open("config/boards.json", "w") as f:
         f.write(json.dumps(bot.boards, indent=4))
@@ -412,7 +415,7 @@ async def egg(ctx, area, levels):
         await message.edit(embed=embed)
         return
     await ctx.message.delete()
-    bot.boards['eggs'].append({"channel_id": message.channel.id, "message_id": message.id, "area": area, "timezone": config['timezone'], "wait": 15, "levels": level_list})
+    bot.boards['eggs'].append({"channel_id": message.channel.id, "message_id": message.id, "title": locale['eggs'], "area": area, "timezone": config['timezone'], "wait": 15, "levels": level_list})
 
     with open("config/boards.json", "w") as f:
         f.write(json.dumps(bot.boards, indent=4))
@@ -470,7 +473,7 @@ async def stats(ctx, area, *, types):
         await message.edit(embed=embed)
         return
     await ctx.message.delete()
-    bot.boards['stats'].append({"channel_id": message.channel.id, "message_id": message.id, "area": area, "timezone": config['timezone'], "wait": 15, "type": stats})
+    bot.boards['stats'].append({"channel_id": message.channel.id, "message_id": message.id, "title": locale['stats'], "area": area, "timezone": config['timezone'], "wait": 15, "type": stats})
 
     with open("config/boards.json", "w") as f:
         f.write(json.dumps(bot.boards, indent=4))
@@ -551,6 +554,15 @@ async def emotes(ctx, quick_name=""):
     bot.custom_emotes = emotejson
 
     print("All emotes imported.")
+
+@bot.command(pass_context=True)
+async def update(ctx):
+    if not ctx.message.author.id in config['admins']:
+        print(f"@{ctx.author.name} tried to import emotes but is no Admin")
+        return
+    await ctx.send("Seeing if there's new stuff to add to Discordopole...")
+    bot.boards = util.update.update(bot.boards, locale)
+    await ctx.send("Done.")
 
 @bot.command(pass_context=True, aliases=config['pokemon_aliases'])
 async def pokemon(ctx, stat_name, areaname = "", *, timespan = None):
