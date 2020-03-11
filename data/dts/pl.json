@@ -37,5 +37,8 @@
     "pokemon_seen_today": "Pokemony widziane dzisiaj",
     "quests": "Questy",
     "grunts": "Inwazje",
-    "leaders": "Liderzy"
+    "leaders": "Liderzy",
+    "moves": "Ataki",
+    "hatches_at": "Kluje się o",
+    "lasts_until": "Trwa do"
 }
