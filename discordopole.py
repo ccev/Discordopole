@@ -415,7 +415,7 @@ async def egg(ctx, area, levels):
         await message.edit(embed=embed)
         return
     await ctx.message.delete()
-    bot.boards['eggs'].append({"channel_id": message.channel.id, "message_id": message.id, "title": locale['eggs'], "area": area, "timezone": config['timezone'], "wait": 15, "levels": level_list}, "ex": False)
+    bot.boards['eggs'].append({"channel_id": message.channel.id, "message_id": message.id, "title": locale['eggs'], "area": area, "timezone": config['timezone'], "wait": 15, "levels": level_list, "ex": False})
 
     with open("config/boards.json", "w") as f:
         f.write(json.dumps(bot.boards, indent=4))
