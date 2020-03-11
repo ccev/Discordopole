@@ -10,7 +10,7 @@ def update(boards, locale):
             print("Updated title for Raid Board")
         if not "ex" in board:
             boards['raids'][count]['ex'] = False
-            print("Updated title for Raid Board")
+            print("Updated ex for Raid Board")
         count += 1
         
     for board in boards['raid_channels']:
@@ -30,7 +30,7 @@ def update(boards, locale):
     for board in boards['stats']:
         if not "title" in board:            
             boards['stats'][count]['title'] = locale['stats']
-            print("Updated ex for Stat Board")
+            print("Updated title for Stat Board")
         count += 1
 
 
