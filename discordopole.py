@@ -64,7 +64,7 @@ async def board_loop():
                 message = await channel.fetch_message(board["message_id"])
                 area = get_area(board["area"])
                 text = ""
-                raids = await queries.get_active_raids(config, area[0], board["levels"], board["timezone"])
+                raids = await queries.get_active_raids(config, area[0], board["levels"], board["timezone"], board['ex'])
                 if not raids:
                     text = locale["empty_board"]
                 else:
@@ -110,7 +110,7 @@ async def board_loop():
                 message = await channel.fetch_message(board["message_id"])
                 area = get_area(board["area"])
                 text = ""
-                raids = await queries.get_active_raids(config, area[0], board["levels"], board["timezone"])
+                raids = await queries.get_active_raids(config, area[0], board["levels"], board["timezone"], board['ex'])
                 if not raids:
                     text = locale["empty_board"]
                 else:

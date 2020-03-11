@@ -65,17 +65,24 @@ async def get_big_numbers(mon_id, area, starttime, endtime, config):
     await cursor_big_numbers.close()
     return big_numbers
 
-async def get_active_raids(config, area, level_list, tz_offset):
+async def get_active_raids(config, area, level_list, tz_offset, ex=False):
     levels = "("
     for level in level_list:
         levels = f"{levels}{level},"
     levels = levels[:-1]
     levels = f"{levels})"
+
+    where_ex = ""
+
     cursor_raids = await connect_db(config)
     if config['db_scan_schema'] == "mad":
-        await cursor_raids.execute(f"SELECT gym.gym_id, Unix_timestamp(Convert_tz(start, '+00:00', '{tz_offset}')) AS starts, Unix_timestamp(Convert_tz(end, '+00:00', '{tz_offset}')) AS ends, latitude, longitude, pokemon_id, move_1, move_2, name, is_ex_raid_eligible, level, url FROM gym LEFT JOIN gymdetails ON gym.gym_id = gymdetails.gym_id LEFT JOIN raid ON gym.gym_id = raid.gym_id WHERE name IS NOT NULL AND end > UTC_TIMESTAMP() AND level IN {levels} AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude)) ORDER BY end;")
+        if ex:
+            where_ex = "AND is_ex_raid_eligible = 1"
+        await cursor_raids.execute(f"SELECT gym.gym_id, Unix_timestamp(Convert_tz(start, '+00:00', '{tz_offset}')) AS starts, Unix_timestamp(Convert_tz(end, '+00:00', '{tz_offset}')) AS ends, latitude, longitude, pokemon_id, move_1, move_2, name, is_ex_raid_eligible, level, url FROM gym LEFT JOIN gymdetails ON gym.gym_id = gymdetails.gym_id LEFT JOIN raid ON gym.gym_id = raid.gym_id WHERE name IS NOT NULL {where_ex} AND end > UTC_TIMESTAMP() AND level IN {levels} AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude)) ORDER BY end;")
     elif config['db_scan_schema'] == "rdm":
-        await cursor_raids.execute(f"SELECT id, (UNIX_TIMESTAMP(CONVERT_TZ((FROM_UNIXTIME(raid_battle_timestamp)), '+00:00', '{tz_offset}'))) AS starts, (UNIX_TIMESTAMP(CONVERT_TZ((FROM_UNIXTIME(raid_end_timestamp)), '+00:00', '{tz_offset}'))) AS ends, lat, lon, raid_pokemon_id, raid_pokemon_move_1, raid_pokemon_move_2, name, ex_raid_eligible, raid_level, url FROM gym WHERE name IS NOT NULL AND raid_end_timestamp > UNIX_TIMESTAMP() AND raid_level in {levels} AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon)) ORDER BY raid_end_timestamp; ")
+        if ex:
+            where_ex = "AND ex_raid_eligible = 1"
+        await cursor_raids.execute(f"SELECT id, (UNIX_TIMESTAMP(CONVERT_TZ((FROM_UNIXTIME(raid_battle_timestamp)), '+00:00', '{tz_offset}'))) AS starts, (UNIX_TIMESTAMP(CONVERT_TZ((FROM_UNIXTIME(raid_end_timestamp)), '+00:00', '{tz_offset}'))) AS ends, lat, lon, raid_pokemon_id, raid_pokemon_move_1, raid_pokemon_move_2, name, ex_raid_eligible, raid_level, url FROM gym WHERE name IS NOT NULL {where_ex} AND raid_end_timestamp > UNIX_TIMESTAMP() AND raid_level in {levels} AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon)) ORDER BY raid_end_timestamp; ")
     raids = await cursor_raids.fetchall()
 
     await cursor_raids.close()
