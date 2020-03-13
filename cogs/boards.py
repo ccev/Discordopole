@@ -33,6 +33,11 @@ class Boards(commands.Cog):
                         ex_emote = ""
                         if ex == 1:
                             ex_emote = f"{self.bot.custom_emotes['ex_pass']} "
+                        form_letter = ""
+                        if str(mon_id) in self.bot.forms:
+                            if str(form) in self.bot.forms[str(mon_id)]:
+                                form_letter = f"{self.bot.forms[str(mon_id)][str(form)][0]} "
+                        
                         if not mon_id is None and mon_id > 0:
                             mon_name = details.id(mon_id, self.bot.config['language'])
                             if move_1 > self.bot.max_moves_in_list:
@@ -44,7 +49,7 @@ class Boards(commands.Cog):
                             else:
                                 move_2 = self.bot.moves[str(move_2)]["name"]
 
-                            entry = f"{ex_emote}**{name}**: {self.bot.locale['until']} {end}\n**{mon_name}** - *{move_1} / {move_2}*\n\n"
+                            entry = f"{ex_emote}**{name}**: {self.bot.locale['until']} {end}\n**{mon_name}** {form_letter}- *{move_1} / {move_2}*\n\n"
                             if length + len(entry) >= 2048:
                                 break
                             else:
