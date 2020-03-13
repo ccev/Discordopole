@@ -40,5 +40,7 @@
     "leaders": "Leaders",
     "moves": "Moves",
     "hatches_at": "Hatches at",
-    "lasts_until": "Lasts until"
+    "lasts_until": "Lasts until",
+    "level": "Level",
+    "egg": "Egg"
 }

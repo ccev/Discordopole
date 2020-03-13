@@ -1,12 +1,10 @@
 import discord
 import json
-import aiomysql
 import asyncio
 import os
 import dateparser
 import matplotlib.pyplot as plt
 
-from dateutil.relativedelta import relativedelta
 from datetime import datetime, date
 from discord.ext import commands
 
@@ -41,6 +39,9 @@ with open("config/geofence.json") as f:
 
 with open("config/emotes.json") as f:
     bot.custom_emotes = json.load(f)
+
+with open(f"data/forms/{bot.config['language']}.json") as f:
+    bot.forms = json.load(f)
 
 def get_area(areaname):
     stringfence = "-100 -100, -100 100, 100 100, 100 -100, -100 -100"

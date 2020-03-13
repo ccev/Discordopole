@@ -40,5 +40,7 @@
     "leaders": "Bosse",
     "moves": "Attacken",
     "hatches_at": "Schlüpft um",
-    "lasts_until": "Bleibt bis"
+    "lasts_until": "Bleibt bis",
+    "level": "Level",
+    "egg": "Ei"
 }

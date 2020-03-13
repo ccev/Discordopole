@@ -26,7 +26,7 @@ class Boards(commands.Cog):
                     text = self.bot.locale["empty_board"]
                 else:
                     length = 0
-                    for gym_id, start, end, lat, lon, mon_id, move_1, move_2, name, ex, level, gym_img in raids:
+                    for gym_id, start, end, lat, lon, mon_id, move_1, move_2, name, ex, level, gym_img, form in raids:
                         end = datetime.fromtimestamp(end).strftime(self.bot.locale['time_format_hm'])
                         if len(name) >= 30:
                             name = name[0:27] + "..."
@@ -72,7 +72,7 @@ class Boards(commands.Cog):
                     text = self.bot.locale["empty_board"]
                 else:
                     length = 0
-                    for gym_id, start, end, lat, lon, mon_id, move_1, move_2, name, ex, level, gym_img in raids:
+                    for gym_id, start, end, lat, lon, mon_id, move_1, move_2, name, ex, level, gym_img, form in raids:
                         start = datetime.fromtimestamp(start).strftime(self.bot.locale['time_format_hm'])
                         end = datetime.fromtimestamp(end).strftime(self.bot.locale['time_format_hm'])
                         if len(name) >= 30:

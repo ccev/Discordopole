@@ -14,8 +14,7 @@ class Channels(commands.Cog):
         self.bot = bot
         self.channel_loop.start()
   
-    def get_raid_embed(self, mon_id, start, end, move_1, move_2, lat, lon, gym_name, gym_img, level):
-        #mon_name = details.id(mon_id, self.bot.config['language'])
+    def get_raid_embed(self, mon_id, start, end, move_1, move_2, lat, lon, gym_name, gym_img, level, form):
         start = datetime.fromtimestamp(start).strftime(self.bot.locale['time_format_hm'])
         end = datetime.fromtimestamp(end).strftime(self.bot.locale['time_format_hm'])
 
@@ -23,6 +22,9 @@ class Channels(commands.Cog):
             gym_name = gym_name[0:27] + "..."
 
         if not mon_id is None and mon_id > 0:
+            mon_name = details.id(mon_id, self.bot.config['language'])
+            mon_img = f"{self.bot.config['mon_icon_repo']}pokemon_icon_{str(mon_id).zfill(3)}_00.png"
+
             if move_1 > self.bot.max_moves_in_list:
                 move_1 = "?"
             else:
@@ -32,13 +34,20 @@ class Channels(commands.Cog):
             else:
                 move_2 = self.bot.moves[str(move_2)]["name"]
 
-            embed = discord.Embed(description=f"{self.bot.locale['until']} **{end}**\n{self.bot.locale['moves']}: **{move_1}** | **{move_2}**\n\n[Google Maps](https://www.google.com/maps/search/?api=1&query={lat},{lon}) | [Apple Maps](https://maps.apple.com/maps?daddr={lat},{lon})")
-            embed.set_thumbnail(url=f"{self.bot.config['mon_icon_repo']}pokemon_icon_{str(mon_id).zfill(3)}_00.png")
-            embed.set_author(name=gym_name, icon_url=gym_img)
+            if str(mon_id) in self.bot.forms:
+                if str(form) in self.bot.forms[str(mon_id)]:
+                    mon_name = f"{self.bot.forms[str(mon_id)][str(form)]} {mon_name}"
+
+            embed = discord.Embed(title=gym_name, description=f"{self.bot.locale['until']} **{end}**\n{self.bot.locale['moves']}: **{move_1}** | **{move_2}**\n\n[Google Maps](https://www.google.com/maps/search/?api=1&query={lat},{lon}) | [Apple Maps](https://maps.apple.com/maps?daddr={lat},{lon})")
+            embed.set_thumbnail(url=gym_img)
+            embed.set_author(name=mon_name, icon_url=mon_img)
         else:
-            embed = discord.Embed(description=f"{self.bot.locale['hatches_at']} **{start}**\n{self.bot.locale['lasts_until']} **{end}**\n\n[Google Maps](https://www.google.com/maps/search/?api=1&query={lat},{lon}) | [Apple Maps](https://maps.apple.com/maps?daddr={lat},{lon})")
-            embed.set_thumbnail(url=f"{self.bot.config['emote_repo']}raid_egg_{level}.png")
-            embed.set_author(name=gym_name, icon_url=gym_img)
+            egg_name = f"{self.bot.locale['level']} {level} {self.bot.locale['egg']}"
+            egg_img = f"{self.bot.config['emote_repo']}raid_egg_{level}.png"
+
+            embed = discord.Embed(title=gym_name, description=f"{self.bot.locale['hatches_at']} **{start}**\n{self.bot.locale['lasts_until']} **{end}**\n\n[Google Maps](https://www.google.com/maps/search/?api=1&query={lat},{lon}) | [Apple Maps](https://maps.apple.com/maps?daddr={lat},{lon})")
+            embed.set_thumbnail(url=gym_img)
+            embed.set_author(name=egg_name, icon_url=egg_img)
 
         return embed
 
@@ -57,7 +66,7 @@ class Channels(commands.Cog):
                 if not str(board['channel_id']) in cache:
                     cache[channel_id] = {}
 
-                for gym_id, start, end, lat, lon, mon_id, move_1, move_2, name, ex, level, gym_img in raids:
+                for gym_id, start, end, lat, lon, mon_id, move_1, move_2, name, ex, level, gym_img, form in raids:
                     raid_gyms.append(gym_id)
 
                     # Check if the Raid has hatched & edit (or send) accordingly
@@ -65,12 +74,12 @@ class Channels(commands.Cog):
                         if str(gym_id) in cache[channel_id]:
                             if cache[channel_id][gym_id][1] == "egg":
                                 cache[channel_id][gym_id][1] = "raid"
-                                embed = self.get_raid_embed(mon_id, start, end, move_1, move_2, lat, lon, name, gym_img, level)
+                                embed = self.get_raid_embed(mon_id, start, end, move_1, move_2, lat, lon, name, gym_img, level, form)
                                 message = await channel.fetch_message(cache[channel_id][gym_id][0])
                                 await message.edit(embed=embed, content="")
                                 await asyncio.sleep(1)
                         else:
-                            embed = self.get_raid_embed(mon_id, start, end, move_1, move_2, lat, lon, name, gym_img, level)
+                            embed = self.get_raid_embed(mon_id, start, end, move_1, move_2, lat, lon, name, gym_img, level, form)
                             message = await channel.send(embed=embed,content="")
                             cache[channel_id][str(gym_id)] =  [message.id, "raid"]
                             await asyncio.sleep(1)
@@ -78,7 +87,7 @@ class Channels(commands.Cog):
                     # Send messages for new eggs
                     else:
                         if not str(gym_id) in cache[channel_id]:
-                            embed = self.get_raid_embed(mon_id, start, end, move_1, move_2, lat, lon, name, gym_img, level)
+                            embed = self.get_raid_embed(mon_id, start, end, move_1, move_2, lat, lon, name, gym_img, level, form)
                             message = await channel.send(embed=embed, content="")
                             cache[channel_id][str(gym_id)] =  [message.id, "egg"]
                             await asyncio.sleep(1)
