@@ -90,7 +90,7 @@ class Admin(commands.Cog):
         embed.title = "Succesfully created this Raid Board"
         embed.description = f"You'll see this message being filled in soon\n\n```Area: {area}\nLevels: {levels}\nChannel ID: {message.channel.id}\nMessage ID: {message.id}```"
         await message.edit(embed=embed)
-        print("Wrote Raid Board to self.bot.config/boards.json")
+        print("Wrote Raid Board to config/boards.json")
 
     @create.command(pass_context=True)
     async def egg(self, ctx, area, levels):
@@ -126,7 +126,7 @@ class Admin(commands.Cog):
         embed.title = "Succesfully created this Egg Board"
         embed.description = f"You'll see this message being filled in soon\n\n```Area: {area}\nLevels: {levels}\nChannel ID: {message.channel.id}\nMessage ID: {message.id}```"
         await message.edit(embed=embed)
-        print("Wrote Raid Board to self.bot.config/boards.json")
+        print("Wrote Raid Board to config/boards.json")
 
     @create.command(pass_context=True)
     async def stats(self, ctx, area, *, types):
@@ -184,7 +184,47 @@ class Admin(commands.Cog):
         embed.title = "Succesfully created this Stat Board"
         embed.description = f"You'll see this message being filled in soon\n\n```Area: {area}\nStats: {stats}\nChannel ID: {message.channel.id}\nMessage ID: {message.id}```"
         await message.edit(embed=embed)
-        print("Wrote Stat Board to self.bot.config/boards.json")
+        print("Wrote Stat Board to config/boards.json")
+
+    @create.command(pass_context=True)
+    async def raidchannel(self, ctx, channel_name, area, levels):
+        if not ctx.message.author.id in self.bot.config['admins']:
+            print(f"@{ctx.author.name} tried to create a Raid Channel but is no Admin")
+            return
+        print("Creating Raid Channel")
+
+        guild = ctx.message.guild
+        channel = await guild.create_text_channel(channel_name)
+
+        embed = discord.Embed(title="Raid Channel", description="")
+        message = await ctx.send(embed=embed)
+        
+        level_list = list(levels.split(','))
+        level_list = list(map(int, level_list))
+
+        if all(i > 5 or i < 1 for i in level_list):
+            embed.description = "Couldn't create Raid Channel. Try chosing other levels."
+            await message.edit(embed=embed)
+            return
+        areaexist = False
+        for areag in self.bot.geofences:
+            if areag['name'].lower() == area.lower():
+                areaexist = True
+        if not areaexist:
+            embed.description = "Couldn't find that area. Try again."
+            await message.edit(embed=embed)
+            return
+
+        await ctx.message.delete()
+        self.bot.boards['raid_channels'].append({"channel_id": channel.id, "area": area, "timezone": self.bot.config['timezone'], "wait": 15, "levels": level_list})
+
+        with open("config/boards.json", "w") as f:
+            f.write(json.dumps(self.bot.boards, indent=4))
+
+        embed.title = "Succesfully created this Raid Channel"
+        embed.description = f"You'll see the channel being filled in soon.\n<#{channel.id}>\n\n```Area: {area}\nLevels: {levels}\nChannel ID: {channel.id}```"
+        await message.edit(embed=embed)
+        print("Wrote Raid Channel to config/boards.json")
 
     @commands.group(pass_context=True)
     async def get(self, ctx):

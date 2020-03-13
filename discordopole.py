@@ -43,6 +43,9 @@ with open("config/emotes.json") as f:
 with open(f"data/forms/{bot.config['language']}.json") as f:
     bot.forms = json.load(f)
 
+with open(f"data/raidcp.json") as f:
+    bot.raidcp = json.load(f)
+
 def get_area(areaname):
     stringfence = "-100 -100, -100 100, 100 100, 100 -100, -100 -100"
     namefence = bot.locale['all']
