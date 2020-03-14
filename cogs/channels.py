@@ -18,8 +18,8 @@ class Channels(commands.Cog):
         start = datetime.fromtimestamp(start).strftime(self.bot.locale['time_format_hm'])
         end = datetime.fromtimestamp(end).strftime(self.bot.locale['time_format_hm'])
 
-        if len(gym_name) >= 30:
-            gym_name = gym_name[0:27] + "..."
+        #if len(gym_name) >= 30:
+        #    gym_name = gym_name[0:27] + "..."
 
         if not mon_id is None and mon_id > 0:
             mon_name = details.id(mon_id, self.bot.config['language'])
@@ -38,7 +38,7 @@ class Channels(commands.Cog):
                 if str(form) in self.bot.forms[str(mon_id)]:
                     mon_name = f"{self.bot.forms[str(mon_id)][str(form)]} {mon_name}"
 
-            embed = discord.Embed(title=gym_name, description=f"{self.bot.locale['until']} **{end}**\n100%: **{self.bot.raidcp[str(mon_id)]['max_cp_20']}** | **{self.bot.raidcp[str(mon_id)]['max_cp_25']}**\n{self.bot.locale['moves']}: **{move_1}** | **{move_2}**\n\n[Google Maps](https://www.google.com/maps/search/?api=1&query={lat},{lon}) | [Apple Maps](https://maps.apple.com/maps?daddr={lat},{lon})")
+            embed = discord.Embed(title=gym_name, description=f"{self.bot.locale['until']} **{end}**\n100%: **{self.bot.raidcp[f'{mon_id}_{form}']['max_cp_20']}** | **{self.bot.raidcp[f'{mon_id}_{form}']['max_cp_25']}**\n{self.bot.locale['moves']}: **{move_1}** | **{move_2}**\n\n[Google Maps](https://www.google.com/maps/search/?api=1&query={lat},{lon}) | [Apple Maps](https://maps.apple.com/maps?daddr={lat},{lon})")
             embed.set_thumbnail(url=gym_img)
             embed.set_author(name=mon_name, icon_url=mon_img)
         else:
