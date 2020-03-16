@@ -180,7 +180,7 @@ class Boards(commands.Cog):
                 print("Error while updating Stat Board. Skipping it.")
                 await asyncio.sleep(5)
 
-    @tasks.loop(seconds=2.0)    
+    @tasks.loop(hours=1)    
     async def quest_loop(self):
         for board in self.bot.boards['quests']:
             try:
