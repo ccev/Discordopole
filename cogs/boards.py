@@ -1,5 +1,6 @@
 import discord
 import asyncio
+import json
 
 from discord.ext import tasks, commands
 from datetime import datetime, date
@@ -12,9 +13,10 @@ class Boards(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.board_loop.start()
+        self.quest_loop.start()
 
     @tasks.loop(seconds=2.0)   
-    async def board_loop(self):      
+    async def board_loop(self):
         for board in self.bot.boards['raids']:
             try:
                 channel = await self.bot.fetch_channel(board["channel_id"])
@@ -178,8 +180,60 @@ class Boards(commands.Cog):
                 print("Error while updating Stat Board. Skipping it.")
                 await asyncio.sleep(5)
 
+    @tasks.loop(seconds=2.0)    
+    async def quest_loop(self):
+        for board in self.bot.boards['quests']:
+            try:
+                channel = await self.bot.fetch_channel(board["channel_id"])
+                message = await channel.fetch_message(board["message_id"])
+                area = get_area(board["area"])
+                text = ""
+                quests = await queries.get_active_quests(self.bot.config, area[0])
+                if not quests:
+                    text = self.bot.locale["empty_board"]
+                else:
+                    length = 0
+                    for quest_json, quest_text, lat, lon, stop_name, stop_id in quests:
+                        quest_json = json.loads(quest_json)
+                        if len(stop_name) >= 30:
+                            stop_name = stop_name[0:27] + "..."
+
+                        found_rewards = True
+                        emote = ""
+                        map_url = self.bot.map_url.quest(lat, lon, stop_id)
+                        item_id = quest_json[0]["item"]["item"]
+                        mon_id = quest_json[0]["pokemon_encounter"]["pokemon_id"]
+                        if item_id in board["items"]:
+                            emote = self.bot.custom_emotes[f"i{item_id}"]
+                        elif mon_id in board["mons"]:
+                            emote = self.bot.custom_emotes[f"m{mon_id}"]
+                        else:
+                            found_rewards = False
+
+                        if found_rewards:
+                            entry = f"{emote} [{stop_name}]({map_url})\n"
+                            if length + len(entry) >= 2048:
+                                break
+                            else:
+                                text = text + entry
+                                length = length + len(entry)
+                        
+                embed = discord.Embed(title=board['title'], description=text, timestamp=datetime.utcnow())
+                embed.set_footer(text=area[1])
+
+                await message.edit(embed=embed)
+                await asyncio.sleep(2)
+            except Exception as err:              
+                print(err)
+                print("Error while updating Quest Board. Skipping it.")
+                await asyncio.sleep(5)
+
     @board_loop.before_loop
     async def before_boards(self):
+        await self.bot.wait_until_ready()
+
+    @quest_loop.before_loop
+    async def before_quests(self):
         await self.bot.wait_until_ready()
 
 def setup(bot):

@@ -11,6 +11,7 @@ from discord.ext import commands
 from util.mondetails import details
 import util.queries as queries
 import util.config
+import util.maps
 
 #extensions = ["cogs.admin", "cogs.boards", "cogs.channels", "cogs.misc", "cogs.stats"]
 extensions = ["cogs.admin", "cogs.boards", "cogs.channels"]
@@ -19,6 +20,12 @@ config = util.config.create_config("config/config.ini")
 bot = commands.Bot(command_prefix=config['prefix'], case_insensitive=1)
 bot.max_moves_in_list = 291
 bot.config = config
+
+if bot.config['use_static']:
+    bot.static_map = util.maps.static_map(config['static_provider'], config['tileserver_url'])
+
+if bot.config['use_map']:
+    bot.map_url = util.maps.map_url(config['map'], config['map_url'])
 
 if not os.path.exists("data/raid_cache.json"):
     f = open("data/raid_cache.json", 'w+')
@@ -45,6 +52,9 @@ with open(f"data/forms/{bot.config['language']}.json") as f:
 
 with open(f"data/raidcp.json") as f:
     bot.raidcp = json.load(f)
+
+with open(f"data/items/{bot.config['language']}.json") as f:
+    bot.items = json.load(f)
 
 def get_area(areaname):
     stringfence = "-100 -100, -100 100, 100 100, 100 -100, -100 -100"

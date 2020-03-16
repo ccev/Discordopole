@@ -88,6 +88,17 @@ async def get_active_raids(config, area, level_list, tz_offset, ex=False):
     await cursor_raids.close()
     return raids
 
+async def get_active_quests(config, area):
+    cursor_active_quests = await connect_db(config)
+    if config['db_scan_schema'] == "mad":
+        await cursor_active_quests.execute(f"select quest_reward, quest_task, latitude, longitude, name, pokestop_id from trs_quest left join pokestop on trs_quest.GUID = pokestop.pokestop_id WHERE quest_timestamp > UNIX_TIMESTAMP(CURDATE()) AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude));")
+    elif config['db_scan_schema'] == "rdm":
+        await cursor_active_quests.execute(f"select quest_reward_type, quest_template, lat, lon, name, id from poksetop WHERE quest_type IS NOT NULL AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon));")
+    quests = await cursor_active_quests.fetchall()
+
+    await cursor_active_quests.close()
+    return quests
+
 async def get_gym_stats(config, area):
     cursor_gym_stats = await connect_db(config)
     if config['db_scan_schema'] == "mad":

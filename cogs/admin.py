@@ -4,10 +4,16 @@ import json
 import aiohttp
 
 from discord.ext import commands
+from util.mondetails import details
 
 class Admin(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+    async def download_url(self, url):
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                return await response.read()
 
     @commands.group(pass_context=True)
     async def board(self, ctx):
@@ -226,17 +232,115 @@ class Admin(commands.Cog):
         await message.edit(embed=embed)
         print("Wrote Raid Channel to config/boards.json")
 
+    @create.command(pass_context=True)
+    async def quest(self, ctx, area, *, rewards):
+        if not ctx.message.author.id in self.bot.config['admins']:
+            print(f"@{ctx.author.name} tried to create a Quest Board but is no Admin")
+            return
+        print("Creating Quest Board")
+
+        embed = discord.Embed(title="Quest Board", description="")
+        message = await ctx.send(embed=embed)
+        
+        rewards = list(rewards.split(','))
+        items = list()
+        mons = list()
+
+        areaexist = False
+        for areag in self.bot.geofences:
+            if areag['name'].lower() == area.lower():
+                areaexist = True
+        if not areaexist:
+            embed.description = "Couldn't find that area. Try again."
+            await message.edit(embed=embed)
+            return
+
+        for reward in rewards:
+            item_found = False
+            for item_id in self.bot.items:
+                if self.bot.items[item_id]["name"].lower() == reward.lower():
+                    items.append(int(item_id))
+                    item_found = True
+            if not item_found:
+                mon = details(reward, self.bot.config['mon_icon_repo'], self.bot.config['language'])
+                mons.append(mon.id)
+
+        await ctx.message.delete()
+        
+
+        embed.title = "Now downloading Emotes"
+        embed_emotes = ""
+        embed_rest = f"\n\n```Area: {area}\nMons: {mons}\nItems: {items}\nChannel ID: {message.channel.id}\nMessage ID: {message.id}```"
+        embed.description = embed_emotes + embed_rest
+        await message.edit(embed=embed)
+        print("Wrote Raid Board to config/boards.json - Now downloading Emotes")
+
+        guild = await self.bot.fetch_guild(self.bot.config['host_server'])
+        existing_emotes = await guild.fetch_emojis()
+        for mon in mons:
+            emote_exist = False
+            for existing_emote in existing_emotes:
+                if f"m{mon}" == existing_emote.name:
+                    emote_exist = True
+            if not emote_exist:
+                try:
+                    image = await self.download_url(f"{self.bot.config['mon_icon_repo']}pokemon_icon_{str(mon).zfill(3)}_00.png")
+                    emote = await guild.create_custom_emoji(name=f"m{mon}", image=image)
+                    emote_ref = f"<:{emote.name}:{emote.id}>"
+                    embed_emotes = f"{embed_emotes}\n{emote_ref} `{emote_ref}`"
+                    embed.description = embed_emotes + embed_rest
+                    await message.edit(embed=embed)
+                    self.bot.custom_emotes.update({f"m{mon}": emote_ref})
+                except Exception as err:
+                    print(err)
+                    print(f"Error while importing emote m{mon}")
+            else:
+                embed_emotes = f"{embed_emotes}\nmon {mon}: already exists"
+                embed.description = embed_emotes + embed_rest
+                await message.edit(embed=embed)
+
+        for item in items:
+            emote_exist = False
+            for existing_emote in existing_emotes:
+                if f"i{item}" == existing_emote.name:
+                    emote_exist = True
+            if not emote_exist:
+                try:
+                    image = await self.download_url(f"{self.bot.config['mon_icon_repo']}rewards/reward_{item}_1.png")
+                    emote = await guild.create_custom_emoji(name=f"i{item}", image=image)
+                    emote_ref = f"<:{emote.name}:{emote.id}>"
+                    embed_emotes = f"{embed_emotes}\n{emote_ref} `{emote_ref}`"
+                    embed.description = embed_emotes + embed_rest
+                    await message.edit(embed=embed)
+                    self.bot.custom_emotes.update({f"i{item}": emote_ref})
+                except Exception as err:
+                    print(err)
+                    print(f"Error while importing emote i{item}")
+            else:
+                embed_emotes = f"{embed_emotes}\nmon {mon}: already exists"
+                embed.description = embed_emotes + embed_rest
+                await message.edit(embed=embed)
+
+        embed.title = "Succesfully created this Quest Board"
+        embed.description = "You'll see the message being filled in soon.\n" + embed_emotes + embed_rest
+        await message.edit(embed=embed)
+
+        print("All done with Quest Board")
+
+        self.bot.boards['quests'].append({"channel_id": message.channel.id, "message_id": message.id, "title": self.bot.locale['quests'], "area": area, "mons": mons, "items": items})
+
+        with open("config/boards.json", "w") as f:
+            f.write(json.dumps(self.bot.boards, indent=4))
+
+        with open("config/emotes.json", "w") as f:
+            f.write(json.dumps(self.bot.custom_emotes, indent=4))
+
     @commands.group(pass_context=True)
     async def get(self, ctx):
         if not ctx.message.author.id in self.bot.config['admins']:
             return
         if ctx.invoked_subcommand is None:
             await ctx.send("Be more specific")
-
-    async def download_url(self, url):
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as response:
-                return await response.read()
 
     @get.command(pass_context=True)
     async def emotes(self, ctx, quick_name=""):
@@ -335,6 +439,9 @@ class Admin(commands.Cog):
                 print("Updated title for Stat Board")
             count += 1
 
+        if not "quests" in self.bot.boards:
+            self.bot.boards["quests"] = []
+            print("put empty quests board in boards.json")
 
         with open("config/boards.json", "w") as f:
             f.write(json.dumps(self.bot.boards, indent=4))
