@@ -25,7 +25,7 @@ def create_config(config_path):
     # Maps #
     config['use_static'] = config_raw.getboolean('Maps','use_static_maps')
     config['static_provider'] = config_raw.get('Maps','provider')
-    config['tileserver_url'] = config_raw.get('Maps','tileserver_url')
+    config['static_key'] = config_raw.get('Maps','key')
     config['use_map'] = config_raw.getboolean('Maps','use_map_frontend')
     config['map'] = config_raw.get('Maps','frontend')
     config['map_url'] = config_raw.get('Maps','map_url')

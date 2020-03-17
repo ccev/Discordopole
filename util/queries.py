@@ -91,9 +91,9 @@ async def get_active_raids(config, area, level_list, tz_offset, ex=False):
 async def get_active_quests(config, area):
     cursor_active_quests = await connect_db(config)
     if config['db_scan_schema'] == "mad":
-        await cursor_active_quests.execute(f"select quest_reward, quest_task, latitude, longitude, name, pokestop_id from trs_quest left join pokestop on trs_quest.GUID = pokestop.pokestop_id WHERE quest_timestamp > UNIX_TIMESTAMP(CURDATE()) AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude));")
+        await cursor_active_quests.execute(f"select quest_reward, quest_task, latitude, longitude, name, pokestop_id from trs_quest left join pokestop on trs_quest.GUID = pokestop.pokestop_id WHERE quest_timestamp > UNIX_TIMESTAMP(CURDATE()) AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude)) ORDER BY quest_item_id ASC, quest_pokemon_id ASC, name;")
     elif config['db_scan_schema'] == "rdm":
-        await cursor_active_quests.execute(f"select quest_reward_type, quest_template, lat, lon, name, id from poksetop WHERE quest_type IS NOT NULL AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon));")
+        await cursor_active_quests.execute(f"select quest_reward_type, quest_template, lat, lon, name, id from poksetop WHERE quest_type IS NOT NULL AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon)) ORDER BY quest_item_id ASC, quest_pokemon_id ASC, name;")
     quests = await cursor_active_quests.fetchall()
 
     await cursor_active_quests.close()

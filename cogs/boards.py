@@ -2,6 +2,8 @@ import discord
 import asyncio
 import json
 import pyshorteners
+import urllib.request
+import os
 
 from discord.ext import tasks, commands
 from datetime import datetime, date
@@ -191,41 +193,59 @@ class Boards(commands.Cog):
                 area = get_area(board["area"])
                 text = ""
                 quests = await queries.get_active_quests(self.bot.config, area[0])
-                if not quests:
-                    text = self.bot.locale["empty_board"]
-                else:
-                    length = 0
-                    for quest_json, quest_text, lat, lon, stop_name, stop_id in quests:
-                        quest_json = json.loads(quest_json)
 
+                length = 0
+                reward_mons = list()
+                reward_items = list()
+                lat_list = list()
+                lon_list = list()
+                for quest_json, quest_text, lat, lon, stop_name, stop_id in quests:
+                    quest_json = json.loads(quest_json)
 
-                        found_rewards = True
-                        emote = ""
+                    found_rewards = True
+                    emote = ""
 
-                        item_id = quest_json[0]["item"]["item"]
-                        mon_id = quest_json[0]["pokemon_encounter"]["pokemon_id"]
-                        if item_id in board["items"]:
-                            emote = self.bot.custom_emotes[f"i{item_id}"]
-                        elif mon_id in board["mons"]:
-                            emote = self.bot.custom_emotes[f"m{mon_id}"]
+                    item_id = quest_json[0]["item"]["item"]
+                    mon_id = quest_json[0]["pokemon_encounter"]["pokemon_id"]
+                    if item_id in board["items"]:
+                        emote = self.bot.custom_emotes[f"i{item_id}"]
+                        reward_items.append([item_id, lat, lon])
+                    elif mon_id in board["mons"]:
+                        emote = self.bot.custom_emotes[f"m{mon_id}"]
+                        reward_mons.append([mon_id, lat, lon])
+                    else:
+                        found_rewards = False
+
+                    if found_rewards:
+                        if len(stop_name) >= 30:
+                            stop_name = stop_name[0:27] + "..."
+                        lat_list.append(lat)
+                        lon_list.append(lon)
+                        map_url = self.bot.map_url.quest(lat, lon, stop_id)
+                        map_url = self.short(map_url)
+
+                        entry = f"{emote} [{stop_name}]({map_url})\n"
+                        if length + len(entry) >= 2048:
+                            break
                         else:
-                            found_rewards = False
+                            text = text + entry
+                            length = length + len(entry)
+                
+                if length > 0:
+                    static_map = self.bot.static_map.quest(lat_list, lon_list, reward_items, reward_mons, self.bot.custom_emotes)
 
-                        if found_rewards:
-                            if len(stop_name) >= 30:
-                                stop_name = stop_name[0:27] + "..."
-                            map_url = self.bot.map_url.quest(lat, lon, stop_id)
-                            map_url = self.short(map_url)
+                    urllib.request.urlretrieve(static_map, "quest_static_map_temp.png")
+                    channel = await self.bot.fetch_channel(self.bot.config['host_channel'])
+                    image_msg = await channel.send(file=discord.File("quest_static_map_temp.png"))
+                    image = image_msg.attachments[0].url
+                    os.remove("quest_static_map_temp.png")
+                else:
+                    text = self.bot.locale["empty_board"]
+                    image = ""
 
-                            entry = f"{emote} [{stop_name}]({map_url})\n"
-                            if length + len(entry) >= 2048:
-                                break
-                            else:
-                                text = text + entry
-                                length = length + len(entry)
-                        
                 embed = discord.Embed(title=board['title'], description=text, timestamp=datetime.utcnow())
                 embed.set_footer(text=area[1])
+                embed.set_image(url=image)
 
                 await message.edit(embed=embed)
                 await asyncio.sleep(2)

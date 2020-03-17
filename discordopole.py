@@ -22,7 +22,7 @@ bot.max_moves_in_list = 291
 bot.config = config
 
 if bot.config['use_static']:
-    bot.static_map = util.maps.static_map(config['static_provider'], config['tileserver_url'])
+    bot.static_map = util.maps.static_map(config['static_provider'], config['static_key'])
 
 if bot.config['use_map']:
     bot.map_url = util.maps.map_url(config['map'], config['map_url'])
