@@ -22,6 +22,7 @@ class static_map:
     def quest(self, lat, lon, items, mons, custom_emotes):
         width = 1000
         height = 600
+        static_map = ""
         if self.provider == "mapbox":
             zoom = self.get_zoom(min(lon), max(lon), width)
             center_lat = min(lat) + ((max(lat) - min(lat)) / 2)
