@@ -40,5 +40,7 @@
     "leaders": "Liderzy",
     "moves": "Ataki",
     "hatches_at": "Kluje się o",
-    "lasts_until": "Trwa do"
+    "lasts_until": "Trwa do",
+    "level": "Level",
+    "egg": "Egg"
 }
