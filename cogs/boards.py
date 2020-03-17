@@ -1,6 +1,7 @@
 import discord
 import asyncio
 import json
+import pyshorteners
 
 from discord.ext import tasks, commands
 from datetime import datetime, date
@@ -12,6 +13,7 @@ import util.queries as queries
 class Boards(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.short = pyshorteners.Shortener().tinyurl.short
         self.board_loop.start()
         self.quest_loop.start()
 
@@ -180,7 +182,7 @@ class Boards(commands.Cog):
                 print("Error while updating Stat Board. Skipping it.")
                 await asyncio.sleep(5)
 
-    @tasks.loop(hours=1)    
+    @tasks.loop(hours=1)  
     async def quest_loop(self):
         for board in self.bot.boards['quests']:
             try:
@@ -195,12 +197,11 @@ class Boards(commands.Cog):
                     length = 0
                     for quest_json, quest_text, lat, lon, stop_name, stop_id in quests:
                         quest_json = json.loads(quest_json)
-                        if len(stop_name) >= 30:
-                            stop_name = stop_name[0:27] + "..."
+
 
                         found_rewards = True
                         emote = ""
-                        map_url = self.bot.map_url.quest(lat, lon, stop_id)
+
                         item_id = quest_json[0]["item"]["item"]
                         mon_id = quest_json[0]["pokemon_encounter"]["pokemon_id"]
                         if item_id in board["items"]:
@@ -211,6 +212,11 @@ class Boards(commands.Cog):
                             found_rewards = False
 
                         if found_rewards:
+                            if len(stop_name) >= 30:
+                                stop_name = stop_name[0:27] + "..."
+                            map_url = self.bot.map_url.quest(lat, lon, stop_id)
+                            map_url = self.short(map_url)
+
                             entry = f"{emote} [{stop_name}]({map_url})\n"
                             if length + len(entry) >= 2048:
                                 break

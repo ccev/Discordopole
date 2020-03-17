@@ -98,6 +98,8 @@ class Channels(commands.Cog):
                         message = await channel.fetch_message(entry[0])
                         await message.delete()
                         cache[channel_id].pop(cached_raid)
+                        with open("data/raid_cache.json", "w") as f:
+                            f.write(json.dumps(cache, indent=4))  
                         await asyncio.sleep(1)
                         
                 with open("data/raid_cache.json", "w") as f:
