@@ -232,9 +232,9 @@ class Boards(commands.Cog):
                             length = length + len(entry)
                 
                 if length > 0:
-                    static_map = self.bot.static_map.quest(lat_list, lon_list, reward_items, reward_mons, self.bot.custom_emotes)
+                    static_map_url = self.bot.static_map.quest(lat_list, lon_list, reward_items, reward_mons, self.bot.custom_emotes)
 
-                    urllib.request.urlretrieve(static_map, "quest_static_map_temp.png")
+                    urllib.request.urlretrieve(static_map_url, "quest_static_map_temp.png")
                     channel = await self.bot.fetch_channel(self.bot.config['host_channel'])
                     image_msg = await channel.send(file=discord.File("quest_static_map_temp.png"))
                     image = image_msg.attachments[0].url
