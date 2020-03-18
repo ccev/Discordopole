@@ -5,26 +5,41 @@ class static_map:
         self.provider = provider
         self.key = key
 
-    def get_zoom(self, west, east, width):
-        if west == east:
-            zoom = 17.5
-            return zoom
-        east = east * 1.06
-        west = west * 1.06
-        tile_width = 512
-        angle = east - west
+    def get_zoom(self, ne, sw, width, height):
+        ne = [c * 1.06 for c in ne]
+        sw = [c * 1.06 for c in sw]
+        tile_size = 512
+
+        if ne == sw:
+            return 17.5
+
+        def latRad(lat):
+            sin = math.sin(lat * math.pi / 180)
+            rad = math.log((1 + sin) / (1 - sin)) / 2
+            return max(min(rad, math.pi), -math.pi) / 2
+
+        def zoom(px, tile, fraction):
+            return round(math.log((px / tile / fraction), 2), 2)
+
+        lat_fraction = (latRad(ne[0]) - latRad(sw[0])) / math.pi
+
+        angle = ne[1] - sw[1] 
         if angle < 0:
             angle += 360
+        lon_fraction = angle / 360
 
-        zoom = round(math.log((width * 360 / angle / tile_width), 2), 2)
-        return zoom
+        lat_zoom = zoom(height, tile_size, lat_fraction)
+        lon_zoom = zoom(width, tile_size, lon_fraction)
+
+        return min(lat_zoom, lon_zoom)
 
     def quest(self, lat, lon, items, mons, custom_emotes):
         width = 1000
         height = 600
-        static_map = ""
         if self.provider == "mapbox":
-            zoom = self.get_zoom(min(lon), max(lon), width)
+            ne = [max(lat), max(lon)]
+            sw = [min(lat), min(lon)]
+            zoom = self.get_zoom(ne, sw, width, height)
             center_lat = min(lat) + ((max(lat) - min(lat)) / 2)
             center_lon = min(lon) + ((max(lon) - min(lon)) / 2)
 
