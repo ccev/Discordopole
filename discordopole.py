@@ -4,6 +4,8 @@ import asyncio
 import os
 import dateparser
 import matplotlib.pyplot as plt
+import pyshorteners
+import urllib.request
 
 from datetime import datetime, date
 from discord.ext import commands
@@ -20,6 +22,7 @@ config = util.config.create_config("config/config.ini")
 bot = commands.Bot(command_prefix=config['prefix'], case_insensitive=1)
 bot.max_moves_in_list = 291
 bot.config = config
+short = pyshorteners.Shortener().tinyurl.short
 
 if bot.config['use_static']:
     bot.static_map = util.maps.static_map(config['static_provider'], config['static_key'])
@@ -254,6 +257,102 @@ async def gyms(ctx, areaname = ""):
     await message.edit(embed=embed)
     os.remove("gym_stats.png")
     print("Done with Gym Stats")
+
+@bot.command(pass_context=True, aliases=bot.config['quest_aliases'])
+async def quest(ctx, areaname = "", *, reward):
+    footer_text = ""
+    text = ""
+    loading = bot.locale['loading_quests']
+
+    area = get_area(areaname)
+    if not area[1] == bot.locale['all']:
+        footer_text = area[1]
+        loading = f"{loading} • {footer_text}"
+
+    print(f"@{ctx.author.name} requested quests for area {area[1]}")
+
+    embed = discord.Embed(title=bot.locale['quests'], description=text)
+    embed.set_footer(text=loading, icon_url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
+    message = await ctx.send(embed=embed)
+
+    items = list()
+    mons = list()
+    item_found = False
+    for item_id in bot.items:
+        if bot.items[item_id]["name"].lower() == reward.lower():
+            embed.set_thumbnail(url=f"{bot.config['mon_icon_repo']}rewards/reward_{item_id}_1.png")
+            embed.title = f"{bot.items[item_id]['name']} {bot.locale['quests']}"
+            items.append(int(item_id))
+            item_found = True
+    if not item_found:
+        mon = details(reward, bot.config['mon_icon_repo'], bot.config['language'])
+        embed.set_thumbnail(url=f"{bot.config['mon_icon_repo']}pokemon_icon_{str(mon.id).zfill(3)}_00.png")
+        embed.title = f"{mon.name} {bot.locale['quests']}"
+        mons.append(mon.id)
+    
+    await message.edit(embed=embed)
+
+    quests = await queries.get_active_quests(bot.config, area[0])
+
+    length = 0
+    reward_mons = list()
+    reward_items = list()
+    lat_list = list()
+    lon_list = list()
+
+    for quest_json, quest_text, lat, lon, stop_name, stop_id in quests:
+        quest_json = json.loads(quest_json)
+
+        found_rewards = True
+
+        item_id = quest_json[0]["item"]["item"]
+        mon_id = quest_json[0]["pokemon_encounter"]["pokemon_id"]
+        if item_id in items:
+            reward_items.append([item_id, lat, lon])
+        elif mon_id in mons:
+            reward_mons.append([mon_id, lat, lon])
+        else:
+            found_rewards = False
+
+        if found_rewards:
+            if len(stop_name) >= 30:
+                stop_name = stop_name[0:27] + "..."
+            lat_list.append(lat)
+            lon_list.append(lon)
+
+            if bot.config['use_map']:
+                map_url = bot.map_url.quest(lat, lon, stop_id)
+            else:
+                map_url = f"https://www.google.com/maps/search/?api=1&query={lat},{lon})"
+            map_url = short(map_url)
+
+            entry = f"[{stop_name}]({map_url})\n"
+            if length + len(entry) >= 2048:
+                break
+            else:
+                text = text + entry
+                length = length + len(entry)
+
+    embed.description = text
+    image = ""
+    if length > 0:
+        if bot.config['use_static']:
+            await message.edit(embed=embed)
+            static_map = bot.static_map.quest(lat_list, lon_list, reward_items, reward_mons, bot.custom_emotes)
+
+            urllib.request.urlretrieve(static_map, "quest_command_static_map_temp.png")
+            channel = await bot.fetch_channel(bot.config['host_channel'])
+            image_msg = await channel.send(file=discord.File("quest_command_static_map_temp.png"))
+            image = image_msg.attachments[0].url
+            os.remove("quest_command_static_map_temp.png")
+    else:
+        text = bot.locale["no_quests_found"]  
+
+    embed.set_footer(text=footer_text)
+    embed.set_image(url=image)
+
+    await message.edit(embed=embed)
+    await asyncio.sleep(2)
 
 @bot.event
 async def on_ready():

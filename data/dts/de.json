@@ -42,5 +42,7 @@
     "hatches_at": "Schlüpft um",
     "lasts_until": "Bleibt bis",
     "level": "Level",
-    "egg": "Ei"
+    "egg": "Ei",
+    "loading_quests": "Lade Quests",
+    "no_quests_found": "❌ Es konnten keine Quests gefunden werden"
 }

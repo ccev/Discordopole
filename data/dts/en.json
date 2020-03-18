@@ -42,5 +42,7 @@
     "hatches_at": "Hatches at",
     "lasts_until": "Lasts until",
     "level": "Level",
-    "egg": "Egg"
+    "egg": "Egg",
+    "loading_quests": "Loading Quests",
+    "no_quests_found": "❌ No Quests were found"
 }

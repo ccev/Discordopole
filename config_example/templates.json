@@ -1,0 +1,5 @@
+{
+    "raid_board": "{ex_emote}**{gym_name}**: ends {end}\n**{mon_name}**{form_letter} - *{quick_move} / {charge_move}*",
+    "egg_board": "{egg_emote}{ex_emote}**{gym_name}**: {start} – {end}",
+    "quest_board": "{reward_emote} [{stop_name}]({map_url})",
+}

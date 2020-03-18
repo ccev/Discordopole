@@ -35,6 +35,7 @@ def create_config(config_path):
     # Commands #
     config['pokemon_aliases'] = json.loads(config_raw.get('Commands','pokemon_aliases'))
     config['gyms_aliases'] = json.loads(config_raw.get('Commands','gyms_aliases'))
+    config['quest_aliases'] = json.loads(config_raw.get('Commands','quest_aliases'))
 
 
     # DB #
