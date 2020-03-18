@@ -221,7 +221,11 @@ class Boards(commands.Cog):
                             stop_name = stop_name[0:27] + "..."
                         lat_list.append(lat)
                         lon_list.append(lon)
-                        map_url = self.bot.map_url.quest(lat, lon, stop_id)
+
+                        if self.bot.config['use_map']:
+                            map_url = self.bot.map_url.quest(lat, lon, stop_id)
+                        else:
+                            map_url = f"https://www.google.com/maps/search/?api=1&query={lat},{lon})"
                         map_url = self.short(map_url)
 
                         entry = f"{emote} [{stop_name}]({map_url})\n"
@@ -230,18 +234,19 @@ class Boards(commands.Cog):
                         else:
                             text = text + entry
                             length = length + len(entry)
-                
-                if length > 0:
-                    static_map_url = self.bot.static_map.quest(lat_list, lon_list, reward_items, reward_mons, self.bot.custom_emotes)
 
-                    urllib.request.urlretrieve(static_map_url, "quest_static_map_temp.png")
-                    channel = await self.bot.fetch_channel(self.bot.config['host_channel'])
-                    image_msg = await channel.send(file=discord.File("quest_static_map_temp.png"))
-                    image = image_msg.attachments[0].url
-                    os.remove("quest_static_map_temp.png")
+                image = ""
+                if length > 0:
+                    if self.bot.config['use_static']:
+                        static_map = self.bot.static_map.quest(lat_list, lon_list, reward_items, reward_mons, self.bot.custom_emotes)
+
+                        urllib.request.urlretrieve(static_map, "quest_static_map_temp.png")
+                        channel = await self.bot.fetch_channel(self.bot.config['host_channel'])
+                        image_msg = await channel.send(file=discord.File("quest_static_map_temp.png"))
+                        image = image_msg.attachments[0].url
+                        os.remove("quest_static_map_temp.png")
                 else:
-                    text = self.bot.locale["empty_board"]
-                    image = ""
+                    text = self.bot.locale["empty_board"]  
 
                 embed = discord.Embed(title=board['title'], description=text, timestamp=datetime.utcnow())
                 embed.set_footer(text=area[1])
