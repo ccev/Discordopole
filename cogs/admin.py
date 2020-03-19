@@ -317,7 +317,7 @@ class Admin(commands.Cog):
                     print(err)
                     print(f"Error while importing emote i{item}")
             else:
-                embed_emotes = f"{embed_emotes}\nmon {mon}: already exists"
+                embed_emotes = f"{embed_emotes}\nitem {item}: already exists"
                 embed.description = embed_emotes + embed_rest
                 await message.edit(embed=embed)
 
