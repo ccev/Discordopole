@@ -346,7 +346,7 @@ async def quest(ctx, areaname = "", *, reward):
             image = image_msg.attachments[0].url
             os.remove("quest_command_static_map_temp.png")
     else:
-        text = bot.locale["no_quests_found"]  
+        embed.description = bot.locale["no_quests_found"]
 
     embed.set_footer(text=footer_text)
     embed.set_image(url=image)
