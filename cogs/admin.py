@@ -290,7 +290,10 @@ class Admin(commands.Cog):
                     embed_emotes = f"{embed_emotes}\n{emote_ref} `{emote_ref}`"
                     embed.description = embed_emotes + embed_rest
                     await message.edit(embed=embed)
-                    self.bot.custom_emotes.update({f"m{mon}": emote_ref})
+                    if f"m{mon}" in self.bot.custom_emotes:
+                        self.bot.custom_emotes[f"m{mon}"] = emote_ref
+                    else:
+                        self.bot.custom_emotes.update({f"m{mon}": emote_ref})
                 except Exception as err:
                     print(err)
                     print(f"Error while importing emote m{mon}")
@@ -312,7 +315,10 @@ class Admin(commands.Cog):
                     embed_emotes = f"{embed_emotes}\n{emote_ref} `{emote_ref}`"
                     embed.description = embed_emotes + embed_rest
                     await message.edit(embed=embed)
-                    self.bot.custom_emotes.update({f"i{item}": emote_ref})
+                    if f"i{item}" in self.bot.custom_emotes:
+                        self.bot.custom_emotes[f"i{item}"] = emote_ref
+                    else:
+                        self.bot.custom_emotes.update({f"i{item}": emote_ref})
                 except Exception as err:
                     print(err)
                     print(f"Error while importing emote i{item}")
