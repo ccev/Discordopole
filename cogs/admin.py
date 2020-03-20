@@ -132,7 +132,7 @@ class Admin(commands.Cog):
         embed.title = "Succesfully created this Egg Board"
         embed.description = f"You'll see this message being filled in soon\n\n```Area: {area}\nLevels: {levels}\nChannel ID: {message.channel.id}\nMessage ID: {message.id}```"
         await message.edit(embed=embed)
-        print("Wrote Raid Board to config/boards.json")
+        print("Wrote Egg Board to config/boards.json")
 
     @create.command(pass_context=True)
     async def stats(self, ctx, area, *, types):
@@ -273,7 +273,7 @@ class Admin(commands.Cog):
         embed_rest = f"\n\n```Area: {area}\nMons: {mons}\nItems: {items}\nChannel ID: {message.channel.id}\nMessage ID: {message.id}```"
         embed.description = embed_emotes + embed_rest
         await message.edit(embed=embed)
-        print("Wrote Raid Board to config/boards.json - Now downloading Emotes")
+        print("Wrote Quest Board to config/boards.json - Now downloading Emotes")
 
         guild = await self.bot.fetch_guild(self.bot.config['host_server'])
         existing_emotes = await guild.fetch_emojis()
@@ -317,7 +317,7 @@ class Admin(commands.Cog):
                     print(err)
                     print(f"Error while importing emote i{item}")
             else:
-                embed_emotes = f"{embed_emotes}\nmon {mon}: already exists"
+                embed_emotes = f"{embed_emotes}\nitem {item}: already exists"
                 embed.description = embed_emotes + embed_rest
                 await message.edit(embed=embed)
 
