@@ -11,6 +11,7 @@ from datetime import datetime, date
 from discord.ext import commands
 
 from util.mondetails import details
+from cogs.admin import Admin
 import util.queries as queries
 import util.config
 import util.maps
@@ -309,8 +310,12 @@ async def quest(ctx, areaname = "", *, reward):
         mon_id = quest_json[0]["pokemon_encounter"]["pokemon_id"]
         if item_id in items:
             reward_items.append([item_id, lat, lon])
+            emote_name = f"i{item_id}"
+            emote_img = f"{bot.config['mon_icon_repo']}rewards/reward_{item_id}_1.png"
         elif mon_id in mons:
             reward_mons.append([mon_id, lat, lon])
+            emote_name = f"m{mon_id}"
+            emote_img = f"{bot.config['mon_icon_repo']}pokemon_icon_{str(mon_id).zfill(3)}_00.png"
         else:
             found_rewards = False
 
@@ -337,7 +342,26 @@ async def quest(ctx, areaname = "", *, reward):
     image = ""
     if length > 0:
         if bot.config['use_static']:
-            await message.edit(embed=embed)
+            guild = await bot.fetch_guild(bot.config['host_server'])
+            existing_emotes = await guild.fetch_emojis()
+            emote_exist = False
+            for existing_emote in existing_emotes:
+                if emote_name == existing_emote.name:
+                    emote_exist = True
+            if not emote_exist:
+                try:
+                    image = await Admin.download_url("", emote_img)
+                    emote = await guild.create_custom_emoji(name=emote_name, image=image)
+                    emote_ref = f"<:{emote.name}:{emote.id}>"
+
+                    if emote_name in bot.custom_emotes:
+                        bot.custom_emotes[emote_name] = emote_ref
+                    else:
+                        bot.custom_emotes.update({emote_name: emote_ref})
+                except Exception as err:
+                    print(err)
+                    print(f"Error while importing emote {emote_name}")
+
             static_map = bot.static_map.quest(lat_list, lon_list, reward_items, reward_mons, bot.custom_emotes)
 
             urllib.request.urlretrieve(static_map, "quest_command_static_map_temp.png")
@@ -345,6 +369,10 @@ async def quest(ctx, areaname = "", *, reward):
             image_msg = await channel.send(file=discord.File("quest_command_static_map_temp.png"))
             image = image_msg.attachments[0].url
             os.remove("quest_command_static_map_temp.png")
+
+            if not emote_exist:
+                await emote.delete()
+                bot.custom_emotes.pop(emote_name)
     else:
         embed.description = bot.locale["no_quests_found"]
 
