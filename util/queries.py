@@ -124,9 +124,9 @@ async def statboard_mon_active(config, area):
 async def statboard_mon_today(config, area):
     cursor_statboard_mon_today = await connect_db(config)
     if config['db_scan_schema'] == "mad":
-        await cursor_statboard_mon_today.execute(f"select count(pokemon_id) from pokemon where disappear_time > utc_date() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
+        await cursor_statboard_mon_today.execute(f"select count(pokemon_id) from pokemon where CONVERT_TZ(pokemon.disappear_time,'+00:00','{config['timezone']}') > curdate() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
     elif config['db_scan_schema'] == "rdm":
-        await cursor_statboard_mon_today.execute(f"select count(id) from pokemon WHERE expire_timestamp > unix_timestamp(CURDATE()) and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon))")
+        await cursor_statboard_mon_today.execute(f"select count(id) from pokemon WHERE CONVERT_TZ(from_unixtime(first_seen_timestamp),'+00:00','{config['timezone']}') > CURDATE() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon))")
     statboard_mon_today = await cursor_statboard_mon_today.fetchall()
 
     await cursor_statboard_mon_today.close()
