@@ -42,5 +42,7 @@
     "hatches_at": "Kluje się o",
     "lasts_until": "Trwa do",
     "level": "Level",
-    "egg": "Egg"
+    "egg": "Egg",
+    "loading_quests": "Ładowanie Questów",
+    "no_quests_found": "❌ Brak Questów"
 }
