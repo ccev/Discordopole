@@ -1,0 +1,2114 @@
+{
+  "0": {
+    "name": "Impactrueno",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "1": {
+    "name": "Impactrueno",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "2": {
+    "name": "Ataque Rápido",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "3": {
+    "name": "Arañazo",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "4": {
+    "name": "Ascuas",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "5": {
+    "name": "Látigo Cepa",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "6": {
+    "name": "Placaje",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "7": {
+    "name": "Hoja Afilada",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "8": {
+    "name": "Derribo",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "9": {
+    "name": "Pistola Agua",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "10": {
+    "name": "Mordisco",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "11": {
+    "name": "Destructor",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "12": {
+    "name": "Doble Bofetón",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "13": {
+    "name": "Constricción",
+    "type": "Normal",
+    "damage": 60,
+    "duration": 2900,
+    "energy": 33,
+    "dps": 20.69
+  },
+  "14": {
+    "name": "Hiperrayo",
+    "type": "Normal",
+    "damage": 150,
+    "duration": 3800,
+    "energy": 100,
+    "dps": 39.47
+  },
+  "15": {
+    "name": "Lengüetazo",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "16": {
+    "name": "Pulso Umbrío",
+    "type": "Dark",
+    "damage": 80,
+    "duration": 3000,
+    "energy": 50,
+    "dps": 26.67
+  },
+  "17": {
+    "name": "Polución",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "18": {
+    "name": "Residuos",
+    "type": "Poison",
+    "damage": 50,
+    "duration": 2100,
+    "energy": 33,
+    "dps": 23.81
+  },
+  "19": {
+    "name": "Garra Metal",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "20": {
+    "name": "Agarre",
+    "type": "Normal",
+    "damage": 35,
+    "duration": 1900,
+    "energy": 33,
+    "dps": 18.42
+  },
+  "21": {
+    "name": "Rueda Fuego",
+    "type": "Fire",
+    "damage": 60,
+    "duration": 2700,
+    "energy": 50,
+    "dps": 22.22
+  },
+  "22": {
+    "name": "Megacuerno",
+    "type": "Bug",
+    "damage": 90,
+    "duration": 2200,
+    "energy": 100,
+    "dps": 40.91
+  },
+  "23": {
+    "name": "Ataque Ala",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "24": {
+    "name": "Lanzallamas",
+    "type": "Fire",
+    "damage": 70,
+    "duration": 2200,
+    "energy": 50,
+    "dps": 31.82
+  },
+  "25": {
+    "name": "Golpe Bajo",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "26": {
+    "name": "Excavar",
+    "type": "Ground",
+    "damage": 100,
+    "duration": 4700,
+    "energy": 50,
+    "dps": 21.28
+  },
+  "27": {
+    "name": "Patada Baja",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "28": {
+    "name": "Tajo Cruzado",
+    "type": "Fighting",
+    "damage": 50,
+    "duration": 1500,
+    "energy": 50,
+    "dps": 33.33
+  },
+  "29": {
+    "name": "Psicocorte",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "30": {
+    "name": "Psicorrayo",
+    "type": "Psychic",
+    "damage": 70,
+    "duration": 3200,
+    "energy": 50,
+    "dps": 21.88
+  },
+  "31": {
+    "name": "Terremoto",
+    "type": "Ground",
+    "damage": 120,
+    "duration": 3600,
+    "energy": 100,
+    "dps": 33.33
+  },
+  "32": {
+    "name": "Roca Afilada",
+    "type": "Rock",
+    "damage": 100,
+    "duration": 2300,
+    "energy": 100,
+    "dps": 43.48
+  },
+  "33": {
+    "name": "Puño Hielo",
+    "type": "Ice",
+    "damage": 50,
+    "duration": 1900,
+    "energy": 33,
+    "dps": 26.32
+  },
+  "34": {
+    "name": "Arrumaco",
+    "type": "Psychic",
+    "damage": 40,
+    "duration": 1900,
+    "energy": 33,
+    "dps": 21.05
+  },
+  "35": {
+    "name": "Chispazo",
+    "type": "Electric",
+    "damage": 65,
+    "duration": 2500,
+    "energy": 33,
+    "dps": 26
+  },
+  "36": {
+    "name": "Foco Resplandor",
+    "type": "Steel",
+    "damage": 100,
+    "duration": 2700,
+    "energy": 100,
+    "dps": 37.04
+  },
+  "37": {
+    "name": "Picotazo",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "38": {
+    "name": "Pico Taladro",
+    "type": "Flying",
+    "damage": 60,
+    "duration": 2300,
+    "energy": 33,
+    "dps": 26.09
+  },
+  "39": {
+    "name": "Rayo Hielo",
+    "type": "Ice",
+    "damage": 90,
+    "duration": 3300,
+    "energy": 50,
+    "dps": 27.27
+  },
+  "40": {
+    "name": "Ventisca",
+    "type": "Ice",
+    "damage": 130,
+    "duration": 3100,
+    "energy": 100,
+    "dps": 41.94
+  },
+  "41": {
+    "name": "Tajo Aéreo",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "42": {
+    "name": "Onda Ígnea",
+    "type": "Fire",
+    "damage": 95,
+    "duration": 3000,
+    "energy": 100,
+    "dps": 31.67
+  },
+  "43": {
+    "name": "Doble Ataque",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "44": {
+    "name": "Puya Nociva",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "45": {
+    "name": "Golpe Aéreo",
+    "type": "Flying",
+    "damage": 55,
+    "duration": 2400,
+    "energy": 33,
+    "dps": 22.92
+  },
+  "46": {
+    "name": "Taladradora",
+    "type": "Ground",
+    "damage": 80,
+    "duration": 2800,
+    "energy": 50,
+    "dps": 28.57
+  },
+  "47": {
+    "name": "Tormenta Floral",
+    "type": "Grass",
+    "damage": 110,
+    "duration": 2600,
+    "energy": 100,
+    "dps": 42.31
+  },
+  "48": {
+    "name": "Megaagotar",
+    "type": "Grass",
+    "damage": 25,
+    "duration": 2600,
+    "energy": 50,
+    "dps": 9.62
+  },
+  "49": {
+    "name": "Zumbido",
+    "type": "Bug",
+    "damage": 90,
+    "duration": 3700,
+    "energy": 50,
+    "dps": 24.32
+  },
+  "50": {
+    "name": "Colmillo Veneno",
+    "type": "Poison",
+    "damage": 35,
+    "duration": 1700,
+    "energy": 33,
+    "dps": 20.59
+  },
+  "51": {
+    "name": "Tajo Umbrío",
+    "type": "Dark",
+    "damage": 50,
+    "duration": 2200,
+    "energy": 33,
+    "dps": 22.73
+  },
+  "52": {
+    "name": "Cuchillada",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "53": {
+    "name": "Rayo Burbuja",
+    "type": "Water",
+    "damage": 45,
+    "duration": 1900,
+    "energy": 33,
+    "dps": 23.68
+  },
+  "54": {
+    "name": "Sumisión",
+    "type": "Fighting",
+    "damage": 60,
+    "duration": 2200,
+    "energy": 50,
+    "dps": 27.27
+  },
+  "55": {
+    "name": "Golpe Kárate",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "56": {
+    "name": "Puntapié",
+    "type": "Fighting",
+    "damage": 40,
+    "duration": 1900,
+    "energy": 33,
+    "dps": 21.05
+  },
+  "57": {
+    "name": "Aqua Jet",
+    "type": "Water",
+    "damage": 45,
+    "duration": 2600,
+    "energy": 33,
+    "dps": 17.31
+  },
+  "58": {
+    "name": "Aqua Cola",
+    "type": "Water",
+    "damage": 50,
+    "duration": 1900,
+    "energy": 33,
+    "dps": 26.32
+  },
+  "59": {
+    "name": "Bomba Germen",
+    "type": "Grass",
+    "damage": 55,
+    "duration": 2100,
+    "energy": 33,
+    "dps": 26.19
+  },
+  "60": {
+    "name": "Psicocarga",
+    "type": "Psychic",
+    "damage": 65,
+    "duration": 2700,
+    "energy": 33,
+    "dps": 24.07
+  },
+  "61": {
+    "name": "Lanzarrocas",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "62": {
+    "name": "Poder Pasado",
+    "type": "Rock",
+    "damage": 70,
+    "duration": 3500,
+    "energy": 33,
+    "dps": 20
+  },
+  "63": {
+    "name": "Tumba Rocas",
+    "type": "Rock",
+    "damage": 70,
+    "duration": 3200,
+    "energy": 50,
+    "dps": 21.88
+  },
+  "64": {
+    "name": "Avalancha",
+    "type": "Rock",
+    "damage": 80,
+    "duration": 2700,
+    "energy": 50,
+    "dps": 29.63
+  },
+  "65": {
+    "name": "Joya de Luz",
+    "type": "Rock",
+    "damage": 80,
+    "duration": 2900,
+    "energy": 50,
+    "dps": 27.59
+  },
+  "66": {
+    "name": "Sombra Vil",
+    "type": "Ghost",
+    "damage": 50,
+    "duration": 2900,
+    "energy": 33,
+    "dps": 17.24
+  },
+  "67": {
+    "name": "Puño Sombra",
+    "type": "Ghost",
+    "damage": 40,
+    "duration": 1700,
+    "energy": 33,
+    "dps": 23.53
+  },
+  "68": {
+    "name": "Garra Umbría",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "69": {
+    "name": "Viento Aciago",
+    "type": "Ghost",
+    "damage": 50,
+    "duration": 2300,
+    "energy": 33,
+    "dps": 21.74
+  },
+  "70": {
+    "name": "Bola Sombra",
+    "type": "Ghost",
+    "damage": 100,
+    "duration": 3000,
+    "energy": 50,
+    "dps": 33.33
+  },
+  "71": {
+    "name": "Puño Bala",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "72": {
+    "name": "Bomba Imán",
+    "type": "Steel",
+    "damage": 70,
+    "duration": 2800,
+    "energy": 33,
+    "dps": 25
+  },
+  "73": {
+    "name": "Ala de Acero",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "74": {
+    "name": "Cabeza de Hierro",
+    "type": "Steel",
+    "damage": 60,
+    "duration": 1900,
+    "energy": 50,
+    "dps": 31.58
+  },
+  "75": {
+    "name": "Carga Parábola",
+    "type": "Electric",
+    "damage": 25,
+    "duration": 2800,
+    "energy": 50,
+    "dps": 8.93
+  },
+  "76": {
+    "name": "Chispa",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "77": {
+    "name": "Puño Trueno",
+    "type": "Electric",
+    "damage": 45,
+    "duration": 1800,
+    "energy": 33,
+    "dps": 25
+  },
+  "78": {
+    "name": "Trueno",
+    "type": "Electric",
+    "damage": 100,
+    "duration": 2400,
+    "energy": 100,
+    "dps": 41.67
+  },
+  "79": {
+    "name": "Rayo",
+    "type": "Electric",
+    "damage": 80,
+    "duration": 2500,
+    "energy": 50,
+    "dps": 32
+  },
+  "80": {
+    "name": "Ciclón",
+    "type": "Dragon",
+    "damage": 45,
+    "duration": 2800,
+    "energy": 33,
+    "dps": 16.07
+  },
+  "81": {
+    "name": "Dragoaliento",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "82": {
+    "name": "Pulso Dragón",
+    "type": "Dragon",
+    "damage": 90,
+    "duration": 3600,
+    "energy": 50,
+    "dps": 25
+  },
+  "83": {
+    "name": "Garra Dragón",
+    "type": "Dragon",
+    "damage": 50,
+    "duration": 1700,
+    "energy": 33,
+    "dps": 29.41
+  },
+  "84": {
+    "name": "Voz Cautivadora",
+    "type": "Fairy",
+    "damage": 70,
+    "duration": 3900,
+    "energy": 33,
+    "dps": 17.95
+  },
+  "85": {
+    "name": "Beso Drenaje",
+    "type": "Fairy",
+    "damage": 60,
+    "duration": 2600,
+    "energy": 50,
+    "dps": 23.08
+  },
+  "86": {
+    "name": "Brillo Mágico",
+    "type": "Fairy",
+    "damage": 100,
+    "duration": 3500,
+    "energy": 50,
+    "dps": 28.57
+  },
+  "87": {
+    "name": "Fuerza Lunar",
+    "type": "Fairy",
+    "damage": 130,
+    "duration": 3900,
+    "energy": 100,
+    "dps": 33.33
+  },
+  "88": {
+    "name": "Carantoña",
+    "type": "Fairy",
+    "damage": 90,
+    "duration": 2900,
+    "energy": 50,
+    "dps": 31.03
+  },
+  "89": {
+    "name": "Veneno X",
+    "type": "Poison",
+    "damage": 40,
+    "duration": 1500,
+    "energy": 33,
+    "dps": 26.67
+  },
+  "90": {
+    "name": "Bomba Lodo",
+    "type": "Poison",
+    "damage": 80,
+    "duration": 2300,
+    "energy": 50,
+    "dps": 34.78
+  },
+  "91": {
+    "name": "Onda Tóxica",
+    "type": "Poison",
+    "damage": 110,
+    "duration": 3200,
+    "energy": 100,
+    "dps": 34.38
+  },
+  "92": {
+    "name": "Lanza Mugre",
+    "type": "Poison",
+    "damage": 130,
+    "duration": 3100,
+    "energy": 100,
+    "dps": 41.94
+  },
+  "93": {
+    "name": "Disparo Lodo",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "94": {
+    "name": "Hueso Palo",
+    "type": "Ground",
+    "damage": 40,
+    "duration": 1600,
+    "energy": 33,
+    "dps": 25
+  },
+  "95": {
+    "name": "Terratemblor",
+    "type": "Ground",
+    "damage": 80,
+    "duration": 3500,
+    "energy": 50,
+    "dps": 22.86
+  },
+  "96": {
+    "name": "Bomba Fango",
+    "type": "Ground",
+    "damage": 55,
+    "duration": 2300,
+    "energy": 33,
+    "dps": 23.91
+  },
+  "97": {
+    "name": "Corte Furia",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "98": {
+    "name": "Picadura",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "99": {
+    "name": "Doble Rayo",
+    "type": "Bug",
+    "damage": 75,
+    "duration": 2900,
+    "energy": 50,
+    "dps": 25.86
+  },
+  "100": {
+    "name": "Tijera X",
+    "type": "Bug",
+    "damage": 45,
+    "duration": 1600,
+    "energy": 33,
+    "dps": 28.13
+  },
+  "101": {
+    "name": "Nitrocarga",
+    "type": "Fire",
+    "damage": 70,
+    "duration": 3800,
+    "energy": 33,
+    "dps": 18.42
+  },
+  "102": {
+    "name": "Pirotecnia",
+    "type": "Fire",
+    "damage": 70,
+    "duration": 2600,
+    "energy": 50,
+    "dps": 26.92
+  },
+  "103": {
+    "name": "Llamarada",
+    "type": "Fire",
+    "damage": 140,
+    "duration": 4200,
+    "energy": 100,
+    "dps": 33.33
+  },
+  "104": {
+    "name": "Salmuera",
+    "type": "Water",
+    "damage": 60,
+    "duration": 2300,
+    "energy": 50,
+    "dps": 26.09
+  },
+  "105": {
+    "name": "Hidropulso",
+    "type": "Water",
+    "damage": 70,
+    "duration": 3200,
+    "energy": 50,
+    "dps": 21.88
+  },
+  "106": {
+    "name": "Escaldar",
+    "type": "Water",
+    "damage": 82,
+    "duration": 3700,
+    "energy": 50,
+    "dps": 21.62
+  },
+  "107": {
+    "name": "Hidrobomba",
+    "type": "Water",
+    "damage": 130,
+    "duration": 3300,
+    "energy": 100,
+    "dps": 39.39
+  },
+  "108": {
+    "name": "Psíquico",
+    "type": "Psychic",
+    "damage": 100,
+    "duration": 2800,
+    "energy": 100,
+    "dps": 35.71
+  },
+  "109": {
+    "name": "Onda Mental",
+    "type": "Psychic",
+    "damage": 100,
+    "duration": 4400,
+    "energy": 50,
+    "dps": 22.73
+  },
+  "110": {
+    "name": "Canto Helado",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "111": {
+    "name": "Viento Hielo",
+    "type": "Ice",
+    "damage": 60,
+    "duration": 3300,
+    "energy": 33,
+    "dps": 18.18
+  },
+  "112": {
+    "name": "Vaho Gélido",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "113": {
+    "name": "Absorber",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "114": {
+    "name": "Gigadrenado",
+    "type": "Grass",
+    "damage": 50,
+    "duration": 3900,
+    "energy": 100,
+    "dps": 12.82
+  },
+  "115": {
+    "name": "Puño Fuego",
+    "type": "Fire",
+    "damage": 55,
+    "duration": 2200,
+    "energy": 33,
+    "dps": 25
+  },
+  "116": {
+    "name": "Rayo Solar",
+    "type": "Grass",
+    "damage": 180,
+    "duration": 4900,
+    "energy": 100,
+    "dps": 36.73
+  },
+  "117": {
+    "name": "Hoja Aguda",
+    "type": "Grass",
+    "damage": 70,
+    "duration": 2400,
+    "energy": 33,
+    "dps": 29.17
+  },
+  "118": {
+    "name": "Latigazo",
+    "type": "Grass",
+    "damage": 90,
+    "duration": 2600,
+    "energy": 50,
+    "dps": 34.62
+  },
+  "119": {
+    "name": "Salpicadura",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "120": {
+    "name": "Ácido",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "121": {
+    "name": "Aire Afilado",
+    "type": "Flying",
+    "damage": 60,
+    "duration": 2700,
+    "energy": 50,
+    "dps": 22.22
+  },
+  "122": {
+    "name": "Vendaval",
+    "type": "Flying",
+    "damage": 110,
+    "duration": 2700,
+    "energy": 100,
+    "dps": 40.74
+  },
+  "123": {
+    "name": "Demolición",
+    "type": "Fighting",
+    "damage": 40,
+    "duration": 1600,
+    "energy": 33,
+    "dps": 25
+  },
+  "124": {
+    "name": "Corte",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "125": {
+    "name": "Rapidez",
+    "type": "Normal",
+    "damage": 60,
+    "duration": 2800,
+    "energy": 50,
+    "dps": 21.43
+  },
+  "126": {
+    "name": "Cornada",
+    "type": "Normal",
+    "damage": 40,
+    "duration": 1850,
+    "energy": 33,
+    "dps": 21.62
+  },
+  "127": {
+    "name": "Pisotón",
+    "type": "Normal",
+    "damage": 55,
+    "duration": 1700,
+    "energy": 50,
+    "dps": 32.35
+  },
+  "128": {
+    "name": "Golpe Cabeza",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "129": {
+    "name": "Hipercolmillo",
+    "type": "Normal",
+    "damage": 80,
+    "duration": 2500,
+    "energy": 50,
+    "dps": 32
+  },
+  "130": {
+    "name": "Atizar",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "131": {
+    "name": "Golpe Cuerpo",
+    "type": "Normal",
+    "damage": 50,
+    "duration": 1900,
+    "energy": 33,
+    "dps": 26.32
+  },
+  "132": {
+    "name": "Descanso",
+    "type": "Normal",
+    "damage": 50,
+    "duration": 1900,
+    "energy": 33,
+    "dps": 26.32
+  },
+  "133": {
+    "name": "Combate",
+    "type": "Normal",
+    "damage": 35,
+    "duration": 2200,
+    "energy": 0,
+    "dps": 15.91
+  },
+  "134": {
+    "name": "Escaldar (Blastoise)",
+    "type": "Water",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "135": {
+    "name": "Hidrobomba (Blastoise)",
+    "type": "Water",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "136": {
+    "name": "Constricción Verde",
+    "type": "Normal",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "137": {
+    "name": "Constricción Rosa",
+    "type": "Normal",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "200": {
+    "name": "Corte Furia",
+    "type": "Bug",
+    "damage": 3,
+    "duration": 400,
+    "energy": 6,
+    "dps": 7.5
+  },
+  "201": {
+    "name": "Picadura",
+    "type": "Bug",
+    "damage": 5,
+    "duration": 500,
+    "energy": 6,
+    "dps": 10
+  },
+  "202": {
+    "name": "Mordisco",
+    "type": "Dark",
+    "damage": 6,
+    "duration": 500,
+    "energy": 4,
+    "dps": 12
+  },
+  "203": {
+    "name": "Golpe Bajo",
+    "type": "Dark",
+    "damage": 7,
+    "duration": 700,
+    "energy": 8,
+    "dps": 10
+  },
+  "204": {
+    "name": "Dragoaliento",
+    "type": "Dragon",
+    "damage": 6,
+    "duration": 500,
+    "energy": 4,
+    "dps": 12
+  },
+  "205": {
+    "name": "Impactrueno",
+    "type": "Electric",
+    "damage": 5,
+    "duration": 600,
+    "energy": 8,
+    "dps": 8.33
+  },
+  "206": {
+    "name": "Chispa",
+    "type": "Electric",
+    "damage": 6,
+    "duration": 700,
+    "energy": 9,
+    "dps": 8.57
+  },
+  "207": {
+    "name": "Patada Baja",
+    "type": "Fighting",
+    "damage": 6,
+    "duration": 600,
+    "energy": 6,
+    "dps": 10
+  },
+  "208": {
+    "name": "Golpe Kárate",
+    "type": "Fighting",
+    "damage": 8,
+    "duration": 800,
+    "energy": 10,
+    "dps": 10
+  },
+  "209": {
+    "name": "Ascuas",
+    "type": "Fire",
+    "damage": 10,
+    "duration": 1000,
+    "energy": 10,
+    "dps": 10
+  },
+  "210": {
+    "name": "Ataque Ala",
+    "type": "Flying",
+    "damage": 8,
+    "duration": 800,
+    "energy": 9,
+    "dps": 10
+  },
+  "211": {
+    "name": "Picotazo",
+    "type": "Flying",
+    "damage": 10,
+    "duration": 1000,
+    "energy": 10,
+    "dps": 10
+  },
+  "212": {
+    "name": "Lengüetazo",
+    "type": "Ghost",
+    "damage": 5,
+    "duration": 500,
+    "energy": 6,
+    "dps": 10
+  },
+  "213": {
+    "name": "Garra Umbría",
+    "type": "Ghost",
+    "damage": 9,
+    "duration": 700,
+    "energy": 6,
+    "dps": 12.86
+  },
+  "214": {
+    "name": "Látigo Cepa",
+    "type": "Grass",
+    "damage": 7,
+    "duration": 600,
+    "energy": 6,
+    "dps": 11.67
+  },
+  "215": {
+    "name": "Hoja Afilada",
+    "type": "Grass",
+    "damage": 13,
+    "duration": 1000,
+    "energy": 7,
+    "dps": 13
+  },
+  "216": {
+    "name": "Disparo Lodo",
+    "type": "Ground",
+    "damage": 5,
+    "duration": 600,
+    "energy": 7,
+    "dps": 8.33
+  },
+  "217": {
+    "name": "Canto Helado",
+    "type": "Ice",
+    "damage": 12,
+    "duration": 1200,
+    "energy": 12,
+    "dps": 10
+  },
+  "218": {
+    "name": "Vaho Gélido",
+    "type": "Ice",
+    "damage": 10,
+    "duration": 900,
+    "energy": 8,
+    "dps": 11.11
+  },
+  "219": {
+    "name": "Ataque Rápido",
+    "type": "Normal",
+    "damage": 8,
+    "duration": 800,
+    "energy": 10,
+    "dps": 10
+  },
+  "220": {
+    "name": "Arañazo",
+    "type": "Normal",
+    "damage": 6,
+    "duration": 500,
+    "energy": 4,
+    "dps": 12
+  },
+  "221": {
+    "name": "Placaje",
+    "type": "Normal",
+    "damage": 5,
+    "duration": 500,
+    "energy": 5,
+    "dps": 10
+  },
+  "222": {
+    "name": "Destructor",
+    "type": "Normal",
+    "damage": 7,
+    "duration": 600,
+    "energy": 6,
+    "dps": 11.67
+  },
+  "223": {
+    "name": "Corte",
+    "type": "Normal",
+    "damage": 5,
+    "duration": 500,
+    "energy": 5,
+    "dps": 10
+  },
+  "224": {
+    "name": "Puya Nociva",
+    "type": "Poison",
+    "damage": 10,
+    "duration": 800,
+    "energy": 7,
+    "dps": 12.5
+  },
+  "225": {
+    "name": "Ácido",
+    "type": "Poison",
+    "damage": 9,
+    "duration": 800,
+    "energy": 8,
+    "dps": 11.25
+  },
+  "226": {
+    "name": "Psicocorte",
+    "type": "Psychic",
+    "damage": 5,
+    "duration": 600,
+    "energy": 8,
+    "dps": 8.33
+  },
+  "227": {
+    "name": "Lanzarrocas",
+    "type": "Rock",
+    "damage": 12,
+    "duration": 900,
+    "energy": 7,
+    "dps": 13.33
+  },
+  "228": {
+    "name": "Garra Metal",
+    "type": "Steel",
+    "damage": 8,
+    "duration": 700,
+    "energy": 7,
+    "dps": 11.43
+  },
+  "229": {
+    "name": "Puño Bala",
+    "type": "Steel",
+    "damage": 9,
+    "duration": 900,
+    "energy": 10,
+    "dps": 10
+  },
+  "230": {
+    "name": "Pistola Agua",
+    "type": "Water",
+    "damage": 5,
+    "duration": 500,
+    "energy": 5,
+    "dps": 10
+  },
+  "231": {
+    "name": "Salpicadura",
+    "type": "Water",
+    "damage": 0,
+    "duration": 1730,
+    "energy": 20,
+    "dps": 0
+  },
+  "232": {
+    "name": "Pistola Agua (Blastoise)",
+    "type": "",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "233": {
+    "name": "Bofetón Lodo",
+    "type": "Ground",
+    "damage": 15,
+    "duration": 1400,
+    "energy": 12,
+    "dps": 10.71
+  },
+  "234": {
+    "name": "Cabezazo Zen",
+    "type": "Psychic",
+    "damage": 12,
+    "duration": 1100,
+    "energy": 10,
+    "dps": 10.91
+  },
+  "235": {
+    "name": "Confusión",
+    "type": "Psychic",
+    "damage": 20,
+    "duration": 1600,
+    "energy": 15,
+    "dps": 12.5
+  },
+  "236": {
+    "name": "Picotazo Veneno",
+    "type": "Poison",
+    "damage": 5,
+    "duration": 600,
+    "energy": 7,
+    "dps": 8.33
+  },
+  "237": {
+    "name": "Burbuja",
+    "type": "Water",
+    "damage": 12,
+    "duration": 1200,
+    "energy": 14,
+    "dps": 10
+  },
+  "238": {
+    "name": "Finta",
+    "type": "Dark",
+    "damage": 10,
+    "duration": 900,
+    "energy": 9,
+    "dps": 11.11
+  },
+  "239": {
+    "name": "Ala de Acero",
+    "type": "Steel",
+    "damage": 11,
+    "duration": 800,
+    "energy": 6,
+    "dps": 13.75
+  },
+  "240": {
+    "name": "Colmillo Ígneo",
+    "type": "Fire",
+    "damage": 11,
+    "duration": 900,
+    "energy": 8,
+    "dps": 12.22
+  },
+  "241": {
+    "name": "Golpe Roca",
+    "type": "Fighting",
+    "damage": 15,
+    "duration": 1300,
+    "energy": 10,
+    "dps": 11.54
+  },
+  "242": {
+    "name": "Transformación",
+    "type": "Normal",
+    "damage": 0,
+    "duration": 2230,
+    "energy": 0,
+    "dps": 0
+  },
+  "243": {
+    "name": "Contraataque",
+    "type": "Fighting",
+    "damage": 8,
+    "duration": 900,
+    "energy": 12,
+    "dps": 13.33
+  },
+  "244": {
+    "name": "Nieve Polvo",
+    "type": "Ice",
+    "damage": 6,
+    "duration": 1000,
+    "energy": 15,
+    "dps": 6
+  },
+  "245": {
+    "name": "A Bocajarro",
+    "type": "Fighting",
+    "damage": 100,
+    "duration": 2300,
+    "energy": 100,
+    "dps": 43.48
+  },
+  "246": {
+    "name": "Puño Dinámico",
+    "type": "Fighting",
+    "damage": 90,
+    "duration": 2700,
+    "energy": 50,
+    "dps": 33.33
+  },
+  "247": {
+    "name": "Onda Certera",
+    "type": "Fighting",
+    "damage": 140,
+    "duration": 3500,
+    "energy": 140,
+    "dps": 40
+  },
+  "248": {
+    "name": "Rayo Aurora",
+    "type": "Ice",
+    "damage": 80,
+    "duration": 3550,
+    "energy": 50,
+    "dps": 22.54
+  },
+  "249": {
+    "name": "Rayo Carga",
+    "type": "Electric",
+    "damage": 8,
+    "duration": 1100,
+    "energy": 15,
+    "dps": 7.27
+  },
+  "250": {
+    "name": "Voltiocambio",
+    "type": "Electric",
+    "damage": 20,
+    "duration": 2300,
+    "energy": 25,
+    "dps": 8.7
+  },
+  "251": {
+    "name": "Voltio Cruel",
+    "type": "Electric",
+    "damage": 90,
+    "duration": 2600,
+    "energy": 50,
+    "dps": 34.62
+  },
+  "252": {
+    "name": "Electrocañón",
+    "type": "Electric",
+    "damage": 140,
+    "duration": 3700,
+    "energy": 100,
+    "dps": 37.84
+  },
+  "253": {
+    "name": "Cola Dragón",
+    "type": "Dragon",
+    "damage": 15,
+    "duration": 1100,
+    "energy": 9,
+    "dps": 13.64
+  },
+  "254": {
+    "name": "Alud",
+    "type": "Ice",
+    "damage": 90,
+    "duration": 2700,
+    "energy": 50,
+    "dps": 33.33
+  },
+  "255": {
+    "name": "Tajo Aéreo",
+    "type": "Flying",
+    "damage": 14,
+    "duration": 1200,
+    "energy": 10,
+    "dps": 11.67
+  },
+  "256": {
+    "name": "Pájaro Osado",
+    "type": "Flying",
+    "damage": 90,
+    "duration": 2000,
+    "energy": 100,
+    "dps": 45
+  },
+  "257": {
+    "name": "Ataque Aéreo",
+    "type": "Flying",
+    "damage": 70,
+    "duration": 2000,
+    "energy": 50,
+    "dps": 35
+  },
+  "258": {
+    "name": "Bucle Arena",
+    "type": "Ground",
+    "damage": 80,
+    "duration": 4000,
+    "energy": 50,
+    "dps": 20
+  },
+  "259": {
+    "name": "Pedrada",
+    "type": "Rock",
+    "damage": 50,
+    "duration": 2100,
+    "energy": 33,
+    "dps": 23.81
+  },
+  "260": {
+    "name": "Acoso",
+    "type": "Bug",
+    "damage": 10,
+    "duration": 1100,
+    "energy": 14,
+    "dps": 9.09
+  },
+  "261": {
+    "name": "Estoicismo",
+    "type": "Bug",
+    "damage": 15,
+    "duration": 1500,
+    "energy": 15,
+    "dps": 10
+  },
+  "262": {
+    "name": "Viento Plata",
+    "type": "Bug",
+    "damage": 70,
+    "duration": 3700,
+    "energy": 33,
+    "dps": 18.92
+  },
+  "263": {
+    "name": "Impresionar",
+    "type": "Ghost",
+    "damage": 8,
+    "duration": 1100,
+    "energy": 14,
+    "dps": 7.27
+  },
+  "264": {
+    "name": "Infortunio",
+    "type": "Ghost",
+    "damage": 10,
+    "duration": 1200,
+    "energy": 15,
+    "dps": 8.33
+  },
+  "265": {
+    "name": "Tinieblas",
+    "type": "Ghost",
+    "damage": 60,
+    "duration": 2600,
+    "energy": 50,
+    "dps": 23.08
+  },
+  "266": {
+    "name": "Cola Férrea",
+    "type": "Steel",
+    "damage": 15,
+    "duration": 1100,
+    "energy": 7,
+    "dps": 13.64
+  },
+  "267": {
+    "name": "Giro Bola",
+    "type": "Steel",
+    "damage": 80,
+    "duration": 3300,
+    "energy": 50,
+    "dps": 24.24
+  },
+  "268": {
+    "name": "Cuerpo Pesado",
+    "type": "Steel",
+    "damage": 70,
+    "duration": 2100,
+    "energy": 50,
+    "dps": 33.33
+  },
+  "269": {
+    "name": "Giro Fuego",
+    "type": "Fire",
+    "damage": 14,
+    "duration": 1100,
+    "energy": 10,
+    "dps": 12.73
+  },
+  "270": {
+    "name": "Sofoco",
+    "type": "Fire",
+    "damage": 160,
+    "duration": 4000,
+    "energy": 100,
+    "dps": 40
+  },
+  "271": {
+    "name": "Recurrente",
+    "type": "Grass",
+    "damage": 8,
+    "duration": 1100,
+    "energy": 14,
+    "dps": 7.27
+  },
+  "272": {
+    "name": "Hierba Lazo",
+    "type": "Grass",
+    "damage": 90,
+    "duration": 2600,
+    "energy": 50,
+    "dps": 34.62
+  },
+  "273": {
+    "name": "Energibola",
+    "type": "Grass",
+    "damage": 90,
+    "duration": 3900,
+    "energy": 50,
+    "dps": 23.08
+  },
+  "274": {
+    "name": "Paranormal",
+    "type": "Psychic",
+    "damage": 12,
+    "duration": 1100,
+    "energy": 12,
+    "dps": 10.91
+  },
+  "275": {
+    "name": "Premonición",
+    "type": "Psychic",
+    "damage": 120,
+    "duration": 2700,
+    "energy": 100,
+    "dps": 44.44
+  },
+  "276": {
+    "name": "Manto Espejo",
+    "type": "Psychic",
+    "damage": 60,
+    "duration": 2600,
+    "energy": 50,
+    "dps": 23.08
+  },
+  "277": {
+    "name": "Enfado",
+    "type": "Dragon",
+    "damage": 110,
+    "duration": 3900,
+    "energy": 50,
+    "dps": 28.21
+  },
+  "278": {
+    "name": "Alarido",
+    "type": "Dark",
+    "damage": 12,
+    "duration": 1100,
+    "energy": 12,
+    "dps": 10.91
+  },
+  "279": {
+    "name": "Triturar",
+    "type": "Dark",
+    "damage": 70,
+    "duration": 3200,
+    "energy": 33,
+    "dps": 21.88
+  },
+  "280": {
+    "name": "Juego Sucio",
+    "type": "Dark",
+    "damage": 70,
+    "duration": 2000,
+    "energy": 50,
+    "dps": 35
+  },
+  "281": {
+    "name": "Poder Oculto",
+    "type": "Normal",
+    "damage": 15,
+    "duration": 1500,
+    "energy": 15,
+    "dps": 10
+  },
+  "282": {
+    "name": "Derribo",
+    "type": "Normal",
+    "damage": 8,
+    "duration": 1200,
+    "energy": 10,
+    "dps": 6.7
+  },
+  "283": {
+    "name": "Cascada",
+    "type": "Water",
+    "damage": 16,
+    "duration": 1200,
+    "energy": 8,
+    "dps": 13.33
+  },
+  "284": {
+    "name": "Surf",
+    "type": "Water",
+    "damage": 65,
+    "duration": 1700,
+    "energy": 50,
+    "dps": 29.5
+  },
+  "285": {
+    "name": "Cometa Draco",
+    "type": "Dragon",
+    "damage": 150,
+    "duration": 3600,
+    "energy": 100,
+    "dps": 36.6
+  },
+  "286": {
+    "name": "Deseo Oculto",
+    "type": "Steel",
+    "damage": 80,
+    "duration": 1700,
+    "energy": 50,
+    "dps": 36.4
+  },
+  "287": {
+    "name": "Bostezo",
+    "type": "Normal",
+    "damage": 0,
+    "duration": 1700,
+    "energy": 15,
+    "dps": 0
+  },
+  "288": {
+    "name": "Psicoataque",
+    "type": "Psychic",
+    "damage": 70,
+    "duration": 4000,
+    "energy": 50,
+    "dps": 15.6
+  },
+  "289": {
+    "name": "Pulso Primigenio",
+    "type": "Water",
+    "damage": 130,
+    "duration": 1700,
+    "energy": 100,
+    "dps": 59.1
+  },
+  "290": {
+    "name": "Filo del Abismo",
+    "type": "Ground",
+    "damage": 130,
+    "duration": 1700,
+    "energy": 100,
+    "dps": 59.1
+  },
+  "291": {
+    "name": "Presente",
+    "type": "Normal",
+    "damage": 5,
+    "duration": 1300,
+    "energy": 20,
+    "dps": 3.8
+  },
+  "292": {
+    "name": "Bola clima fuego",
+    "type": "Fire",
+    "damage": 60,
+    "duration": 1600,
+    "energy": 20,
+    "dps": 37.5
+  },
+  "293": {
+    "name": "Bola clima Hielo",
+    "type": "Ice",
+    "damage": 60,
+    "duration": 1600,
+    "energy": 20,
+    "dps": 37.5
+  },
+  "294": {
+    "name": "Bola clima Roca",
+    "type": "Rock",
+    "damage": 60,
+    "duration": 1600,
+    "energy": 20,
+    "dps": 37.5
+  },
+  "295": {
+    "name": "Bola clima Agua",
+    "type": "Water",
+    "damage": 5,
+    "duration": 1300,
+    "energy": 20,
+    "dps": 3.8
+  },
+  "296": {
+    "name": "Planta Feroz",
+    "type": "Grass",
+    "damage": 5,
+    "duration": 1300,
+    "energy": 20,
+    "dps": 3.8
+  },
+  "297": {
+    "name": "Antiaéreo",
+    "type": "Rock",
+    "damage": 5,
+    "duration": 1300,
+    "energy": 20,
+    "dps": 3.8
+  },
+  "298": {
+    "name": "Anillo Ígneo",
+    "type": "Fire",
+    "damage": 5,
+    "duration": 1300,
+    "energy": 20,
+    "dps": 3.8
+  },
+  "299": {
+    "name": "Hidrocañón",
+    "type": "Water",
+    "damage": 5,
+    "duration": 1300,
+    "energy": 20,
+    "dps": 3.8
+  },
+  "300": {
+    "name": "Última Baza",
+    "type": "Normal",
+    "damage": 5,
+    "duration": 1300,
+    "energy": 20,
+    "dps": 3.8
+  },
+  "301": {
+    "name": "Puño Meteoro",
+    "type": "Steel",
+    "damage": 5,
+    "duration": 1300,
+    "energy": 20,
+    "dps": 3.8
+  },
+  "302": {
+    "name": "Cabezazo",
+    "type": "Normal",
+    "damage": 5,
+    "duration": 1300,
+    "energy": 20,
+    "dps": 3.8
+  },
+  "303": {
+    "name": "Bomba Ácida",
+    "type": "Poison",
+    "damage": 5,
+    "duration": 1300,
+    "energy": 20,
+    "dps": 3.8
+  },
+  "304": {
+    "name": "Tierra Viva",
+    "type": "Ground",
+    "damage": 5,
+    "duration": 1300,
+    "energy": 20,
+    "dps": 3.8
+  },
+  "305": {
+    "name": "Martillazo",
+    "type": "Water",
+    "damage": 5,
+    "duration": 1300,
+    "energy": 20,
+    "dps": 3.8
+  },
+  "306": {
+    "name": "Plancha",
+    "type": "Bug",
+    "damage": 5,
+    "duration": 1300,
+    "energy": 20,
+    "dps": 3.8
+  },
+  "307": {
+    "name": "Garra Brutal",
+    "type": "Normal",
+    "damage": 5,
+    "duration": 1300,
+    "energy": 20,
+    "dps": 3.8
+  },
+  "308": {
+    "name": "Pulpocañón",
+    "type": "Water",
+    "damage": 5,
+    "duration": 1300,
+    "energy": 20,
+    "dps": 3.8
+  },
+  "309": {
+    "name": "Disparo Espejo",
+    "type": "Steel",
+    "damage": 5,
+    "duration": 1300,
+    "energy": 20,
+    "dps": 3.8
+  },
+  "310": {
+    "name": "Fuerza Bruta",
+    "type": "Fighting",
+    "damage": 5,
+    "duration": 1300,
+    "energy": 20,
+    "dps": 3.8
+  },
+  "311": {
+    "name": "Aguijón Letal",
+    "type": "Bug",
+    "damage": 5,
+    "duration": 1300,
+    "energy": 20,
+    "dps": 3.8
+  },
+  "312": {
+    "name": "Ciclón de Hojas",
+    "type": "Grass",
+    "damage": 5,
+    "duration": 1300,
+    "energy": 20,
+    "dps": 3.8
+  },
+  "313": {
+    "name": "Chupavidas",
+    "type": "Bug",
+    "damage": 5,
+    "duration": 1300,
+    "energy": 20,
+    "dps": 3.8
+  },
+  "314": {
+    "name": "Puño Drenaje",
+    "type": "Fighting",
+    "damage": 5,
+    "duration": 1300,
+    "energy": 20,
+    "dps": 3.8
+  },
+  "315": {
+    "name": "Hueso Sombrío",
+    "type": "Ghost",
+    "damage": 5,
+    "duration": 1300,
+    "energy": 20,
+    "dps": 3.8
+  },
+  "316": {
+    "name": "Agua Lodosa",
+    "type": "Water",
+    "damage": 5,
+    "duration": 1300,
+    "energy": 20,
+    "dps": 3.8
+  },
+  "317": {
+    "name": "Patada Ígnea",
+    "type": "Fire",
+    "damage": 5,
+    "duration": 1300,
+    "energy": 20,
+    "dps": 3.8
+  },
+  "318": {
+    "name": "Concha Filo",
+    "type": "Water",
+    "damage": 5,
+    "duration": 1300,
+    "energy": 20,
+    "dps": 3.8
+  },
+  "319": {
+    "name": "Puño Incremento",
+    "type": "Fighting",
+    "damage": 50,
+    "duration": 2000,
+    "energy": 33,
+    "dps": 25
+  },
+  "320": {
+    "name": "Encanto",
+    "type": "Fairy",
+    "damage": 50,
+    "duration": 2000,
+    "energy": 33,
+    "dps": 25
+  },
+  "321": {
+    "name": "Giga Impacto",
+    "type": "Normal",
+    "damage": 50,
+    "duration": 2000,
+    "energy": 33,
+    "dps": 25
+  },
+  "322": {
+    "name": "Frustración",
+    "type": "Normal",
+    "damage": 50,
+    "duration": 2000,
+    "energy": 33,
+    "dps": 25
+  },
+  "323": {
+    "name": "Retribución",
+    "type": "Normal",
+    "damage": 50,
+    "duration": 2000,
+    "energy": 33,
+    "dps": 25
+  },
+  "324": {
+    "name": "Sincrorruido",
+    "type": "Psychic",
+    "damage": 50,
+    "duration": 2000,
+    "energy": 33,
+    "dps": 25
+  },
+  "325": {
+    "name": "Fijar Blanco",
+    "type": "Normal",
+    "damage": 50,
+    "duration": 2000,
+    "energy": 33,
+    "dps": 25
+  }
+}
