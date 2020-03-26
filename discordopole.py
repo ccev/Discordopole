@@ -38,24 +38,28 @@ if not os.path.exists("data/raid_cache.json"):
 
 ### LANG FILES
 
+dts_lang = bot.config['language']
 if not bot.config['language'] in ["en", "de", "fr", "es", "pl"]:
     dts_lang = "en"
 
 with open(f"data/dts/{dts_lang}.json") as f:
     bot.locale = json.load(f)
 
+move_lang = bot.config['language']
 if not bot.config['language'] in ["en", "de", "fr", "es"]:
     move_lang = "en"
 
 with open(f"data/moves/{move_lang}.json") as f:
     bot.moves = json.load(f)
 
+form_lang = bot.config['language']
 if not bot.config['language'] in ["en", "de", "fr", "es"]:
     form_lang = "en"
 
 with open(f"data/forms/{form_lang}.json") as f:
     bot.forms = json.load(f)
 
+item_lang = bot.config['language']
 if not bot.config['language'] in ["en", "de", "fr", "es"]:
     item_lang = "en"
 
