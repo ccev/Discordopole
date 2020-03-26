@@ -225,7 +225,7 @@ class Boards(commands.Cog):
                         if self.bot.config['use_map']:
                             map_url = self.bot.map_url.quest(lat, lon, stop_id)
                         else:
-                            map_url = f"https://www.google.com/maps/search/?api=1&query={lat},{lon})"
+                            map_url = f"https://www.google.com/maps/search/?api=1&query={lat},{lon}"
                         map_url = self.short(map_url)
 
                         entry = f"{emote} [{stop_name}]({map_url})\n"
