@@ -1,0 +1,210 @@
+{
+    "1": {
+      "protoname": "ITEM_POKE_BALL",
+      "name": "Pokéball"
+    },
+    "2": {
+      "protoname": "ITEM_GREAT_BALL",
+      "name": "Greatball"
+    },
+    "3": {
+      "protoname": "ITEM_ULTRA_BALL",
+      "name": "Ultraball"
+    },
+    "4": {
+      "protoname": "ITEM_MASTER_BALL",
+      "name": "Masterball"
+    },
+    "5": {
+      "protoname": "ITEM_PREMIER_BALL",
+      "name": "Premierball"
+    },
+    "101": {
+      "protoname": "ITEM_POTION",
+      "name": "Poción"
+    },
+    "102": {
+      "protoname": "ITEM_SUPER_POTION",
+      "name": "Superpoción"
+    },
+    "103": {
+      "protoname": "ITEM_HYPER_POTION",
+      "name": "Hyperpoción"
+    },
+    "104": {
+      "protoname": "ITEM_MAX_POTION",
+      "name": "Poción Máxima"
+    },
+    "201": {
+      "protoname": "ITEM_REVIVE",
+      "name": "Revivir"
+    },
+    "202": {
+      "protoname": "ITEM_MAX_REVIVE",
+      "name": "Revivir Máximo"
+    },
+    "301": {
+      "protoname": "ITEM_LUCKY_EGG",
+      "name": "Huevo Suerte"
+    },
+    "401": {
+      "protoname": "ITEM_INCENSE_ORDINARY",
+      "name": "Incienso"
+    },
+    "402": {
+      "protoname": "ITEM_INCENSE_SPICY",
+      "name": "Incienso Picante"
+    },
+    "403": {
+      "protoname": "ITEM_INCENSE_COOL",
+      "name": "Incienso Fresco"
+    },
+    "404": {
+      "protoname": "ITEM_INCENSE_FLORAL",
+      "name": "Incienso Floral"
+    },
+    "501": {
+      "protoname": "ITEM_TROY_DISK",
+      "name": "Módulo Cebo"
+    },
+    "502": {
+      "protoname": "ITEM_TROY_DISK_GLACIAL",
+      "name": "Módulo Cebo Glaciar"
+    },
+    "503": {
+      "protoname": "ITEM_TROY_DISK_MOSSY",
+      "name": "Módulo Cebo Musgoso"
+    },
+    "504": {
+      "protoname": "ITEM_TROY_DISK_MAGNETIC",
+      "name": "Módulo Cebo Magnético"
+    },
+    "602": {
+      "protoname": "ITEM_X_ATTACK",
+      "name": "Ataque X"
+    },
+    "603": {
+      "protoname": "ITEM_X_DEFENSE",
+      "name": "Defensa X"
+    },
+    "604": {
+      "protoname": "ITEM_X_MIRACLE",
+      "name": "X Miracle"
+    },
+    "701": {
+      "protoname": "ITEM_RAZZ_BERRY",
+      "name": "Baya Frambu"
+    },
+    "702": {
+      "protoname": "ITEM_BLUK_BERRY",
+      "name": "Baya Oram"
+    },
+    "703": {
+      "protoname": "ITEM_NANAB_BERRY",
+      "name": "Baya Latano"
+    },
+    "704": {
+      "protoname": "ITEM_WEPAR_BERRY",
+      "name": "Baya Peragu"
+    },
+    "705": {
+      "protoname": "ITEM_PINAP_BERRY",
+      "name": "Baya Pinia"
+    },
+    "706": {
+      "protoname": "ITEM_GOLDEN_RAZZ_BERRY",
+      "name": "Baya Frambu dorada"
+    },
+    "707": {
+      "protoname": "ITEM_GOLDEN_NANAB_BERRY",
+      "name": "Baya Frambu Pinia"
+    },
+    "708": {
+      "protoname": "ITEM_GOLDEN_PINAP_BERRY",
+      "name": "Baya Pinia plateada"
+    },
+    "801": {
+      "protoname": "ITEM_SPECIAL_CAMERA",
+      "name": "Cámara"
+    },
+    "901": {
+      "protoname": "ITEM_INCUBATOR_BASIC_UNLIMITED",
+      "name": "Incubadora \u221e"
+    },
+    "902": {
+      "protoname": "ITEM_INCUBATOR_BASIC",
+      "name": "Incubadora"
+    },
+    "903": {
+      "protoname": "ITEM_INCUBATOR_SUPER",
+      "name": "Superincubadora"
+    },
+    "1001": {
+      "protoname": "ITEM_POKEMON_STORAGE_UPGRADE",
+      "name": "Alamcenamiento de Pokémon"
+    },
+    "1002": {
+      "protoname": "ITEM_ITEM_STORAGE_UPGRADE",
+      "name": "Aumento de espacio (bolsa)"
+    },
+    "1101": {
+      "protoname": "ITEM_SUN_STONE",
+      "name": "Piedra Solar"
+    },
+    "1102": {
+      "protoname": "ITEM_KINGS_ROCK",
+      "name": "Roca del Rey"
+    },
+    "1103": {
+      "protoname": "ITEM_METAL_COAT",
+      "name": "Revestimiento Metálico"
+    },
+    "1104": {
+      "protoname": "ITEM_DRAGON_SCALE",
+      "name": "Escama Dragón"
+    },
+    "1105": {
+      "protoname": "ITEM_UP_GRADE",
+      "name": "Mejora"
+    },
+    "1106": {
+      "protoname": "ITEM_GEN4_EVOLUTION_STONE",
+      "name": "Piedra Sinnoh"
+    },
+    "1107": {
+      "protoname": "ITEM_GEN5_EVOLUTION_STONE",
+      "name": "Piedra Teselia"
+    },
+    "1201": {
+      "protoname": "ITEM_MOVE_REROLL_FAST_ATTACK",
+      "name": "MT de ataque rápido"
+    },
+    "1202": {
+      "protoname": "ITEM_MOVE_REROLL_SPECIAL_ATTACK",
+      "name": "MT de ataque cargado"
+    },
+    "1301": {
+      "protoname": "ITEM_RARE_CANDY",
+      "name": "Caramelo Raro"
+    },
+    "1401": {
+      "protoname": "ITEM_FREE_RAID_TICKET",
+      "name": "Pase de incursión"
+    },
+    "1402": {
+      "protoname": "ITEM_PAID_RAID_TICKET",
+      "name": "Pase de combate premium"
+    },
+    "1403": {
+      "protoname": "ITEM_LEGENDARY_RAID_TICKET",
+      "name": "Pase de incursión EX"
+    },
+    "1404": {
+      "protoname": "ITEM_STAR_PIECE",
+      "name": "Trozo Estrella"
+    },
+    "1405": {
+      "protoname": "ITEM_FRIEND_GIFT_BOX",
+      "name": "Regalo"
+    }
+  }
