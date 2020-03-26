@@ -36,14 +36,36 @@ if not os.path.exists("data/raid_cache.json"):
     f.write("{}")
     f.close()
 
-with open(f"data/dts/{bot.config['language']}.json") as localejson:
-    bot.locale = json.load(localejson)
+### LANG FILES
+
+if not bot.config['language'] in ["en", "de", "fr", "es", "pl"]:
+    dts_lang = "en"
+
+with open(f"data/dts/{dts_lang}.json") as f:
+    bot.locale = json.load(f)
+
+if not bot.config['language'] in ["en", "de", "fr", "es"]:
+    move_lang = "en"
+
+with open(f"data/moves/{move_lang}.json") as f:
+    bot.moves = json.load(f)
+
+if not bot.config['language'] in ["en", "de", "fr", "es"]:
+    form_lang = "en"
+
+with open(f"data/forms/{form_lang}.json") as f:
+    bot.forms = json.load(f)
+
+if not bot.config['language'] in ["en", "de", "fr", "es"]:
+    item_lang = "en"
+
+with open(f"data/items/{item_lang}.json") as f:
+    bot.items = json.load(f)
+
+### LANG FILES STOP
 
 with open("config/boards.json", "r") as f:
     bot.boards = json.load(f)
-
-with open(f"data/moves/{bot.config['language']}.json") as f:
-    bot.moves = json.load(f)
 
 with open("config/geofence.json") as f:
     bot.geofences = json.load(f)
@@ -51,14 +73,8 @@ with open("config/geofence.json") as f:
 with open("config/emotes.json") as f:
     bot.custom_emotes = json.load(f)
 
-with open(f"data/forms/{bot.config['language']}.json") as f:
-    bot.forms = json.load(f)
-
 with open(f"data/raidcp.json") as f:
     bot.raidcp = json.load(f)
-
-with open(f"data/items/{bot.config['language']}.json") as f:
-    bot.items = json.load(f)
 
 def get_area(areaname):
     stringfence = "-100 -100, -100 100, 100 100, 100 -100, -100 -100"
