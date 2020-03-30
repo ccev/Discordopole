@@ -1,4 +1,4 @@
-![](https://media.discordapp.net/attachments/523253670700122144/694299343183806524/discordopole.png)
+![](https://media.discordapp.net/attachments/523253670700122144/694300033650130994/dp_maybee.png)
 
 # Discordopole
 
