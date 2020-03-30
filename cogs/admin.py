@@ -407,8 +407,8 @@ class Admin(commands.Cog):
 
         print("All emotes imported.")
 
-    @commands.command(pass_context=True)
-    async def update(self, ctx):
+    @get.command(pass_context=True)
+    async def updates(self, ctx):
         if not ctx.message.author.id in self.bot.config['admins']:
             print(f"@{ctx.author.name} tried to import emotes but is no Admin")
             return
