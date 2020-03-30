@@ -1,4 +1,4 @@
-![](https://media.discordapp.net/attachments/523253670700122144/694300033650130994/dp_maybee.png)
+![](https://media.discordapp.net/attachments/523253670700122144/694300844824199168/dp_maybee.png)
 
 Discordopole takes what [Worldopole](https://github.com/brusselopole/Worldopole) left behind and puts it into Discord. The goal is to allow your users to get easy access to useful data.
 
