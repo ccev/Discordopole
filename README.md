@@ -5,8 +5,10 @@ Discordopole takes what [Worldopole](https://github.com/brusselopole/Worldopole)
 - Supports **MAD** and **RDM**
 - Written with language support in mind. Supports **English**, **German**, **French**, **Spanish** and **Polish**
 
-## [Wiki](https://github.com/ccev/Discordopole/wiki)
+### [Wiki](https://github.com/ccev/Discordopole/wiki)
 Getting started, detailed feature overview and more.
 
-## [Discord](https://discord.gg/cnT8Dmz)
-Support, announcements and planned features.
+### [Discord](https://discord.gg/cnT8Dmz)
+Get support, announcements and planned features.
+
+[SOON: Graphic]
