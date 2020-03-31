@@ -93,8 +93,22 @@ def get_area(areaname):
     area_list = [stringfence, namefence]
     return area_list
 
+def isUser(role_ids, channel_id):
+    if len(bot.config["cmd_roles"][0]) + len(bot.config["cmd_channels"][0]) == 0:
+        return True
+    elif str(channel_id) in bot.config["cmd_channels"]:
+        return True
+    else:
+        for role in role_ids:
+            if str(role.id) in bot.config["cmd_roles"]:
+                return True
+        return False
+
 @bot.command(pass_context=True, aliases=bot.config['pokemon_aliases'])
 async def pokemon(ctx, stat_name, areaname = "", *, timespan = None):
+    if not isUser(ctx.author.roles, ctx.channel.id):
+        print(f"@{ctx.author.name} tried to use !pokemon but is no user")
+        return
     mon = details(stat_name, bot.config['mon_icon_repo'], bot.config['language'])
 
     footer_text = ""
@@ -221,6 +235,9 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None):
 
 @bot.command(pass_context=True, aliases=bot.config['gyms_aliases'])
 async def gyms(ctx, areaname = ""):
+    if not isUser(ctx.author.roles, ctx.channel.id):
+        print(f"@{ctx.author.name} tried to use !gyms but is no user")
+        return
     footer_text = ""
     text = ""
     loading = bot.locale['loading_gym_stats']
@@ -281,6 +298,9 @@ async def gyms(ctx, areaname = ""):
 
 @bot.command(pass_context=True, aliases=bot.config['quest_aliases'])
 async def quest(ctx, areaname = "", *, reward):
+    if not isUser(ctx.author.roles, ctx.channel.id):
+        print(f"@{ctx.author.name} tried to use !quest but is no user")
+        return
     footer_text = ""
     text = ""
     loading = bot.locale['loading_quests']
