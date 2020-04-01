@@ -42,42 +42,42 @@ dts_lang = bot.config['language']
 if not bot.config['language'] in ["en", "de", "fr", "es", "pl"]:
     dts_lang = "en"
 
-with open(f"data/dts/{dts_lang}.json") as f:
+with open(f"data/dts/{dts_lang}.json", encoding="utf-8") as f:
     bot.locale = json.load(f)
 
 move_lang = bot.config['language']
 if not bot.config['language'] in ["en", "de", "fr", "es"]:
     move_lang = "en"
 
-with open(f"data/moves/{move_lang}.json") as f:
+with open(f"data/moves/{move_lang}.json", encoding="utf-8") as f:
     bot.moves = json.load(f)
 
 form_lang = bot.config['language']
 if not bot.config['language'] in ["en", "de", "fr", "es"]:
     form_lang = "en"
 
-with open(f"data/forms/{form_lang}.json") as f:
+with open(f"data/forms/{form_lang}.json", encoding="utf-8") as f:
     bot.forms = json.load(f)
 
 item_lang = bot.config['language']
 if not bot.config['language'] in ["en", "de", "fr", "es"]:
     item_lang = "en"
 
-with open(f"data/items/{item_lang}.json") as f:
+with open(f"data/items/{item_lang}.json", encoding="utf-8") as f:
     bot.items = json.load(f)
 
 ### LANG FILES STOP
 
-with open("config/boards.json", "r") as f:
+with open("config/boards.json", "r", encoding="utf-8") as f:
     bot.boards = json.load(f)
 
-with open("config/geofence.json") as f:
+with open("config/geofence.json", encoding="utf-8") as f:
     bot.geofences = json.load(f)
 
-with open("config/emotes.json") as f:
+with open("config/emotes.json", encoding="utf-8") as f:
     bot.custom_emotes = json.load(f)
 
-with open(f"data/raidcp.json") as f:
+with open(f"data/raidcp.json", encoding="utf-8") as f:
     bot.raidcp = json.load(f)
 
 def get_area(areaname):
@@ -431,3 +431,4 @@ if __name__ == "__main__":
     for extension in extensions:
         bot.load_extension(extension)
     bot.run(bot.config['bot_token'])
+
