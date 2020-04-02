@@ -364,7 +364,6 @@ class Admin(commands.Cog):
             return
 
         needed_emote_names = ["ex_pass", "raid_egg_1", "raid_egg_2", "raid_egg_3", "raid_egg_4", "raid_egg_5", "gym_blue", "gym_red", "gym_yellow", "gym_white", "blank", "raid", "cliff", "grunt_female", "pokeball", "pokestop"]
-        emotejson = json.loads("{}")
 
         if quick_name == ctx.guild.name:
             print(f"@{ctx.author.name} wants to import emotes in Server {ctx.guild.name} and said the name directly")
@@ -404,15 +403,14 @@ class Admin(commands.Cog):
                 emote_ref = f"<:{emote.name}:{emote.id}>"
                 embed.description = f"{embed.description}{emote_ref} `{emote_ref}`\n"
                 await message.edit(embed=embed)
-                emotejson.update({emote_name: emote_ref})
+                self.bot.custom_emotes.update({emote_name: emote_ref})
             except Exception as err:
                 print(err)
                 print(f"Error while importing emote {emote_name}") 
         embed.title = "Done importing Emotes"
         await message.edit(embed=embed)
         with open("config/emotes.json", "w") as f:
-            f.write(json.dumps(emotejson, indent=4))
-        self.bot.custom_emotes = emotejson
+            f.write(json.dumps(self.bot.custom_emotes, indent=4))
 
         print("All emotes imported.")
 
