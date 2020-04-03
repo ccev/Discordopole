@@ -2,8 +2,6 @@ import discord
 import asyncio
 import json
 import pyshorteners
-import urllib.request
-import os
 
 from discord.ext import tasks, commands
 from datetime import datetime, date
@@ -235,22 +233,16 @@ class Boards(commands.Cog):
                             text = text + entry
                             length = length + len(entry)
 
-                image = ""
+                static_map_img = ""
                 if length > 0:
                     if self.bot.config['use_static']:
-                        static_map = self.bot.static_map.quest(lat_list, lon_list, reward_items, reward_mons, self.bot.custom_emotes)
-
-                        urllib.request.urlretrieve(static_map, "quest_static_map_temp.png")
-                        channel = await self.bot.fetch_channel(self.bot.config['host_channel'])
-                        image_msg = await channel.send(file=discord.File("quest_static_map_temp.png"))
-                        image = image_msg.attachments[0].url
-                        os.remove("quest_static_map_temp.png")
+                        static_map_img = await self.bot.static_map.quest(lat_list, lon_list, reward_items, reward_mons, self.bot.custom_emotes)
                 else:
                     text = self.bot.locale["empty_board"]  
 
                 embed = discord.Embed(title=board['title'], description=text, timestamp=datetime.utcnow())
                 embed.set_footer(text=area[1])
-                embed.set_image(url=image)
+                embed.set_image(url=static_map_img)
 
                 if (len(board["items"]) + len(board["mons"])) == 1:
                     if len(board["items"]) == 1:

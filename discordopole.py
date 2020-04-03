@@ -5,7 +5,6 @@ import os
 import dateparser
 import matplotlib.pyplot as plt
 import pyshorteners
-import urllib.request
 
 from datetime import datetime, date
 from discord.ext import commands
@@ -24,9 +23,6 @@ bot = commands.Bot(command_prefix=config['prefix'], case_insensitive=1)
 bot.max_moves_in_list = 291
 bot.config = config
 short = pyshorteners.Shortener().tinyurl.short
-
-if bot.config['use_static']:
-    bot.static_map = util.maps.static_map(config['static_provider'], config['static_key'])
 
 if bot.config['use_map']:
     bot.map_url = util.maps.map_url(config['map'], config['map_url'])
@@ -382,37 +378,35 @@ async def quest(ctx, areaname = "", *, reward):
     image = ""
     if length > 0:
         if bot.config['use_static']:
-            guild = await bot.fetch_guild(bot.config['host_server'])
-            existing_emotes = await guild.fetch_emojis()
-            emote_exist = False
-            for existing_emote in existing_emotes:
-                if emote_name == existing_emote.name:
-                    emote_exist = True
-            if not emote_exist:
-                try:
-                    image = await Admin.download_url("", emote_img)
-                    emote = await guild.create_custom_emoji(name=emote_name, image=image)
-                    emote_ref = f"<:{emote.name}:{emote.id}>"
+            if bot.config['static_provider'] == "mapbox":
+                guild = await bot.fetch_guild(bot.config['host_server'])
+                existing_emotes = await guild.fetch_emojis()
+                emote_exist = False
+                for existing_emote in existing_emotes:
+                    if emote_name == existing_emote.name:
+                        emote_exist = True
+                if not emote_exist:
+                    try:
+                        image = await Admin.download_url("", emote_img)
+                        emote = await guild.create_custom_emoji(name=emote_name, image=image)
+                        emote_ref = f"<:{emote.name}:{emote.id}>"
 
-                    if emote_name in bot.custom_emotes:
-                        bot.custom_emotes[emote_name] = emote_ref
-                    else:
-                        bot.custom_emotes.update({emote_name: emote_ref})
-                except Exception as err:
-                    print(err)
-                    print(f"Error while importing emote {emote_name}")
+                        if emote_name in bot.custom_emotes:
+                            bot.custom_emotes[emote_name] = emote_ref
+                        else:
+                            bot.custom_emotes.update({emote_name: emote_ref})
+                    except Exception as err:
+                        print(err)
+                        print(f"Error while importing emote {emote_name}")
 
-            static_map = bot.static_map.quest(lat_list, lon_list, reward_items, reward_mons, bot.custom_emotes)
+                image = await bot.static_map.quest(lat_list, lon_list, reward_items, reward_mons, bot.custom_emotes)
 
-            urllib.request.urlretrieve(static_map, "quest_command_static_map_temp.png")
-            channel = await bot.fetch_channel(bot.config['host_channel'])
-            image_msg = await channel.send(file=discord.File("quest_command_static_map_temp.png"))
-            image = image_msg.attachments[0].url
-            os.remove("quest_command_static_map_temp.png")
+                if not emote_exist:
+                    await emote.delete()
+                    bot.custom_emotes.pop(emote_name)
 
-            if not emote_exist:
-                await emote.delete()
-                bot.custom_emotes.pop(emote_name)
+            elif bot.config['static_provider'] == "tileserver":
+                image = await bot.static_map.quest(lat_list, lon_list, reward_items, reward_mons, bot.custom_emotes)
     else:
         embed.description = bot.locale["no_quests_found"]
 
@@ -426,6 +420,10 @@ async def quest(ctx, areaname = "", *, reward):
 async def on_ready():
     #await bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.watching, name="Discordopole"))
     print("Connected to Discord. Ready to take commands.")
+
+    if bot.config['use_static']:
+        trash_channel = await bot.fetch_channel(bot.config['host_channel'])
+        bot.static_map = util.maps.static_map(config['static_provider'], config['static_key'], trash_channel, bot.config['mon_icon_repo'])
 
 if __name__ == "__main__":
     for extension in extensions:
