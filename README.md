@@ -9,4 +9,9 @@ Discordopole takes what [Worldopole](https://github.com/brusselopole/Worldopole)
 - [**Wiki**](https://github.com/ccev/Discordopole/wiki) - Getting started, detailed feature overview and more.
 - [**Discord**](https://discord.gg/cnT8Dmz) - Support, announcements and planned features.
 
-[SOON: Graphic]
+### Features
+There are two types of frontend features:
+- Boards: messages that always stay updated with latest information
+- Commands: allow users to get useful information they want
+
+Screenshots and more information: [Board Wiki Page](https://github.com/ccev/Discordopole/wiki/Boards) and [Command Wiki Page](https://github.com/ccev/Discordopole/wiki/Commands)
