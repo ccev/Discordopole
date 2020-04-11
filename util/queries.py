@@ -32,7 +32,7 @@ async def get_shiny_total(mon_id, area, starttime, endtime, config):
     if config['db_scan_schema'] == "mad":
         query_total_shiny_count = f"select count(pokemon_id) from pokemon where pokemon_id={mon_id} and disappear_time > utc_timestamp() - INTERVAL 8 WEEK and individual_attack is not null AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude)) AND disappear_time > convert_tz('{starttime}', '{config['timezone']}', '+00:00') AND disappear_time < convert_tz('{endtime}', '{config['timezone']}', '+00:00')"
     elif config['db_scan_schema'] == "rdm":
-        query_total_shiny_count = f"SELECT count(pokemon_id) from pokemon WHERE where pokemon_id = {mon_id} and expire_timestamp > unix_timestamp() and atk_iv is not null AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon)) and first_seen_timestamp > UNIX_TIMESTAMP(convert_tz('{starttime}', '{config['timezone']}', '+00:00')) AND first_seen_timestamp < UNIX_TIMESTAMP(convert_tz('{endtime}', '{config['timezone']}', '+00:00'))"
+        query_total_shiny_count = f"SELECT count(pokemon_id) from pokemon WHERE pokemon_id = {mon_id} and atk_iv is not null AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon)) and first_seen_timestamp > UNIX_TIMESTAMP(convert_tz('{starttime}', '{config['timezone']}', '+00:00')) AND first_seen_timestamp < UNIX_TIMESTAMP(convert_tz('{endtime}', '{config['timezone']}', '+00:00'))"
     await cursor_shiny_total.execute(query_total_shiny_count)
     shiny_total = await cursor_shiny_total.fetchall()
     for var in shiny_total:
