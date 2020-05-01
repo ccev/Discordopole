@@ -20,7 +20,7 @@ extensions = ["cogs.admin", "cogs.boards", "cogs.channels"]
 
 config = util.config.create_config("config/config.ini")
 bot = commands.Bot(command_prefix=config['prefix'], case_insensitive=1)
-bot.max_moves_in_list = 332
+bot.max_moves_in_list = 340
 bot.config = config
 short = pyshorteners.Shortener().tinyurl.short
 
