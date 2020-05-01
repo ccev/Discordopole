@@ -123,10 +123,15 @@ class Boards(commands.Cog):
                 if "mon_today" in board['type']:
                     mon_today = await queries.statboard_mon_today(self.bot.config, area[0])
                     if "mon_active" in board['type']:
-                        text = f"{text}{self.bot.custom_emotes['pokeball']} **{mon_active[0][0]:,}** {self.bot.locale['active_pokemon']} | **{mon_today[0][0]:,}** {self.bot.locale['today']}\n\n"
+                        scanned_ratio = int(round((mon_today[0][1] / mon_today[0][0] * 100), 0))
+                        text = f"{text}{self.bot.custom_emotes['pokeball']} **{mon_active[0][0]:,}** {self.bot.locale['active_pokemon']} | **{mon_today[0][0]:,}** ({scanned_ratio}% mit IVs) {self.bot.locale['today']}\n\n"
                     else:
                         text = f"{text}{self.bot.custom_emotes['pokeball']} **{mon_today[0][0]:,}** {self.bot.locale['pokemon_seen_today']}\n\n"
-                
+
+                if "hundos_today" in board['type']:
+                    hundos_today = await queries.statboard_hundos_today(self.bot.config, area[0])
+                    text = f"{text}{self.bot.locale['hundos']} {self.bot.locale['today']}: **{hundos_today[0][0]:,}**\n\n"
+
                 if "gym_amount" in board['type']:
                     gym_amount = await queries.statboard_gym_amount(self.bot.config, area[0])
                     text = f"{text}{self.bot.custom_emotes['gym_white']} **{gym_amount[0][0]:,}** {self.bot.locale['total_gyms']}\n"
@@ -197,14 +202,24 @@ class Boards(commands.Cog):
                 reward_items = list()
                 lat_list = list()
                 lon_list = list()
+                mon_id = 0
+                item_id = 0
+
                 for quest_json, quest_text, lat, lon, stop_name, stop_id in quests:
                     quest_json = json.loads(quest_json)
 
                     found_rewards = True
                     emote = ""
 
-                    item_id = quest_json[0]["item"]["item"]
-                    mon_id = quest_json[0]["pokemon_encounter"]["pokemon_id"]
+                    if self.bot.config['db_scan_schema'] == "rdm":
+                        if 'pokemon_id' in quest_json[0]["info"]:
+                            mon_id = quest_json[0]["info"]["pokemon_id"]
+                        elif 'item_id' in quest_json[0]["info"]:
+                            item_id = quest_json[0]["info"]["item_id"]
+                    elif self.bot.config['db_scan_schema'] == "mad":
+                        item_id = quest_json[0]["item"]["item"]
+                        mon_id = quest_json[0]["pokemon_encounter"]["pokemon_id"]
+
                     if item_id in board["items"]:
                         emote = self.bot.custom_emotes[f"i{item_id}"]
                         reward_items.append([item_id, lat, lon])
