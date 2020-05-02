@@ -158,11 +158,45 @@ class Admin(commands.Cog):
                 elif "team" in stat:
                     stats.append("gym_teams")
             elif "raid" in stat:
-                #if "active" in stat:
-                stats.append("raid_active")
+                if "level" in stat:
+                    if "1" in stat:
+                        stats.append("raid_lvl1_active")
+                    elif "2" in stat:
+                        stats.append("raid_lvl2_active")
+                    elif "3" in stat:
+                        stats.append("raid_lvl3_active")
+                    elif "4" in stat:
+                        stats.append("raid_lvl4_active")
+                    elif "5" in stat:
+                        stats.append("raid_lvl5_active")
+                    elif "all" in stat:
+                        stats.append("raid_lvl5_active")
+                        stats.append("raid_lvl4_active")
+                        stats.append("raid_lvl3_active")
+                        stats.append("raid_lvl2_active")
+                        stats.append("raid_lvl1_active")
+                else:
+                    stats.append("raid_active")
             elif "egg" in stat:
-                #if "active" in stat:
-                stats.append("egg_active")
+                if "level" in stat:
+                    if "1" in stat:
+                        stats.append("egg_lvl1_active")
+                    elif "2" in stat:
+                        stats.append("egg_lvl2_active")
+                    elif "3" in stat:
+                        stats.append("egg_lvl3_active")
+                    elif "4" in stat:
+                        stats.append("egg_lvl4_active")
+                    elif "5" in stat:
+                        stats.append("egg_lvl5_active")
+                    elif "all" in stat:
+                        stats.append("egg_lvl5_active")
+                        stats.append("egg_lvl4_active")
+                        stats.append("egg_lvl3_active")
+                        stats.append("egg_lvl2_active")
+                        stats.append("egg_lvl1_active")
+                else:
+                    stats.append("egg_active")
             elif "stop" in stat:
                 stats.append("stop_amount")
             elif "grunt" in stat:
@@ -172,6 +206,16 @@ class Admin(commands.Cog):
                 stats.append("leader_active")
             elif "quest" in stat:
                 stats.append("quest_active")
+            elif "hundos" in stat:
+                if "active" in stat:
+                    stats.append("hundos_active")
+                elif "today" in stat:
+                    stats.append("hundos_today")
+            elif "scanned" in stat:
+                if "active" in stat:
+                    stats.append("scanned_active")
+                elif "today" in stat:
+                    stats.append("scanned_today")
 
         areaexist = False
         for areag in self.bot.geofences:
