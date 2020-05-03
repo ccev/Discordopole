@@ -46,7 +46,7 @@ async def get_scan_numbers(mon_id, area, starttime, endtime, config):
     if config['db_scan_schema'] == "mad":
         query_hundo_count = f"select count(pokemon_id) as scanned, SUM(individual_attack = 15 AND individual_defense = 15 AND individual_stamina = 15) AS iv100, SUM(individual_attack = 0 AND individual_defense = 0 AND individual_stamina = 0) AS iv0, SUM(individual_attack + individual_defense + individual_stamina >= 41) AS iv90 from pokemon where pokemon_id = {mon_id} and individual_attack IS NOT NULL AND disappear_time > convert_tz('{starttime}', '{config['timezone']}', '+00:00') AND disappear_time < convert_tz('{endtime}', '{config['timezone']}', '+00:00') AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))"
     elif config['db_scan_schema'] == "rdm":
-        query_hundo_count = f"select count(id) as scanned, SUM(iv = 100) AS iv100, SUM(iv = 0) AS iv0, SUM(iv > 90) AS iv90 from pokemon where id = {mon_id} and atk_iv IS NOT NULL AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon)) AND first_seen_timestamp > UNIX_TIMESTAMP(convert_tz('{starttime}', '{config['timezone']}', '+00:00')) AND first_seen_timestamp < UNIX_TIMESTAMP(convert_tz('{endtime}', '{config['timezone']}', '+00:00'))"
+        query_hundo_count = f"select count(id) as scanned, SUM(iv = 100) AS iv100, SUM(iv = 0) AS iv0, SUM(iv > 90) AS iv90 from pokemon where pokemon_id = {mon_id} and iv IS NOT NULL AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon)) AND first_seen_timestamp > UNIX_TIMESTAMP(convert_tz('{starttime}', '{config['timezone']}', '+00:00')) AND first_seen_timestamp < UNIX_TIMESTAMP(convert_tz('{endtime}', '{config['timezone']}', '+00:00'))"
     await cursor_scan_numbers.execute(query_hundo_count)
     hundo_count = await cursor_scan_numbers.fetchall()
 
@@ -93,7 +93,7 @@ async def get_active_quests(config, area):
     if config['db_scan_schema'] == "mad":
         await cursor_active_quests.execute(f"select quest_reward, quest_task, latitude, longitude, name, pokestop_id from trs_quest left join pokestop on trs_quest.GUID = pokestop.pokestop_id WHERE quest_timestamp > UNIX_TIMESTAMP(CURDATE()) AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude)) ORDER BY quest_item_id ASC, quest_pokemon_id ASC, name;")
     elif config['db_scan_schema'] == "rdm":
-        await cursor_active_quests.execute(f"select quest_reward_type, quest_template, lat, lon, name, id from poksetop WHERE quest_type IS NOT NULL AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon)) ORDER BY quest_item_id ASC, quest_pokemon_id ASC, name;")
+        await cursor_active_quests.execute(f"select quest_reward_type, quest_template, lat, lon, name, id from pokestop WHERE quest_type IS NOT NULL AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon)) ORDER BY quest_item_id ASC, quest_pokemon_id ASC, name;")
     quests = await cursor_active_quests.fetchall()
 
     await cursor_active_quests.close()

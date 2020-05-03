@@ -260,6 +260,7 @@ class Admin(commands.Cog):
             for item_id in self.bot.items:
                 if self.bot.items[item_id]["name"].lower() == reward.lower():
                     items.append(int(item_id))
+                    found_item_id = item_id
                     item_found = True
             if not item_found:
                 mon = details(reward, self.bot.config['mon_icon_repo'], self.bot.config['language'])
@@ -277,28 +278,28 @@ class Admin(commands.Cog):
 
         guild = await self.bot.fetch_guild(self.bot.config['host_server'])
         existing_emotes = await guild.fetch_emojis()
-        for mon in mons:
+        for mon_id in mons:
             emote_exist = False
             for existing_emote in existing_emotes:
-                if f"m{mon}" == existing_emote.name:
+                if f"m{mon_id}" == existing_emote.name:
                     emote_exist = True
             if not emote_exist:
                 try:
-                    image = await self.download_url(f"{self.bot.config['mon_icon_repo']}pokemon_icon_{str(mon).zfill(3)}_00.png")
-                    emote = await guild.create_custom_emoji(name=f"m{mon}", image=image)
+                    image = await self.download_url(f"{self.bot.config['mon_icon_repo']}pokemon_icon_{str(mon_id).zfill(3)}_00.png")
+                    emote = await guild.create_custom_emoji(name=f"m{mon_id}", image=image)
                     emote_ref = f"<:{emote.name}:{emote.id}>"
                     embed_emotes = f"{embed_emotes}\n{emote_ref} `{emote_ref}`"
                     embed.description = embed_emotes + embed_rest
                     await message.edit(embed=embed)
-                    if f"m{mon}" in self.bot.custom_emotes:
-                        self.bot.custom_emotes[f"m{mon}"] = emote_ref
+                    if f"m{mon_id}" in self.bot.custom_emotes:
+                        self.bot.custom_emotes[f"m{mon_id}"] = emote_ref
                     else:
-                        self.bot.custom_emotes.update({f"m{mon}": emote_ref})
+                        self.bot.custom_emotes.update({f"m{mon_id}": emote_ref})
                 except Exception as err:
                     print(err)
-                    print(f"Error while importing emote m{mon}")
+                    print(f"Error while importing emote m{mon_id}")
             else:
-                embed_emotes = f"{embed_emotes}\nmon {mon}: already exists"
+                embed_emotes = f"{embed_emotes}\nmon {mon_id}: already exists"
                 embed.description = embed_emotes + embed_rest
                 await message.edit(embed=embed)
 
@@ -332,8 +333,16 @@ class Admin(commands.Cog):
         await message.edit(embed=embed)
 
         print("All done with Quest Board")
+        title = self.bot.locale['quests']
+        if len(items) + len(mons) == 1:
+            title2 = ""
+            if len(items) == 1:
+                title2 = self.bot.items[found_item_id]["name"]
+            if len(mons) == 1:
+                title2 = mon.name
+            title = f"{title2} {title}"
 
-        self.bot.boards['quests'].append({"channel_id": message.channel.id, "message_id": message.id, "title": self.bot.locale['quests'], "area": area, "mons": mons, "items": items})
+        self.bot.boards['quests'].append({"channel_id": message.channel.id, "message_id": message.id, "title": title, "area": area, "mons": mons, "items": items})
 
         with open("config/boards.json", "w") as f:
             f.write(json.dumps(self.bot.boards, indent=4))
@@ -355,7 +364,6 @@ class Admin(commands.Cog):
             return
 
         needed_emote_names = ["ex_pass", "raid_egg_1", "raid_egg_2", "raid_egg_3", "raid_egg_4", "raid_egg_5", "gym_blue", "gym_red", "gym_yellow", "gym_white", "blank", "raid", "cliff", "grunt_female", "pokeball", "pokestop"]
-        emotejson = json.loads("{}")
 
         if quick_name == ctx.guild.name:
             print(f"@{ctx.author.name} wants to import emotes in Server {ctx.guild.name} and said the name directly")
@@ -395,20 +403,19 @@ class Admin(commands.Cog):
                 emote_ref = f"<:{emote.name}:{emote.id}>"
                 embed.description = f"{embed.description}{emote_ref} `{emote_ref}`\n"
                 await message.edit(embed=embed)
-                emotejson.update({emote_name: emote_ref})
+                self.bot.custom_emotes.update({emote_name: emote_ref})
             except Exception as err:
                 print(err)
                 print(f"Error while importing emote {emote_name}") 
         embed.title = "Done importing Emotes"
         await message.edit(embed=embed)
         with open("config/emotes.json", "w") as f:
-            f.write(json.dumps(emotejson, indent=4))
-        self.bot.custom_emotes = emotejson
+            f.write(json.dumps(self.bot.custom_emotes, indent=4))
 
         print("All emotes imported.")
 
-    @commands.command(pass_context=True)
-    async def update(self, ctx):
+    @get.command(pass_context=True)
+    async def updates(self, ctx):
         if not ctx.message.author.id in self.bot.config['admins']:
             print(f"@{ctx.author.name} tried to import emotes but is no Admin")
             return

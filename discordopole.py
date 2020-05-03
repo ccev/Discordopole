@@ -5,7 +5,6 @@ import os
 import dateparser
 import matplotlib.pyplot as plt
 import pyshorteners
-import urllib.request
 
 from datetime import datetime, date
 from discord.ext import commands
@@ -25,9 +24,6 @@ bot.max_moves_in_list = 291
 bot.config = config
 short = pyshorteners.Shortener().tinyurl.short
 
-if bot.config['use_static']:
-    bot.static_map = util.maps.static_map(config['static_provider'], config['static_key'])
-
 if bot.config['use_map']:
     bot.map_url = util.maps.map_url(config['map'], config['map_url'])
 
@@ -36,29 +32,49 @@ if not os.path.exists("data/raid_cache.json"):
     f.write("{}")
     f.close()
 
-with open(f"data/dts/{bot.config['language']}.json") as localejson:
-    bot.locale = json.load(localejson)
+### LANG FILES
 
-with open("config/boards.json", "r") as f:
-    bot.boards = json.load(f)
+dts_lang = bot.config['language']
+if not bot.config['language'] in ["en", "de", "fr", "es", "pl"]:
+    dts_lang = "en"
 
-with open(f"data/moves/{bot.config['language']}.json") as f:
+with open(f"data/dts/{dts_lang}.json", encoding="utf-8") as f:
+    bot.locale = json.load(f)
+
+move_lang = bot.config['language']
+if not bot.config['language'] in ["en", "de", "fr", "es"]:
+    move_lang = "en"
+
+with open(f"data/moves/{move_lang}.json", encoding="utf-8") as f:
     bot.moves = json.load(f)
 
-with open("config/geofence.json") as f:
-    bot.geofences = json.load(f)
+form_lang = bot.config['language']
+if not bot.config['language'] in ["en", "de", "fr", "es"]:
+    form_lang = "en"
 
-with open("config/emotes.json") as f:
-    bot.custom_emotes = json.load(f)
-
-with open(f"data/forms/{bot.config['language']}.json") as f:
+with open(f"data/forms/{form_lang}.json", encoding="utf-8") as f:
     bot.forms = json.load(f)
 
-with open(f"data/raidcp.json") as f:
-    bot.raidcp = json.load(f)
+item_lang = bot.config['language']
+if not bot.config['language'] in ["en", "de", "fr", "es"]:
+    item_lang = "en"
 
-with open(f"data/items/{bot.config['language']}.json") as f:
+with open(f"data/items/{item_lang}.json", encoding="utf-8") as f:
     bot.items = json.load(f)
+
+### LANG FILES STOP
+
+with open("config/boards.json", "r", encoding="utf-8") as f:
+    bot.boards = json.load(f)
+
+with open("config/geofence.json", encoding="utf-8") as f:
+    bot.geofences = json.load(f)
+
+with open("config/emotes.json", encoding="utf-8") as f:
+    bot.custom_emotes = json.load(f)
+
+with open(f"data/raidcp.json", encoding="utf-8") as f:
+    bot.raidcp = json.load(f)
 
 def get_area(areaname):
     stringfence = "-100 -100, -100 100, 100 100, 100 -100, -100 -100"
@@ -73,8 +89,22 @@ def get_area(areaname):
     area_list = [stringfence, namefence]
     return area_list
 
+def isUser(role_ids, channel_id):
+    if len(bot.config["cmd_roles"][0]) + len(bot.config["cmd_channels"][0]) == 0:
+        return True
+    elif str(channel_id) in bot.config["cmd_channels"]:
+        return True
+    else:
+        for role in role_ids:
+            if str(role.id) in bot.config["cmd_roles"]:
+                return True
+        return False
+
 @bot.command(pass_context=True, aliases=bot.config['pokemon_aliases'])
 async def pokemon(ctx, stat_name, areaname = "", *, timespan = None):
+    if not isUser(ctx.author.roles, ctx.channel.id):
+        print(f"@{ctx.author.name} tried to use !pokemon but is no user")
+        return
     mon = details(stat_name, bot.config['mon_icon_repo'], bot.config['language'])
 
     footer_text = ""
@@ -201,6 +231,9 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None):
 
 @bot.command(pass_context=True, aliases=bot.config['gyms_aliases'])
 async def gyms(ctx, areaname = ""):
+    if not isUser(ctx.author.roles, ctx.channel.id):
+        print(f"@{ctx.author.name} tried to use !gyms but is no user")
+        return
     footer_text = ""
     text = ""
     loading = bot.locale['loading_gym_stats']
@@ -241,10 +274,10 @@ async def gyms(ctx, areaname = ""):
     plt.pie(sizes, labels=None, colors=colors, autopct='', startangle=120, wedgeprops={"edgecolor":"black", 'linewidth':5, 'linestyle': 'solid', 'antialiased': True})
     plt.axis('equal')
     plt.gca().set_axis_off()
-    plt.subplots_adjust(top = 1, bottom = 0, right = 1, left = 0, hspace = 0, wspace = 0)
-    plt.margins(0,0)
-    plt.gca().xaxis.set_major_locator(plt.NullLocator())
-    plt.gca().yaxis.set_major_locator(plt.NullLocator())
+    #plt.subplots_adjust(top = 1, bottom = 0, right = 1, left = 0, hspace = 0, wspace = 0)
+    plt.margins(0.01)
+    #plt.gca().xaxis.set_major_locator(plt.NullLocator())
+    #plt.gca().yaxis.set_major_locator(plt.NullLocator())
     plt.savefig('gym_stats.png', transparent=True, bbox_inches = 'tight', pad_inches = 0)
 
     channel = await bot.fetch_channel(bot.config['host_channel'])
@@ -261,6 +294,9 @@ async def gyms(ctx, areaname = ""):
 
 @bot.command(pass_context=True, aliases=bot.config['quest_aliases'])
 async def quest(ctx, areaname = "", *, reward):
+    if not isUser(ctx.author.roles, ctx.channel.id):
+        print(f"@{ctx.author.name} tried to use !quest but is no user")
+        return
     footer_text = ""
     text = ""
     loading = bot.locale['loading_quests']
@@ -328,7 +364,7 @@ async def quest(ctx, areaname = "", *, reward):
             if bot.config['use_map']:
                 map_url = bot.map_url.quest(lat, lon, stop_id)
             else:
-                map_url = f"https://www.google.com/maps/search/?api=1&query={lat},{lon})"
+                map_url = f"https://www.google.com/maps/search/?api=1&query={lat},{lon}"
             map_url = short(map_url)
 
             entry = f"[{stop_name}]({map_url})\n"
@@ -342,37 +378,35 @@ async def quest(ctx, areaname = "", *, reward):
     image = ""
     if length > 0:
         if bot.config['use_static']:
-            guild = await bot.fetch_guild(bot.config['host_server'])
-            existing_emotes = await guild.fetch_emojis()
-            emote_exist = False
-            for existing_emote in existing_emotes:
-                if emote_name == existing_emote.name:
-                    emote_exist = True
-            if not emote_exist:
-                try:
-                    image = await Admin.download_url("", emote_img)
-                    emote = await guild.create_custom_emoji(name=emote_name, image=image)
-                    emote_ref = f"<:{emote.name}:{emote.id}>"
+            if bot.config['static_provider'] == "mapbox":
+                guild = await bot.fetch_guild(bot.config['host_server'])
+                existing_emotes = await guild.fetch_emojis()
+                emote_exist = False
+                for existing_emote in existing_emotes:
+                    if emote_name == existing_emote.name:
+                        emote_exist = True
+                if not emote_exist:
+                    try:
+                        image = await Admin.download_url("", emote_img)
+                        emote = await guild.create_custom_emoji(name=emote_name, image=image)
+                        emote_ref = f"<:{emote.name}:{emote.id}>"
 
-                    if emote_name in bot.custom_emotes:
-                        bot.custom_emotes[emote_name] = emote_ref
-                    else:
-                        bot.custom_emotes.update({emote_name: emote_ref})
-                except Exception as err:
-                    print(err)
-                    print(f"Error while importing emote {emote_name}")
+                        if emote_name in bot.custom_emotes:
+                            bot.custom_emotes[emote_name] = emote_ref
+                        else:
+                            bot.custom_emotes.update({emote_name: emote_ref})
+                    except Exception as err:
+                        print(err)
+                        print(f"Error while importing emote {emote_name}")
 
-            static_map = bot.static_map.quest(lat_list, lon_list, reward_items, reward_mons, bot.custom_emotes)
+                image = await bot.static_map.quest(lat_list, lon_list, reward_items, reward_mons, bot.custom_emotes)
 
-            urllib.request.urlretrieve(static_map, "quest_command_static_map_temp.png")
-            channel = await bot.fetch_channel(bot.config['host_channel'])
-            image_msg = await channel.send(file=discord.File("quest_command_static_map_temp.png"))
-            image = image_msg.attachments[0].url
-            os.remove("quest_command_static_map_temp.png")
+                if not emote_exist:
+                    await emote.delete()
+                    bot.custom_emotes.pop(emote_name)
 
-            if not emote_exist:
-                await emote.delete()
-                bot.custom_emotes.pop(emote_name)
+            elif bot.config['static_provider'] == "tileserver":
+                image = await bot.static_map.quest(lat_list, lon_list, reward_items, reward_mons, bot.custom_emotes)
     else:
         embed.description = bot.locale["no_quests_found"]
 
@@ -386,6 +420,10 @@ async def quest(ctx, areaname = "", *, reward):
 async def on_ready():
     #await bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.watching, name="Discordopole"))
     print("Connected to Discord. Ready to take commands.")
+
+    if bot.config['use_static']:
+        trash_channel = await bot.fetch_channel(bot.config['host_channel'])
+        bot.static_map = util.maps.static_map(config['static_provider'], config['static_key'], trash_channel, bot.config['mon_icon_repo'])
 
 if __name__ == "__main__":
     for extension in extensions:

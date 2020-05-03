@@ -33,6 +33,8 @@ def create_config(config_path):
 
 
     # Commands #
+    config['cmd_roles'] = json.loads(config_raw.get('Commands','required_roles'))
+    config['cmd_channels'] = json.loads(config_raw.get('Commands','channels'))
     config['pokemon_aliases'] = json.loads(config_raw.get('Commands','pokemon_aliases'))
     config['gyms_aliases'] = json.loads(config_raw.get('Commands','gyms_aliases'))
     config['quest_aliases'] = json.loads(config_raw.get('Commands','quest_aliases'))
