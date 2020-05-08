@@ -165,6 +165,11 @@ class Admin(commands.Cog):
                 stats.append("egg_active")
             elif "stop" in stat:
                 stats.append("stop_amount")
+            elif "lure" in stat:
+                if "amount" in stat:
+                    stats.append("lure_amount")
+                elif "types" in stat:
+                    stats.append("lure_types")
             elif "grunt" in stat:
                 #if "active" in stat:
                 stats.append("grunt_active")
