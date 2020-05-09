@@ -129,7 +129,7 @@ class Boards(commands.Cog):
                 
                 if "gym_amount" in board['type']:
                     gym_amount = await queries.statboard_gym_amount(self.bot.config, area[0])
-                    text = f"{text}{self.bot.custom_emotes['gym_white']} **{gym_amount[0][0]:,}** {self.bot.locale['total_gyms']}\n"
+                    text = f"{text}{self.bot.custom_emotes['gym_grey']}**{gym_amount[0][0]:,}** {self.bot.locale['total_gyms']}\n"
 
                 if "raid_active" in board['type']:
                     raid_active = await queries.statboard_raid_active(self.bot.config, area[0])
@@ -145,7 +145,7 @@ class Boards(commands.Cog):
                 
                 if "gym_teams" in board['type']:
                     gym_teams = await queries.statboard_gym_teams(self.bot.config, area[0])
-                    text = f"{text}{self.bot.custom_emotes['gym_blue']}**{gym_teams[0][1]}**{self.bot.custom_emotes['blank']}{self.bot.custom_emotes['gym_red']}**{gym_teams[0][2]}**{self.bot.custom_emotes['blank']}{self.bot.custom_emotes['gym_yellow']}**{gym_teams[0][3]}**\n"
+                    text = f"{text}{self.bot.custom_emotes['gym_blue']}**{gym_teams[0][1]}**{self.bot.custom_emotes['blank']}{self.bot.custom_emotes['gym_red']}**{gym_teams[0][2]}**{self.bot.custom_emotes['blank']}{self.bot.custom_emotes['gym_yellow']}**{gym_teams[0][3]}**{self.bot.custom_emotes['blank']}{self.bot.custom_emotes['gym_white']}**{gym_teams[0][0]}**\n"
 
                 if "stop_amount" in board['type']:
                     stop_amount = await queries.statboard_stop_amount(self.bot.config, area[0])
