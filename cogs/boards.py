@@ -197,14 +197,14 @@ class Boards(commands.Cog):
                 reward_items = list()
                 lat_list = list()
                 lon_list = list()
-                mon_id = 0
-                item_id = 0
                 
                 for quest_json, quest_text, lat, lon, stop_name, stop_id in quests:
                     quest_json = json.loads(quest_json)
 
                     found_rewards = True
                     emote = ""
+                    mon_id = 0
+                    item_id = 0
 
                     if self.bot.config['db_scan_schema'] == "rdm":
                         if 'pokemon_id' in quest_json[0]["info"]:
