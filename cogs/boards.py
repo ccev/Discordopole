@@ -159,6 +159,15 @@ class Boards(commands.Cog):
                         text = f"{text} ({quest_ratio}%)"
                     text = text + "\n"
 
+                if "lure_amount" in board['type']:
+                    lure_active = await queries.statboard_lure_active(self.bot.config, area[0])
+                    text = f"{text}{self.bot.custom_emotes['lure']} **{lure_active[0][0]:,}** {self.bot.locale['active_lures']}\n"
+
+                if "lure_types" in board['type']:
+                    if not "lure_amount" in board['type']: #don't run query twice if lure_amount in board type
+                        lure_active = await queries.statboard_lure_active(self.bot.config, area[0])
+                    text = f"{text}{self.bot.custom_emotes['lure_normal']}**{lure_active[0][1]}**{self.bot.custom_emotes['blank']}{self.bot.custom_emotes['lure_glacial']}**{lure_active[0][2]}**{self.bot.custom_emotes['blank']}{self.bot.custom_emotes['lure_mossy']}**{lure_active[0][3]}**{self.bot.custom_emotes['blank']}{self.bot.custom_emotes['lure_magnetic']}**{lure_active[0][4]}**\n\n"
+
                 if "grunt_active" in board['type']:
                     grunt_active = await queries.statboard_grunt_active(self.bot.config, area[0])
                     if not "leader_active" in board['type']:
