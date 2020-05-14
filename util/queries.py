@@ -13,6 +13,20 @@ async def connect_db(config):
     cursor = await mydb.cursor()
     return cursor
 
+async def get_oldest_mon_entry(config):
+    cursor_oldest_mon_entry = await connect_db(config)
+    if config['db_scan_schema'] == "mad":
+        query_oldest_mon_entry = f"select last_modified from pokemon order by last_modified asc limit 1"
+    elif config['db_scan_schema'] == "rdm":
+        query_oldest_mon_entry = f"select from_unixtime(first_seen_timestamp, '%d.%m.%Y %H:%i') from pokemon order by first_seen_timestamp asc limit 1"
+    await cursor_oldest_mon_entry.execute(query_oldest_mon_entry)
+    oldest_mon_entry = await cursor_oldest_mon_entry.fetchall()
+    for var in oldest_mon_entry:
+        oldest_mon_entry = var[0]
+
+    await cursor_oldest_mon_entry.close()
+    return oldest_mon_entry
+
 async def get_shiny_count(mon_id, area, starttime, endtime, config):
     cursor_shiny_count = await connect_db(config)
     if config['db_scan_schema'] == "mad":
