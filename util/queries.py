@@ -146,9 +146,9 @@ async def statboard_gym_amount(config, area):
 async def statboard_gym_teams(config, area):
     cursor_statboard_gym_teams = await connect_db(config)
     if config['db_scan_schema'] == "mad":
-        await cursor_statboard_gym_teams.execute(f"select sum(team_id = 0), sum(team_id = 1), sum(team_id=2), sum(team_id=3) from gym where ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
+        await cursor_statboard_gym_teams.execute(f"select ifnull(sum(team_id = 0),0), ifnull(sum(team_id = 1),0), ifnull(sum(team_id=2),0), ifnull(sum(team_id=3),0) from gym where ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
     elif config['db_scan_schema'] == "rdm":
-        await cursor_statboard_gym_teams.execute(f"select sum(team_id = 0), sum(team_id = 1), sum(team_id=2), sum(team_id=3) from gym where ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon))")
+        await cursor_statboard_gym_teams.execute(f"select ifnull(sum(team_id = 0),0), ifnull(sum(team_id = 1),0), ifnull(sum(team_id=2),0), ifnull(sum(team_id=3),0) from gym where ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon))")
     statboard_gym_teams = await cursor_statboard_gym_teams.fetchall()
 
     await cursor_statboard_gym_teams.close()
