@@ -48,7 +48,7 @@ you can use `!boards create stats all egg lvl all` instead of `!boards create st
 - scanned_active: amount of active scanned mons
 - scanned_today: total amount of scanned mons today
 
-![](http://puu.sh/FKtgy/8efe4bb001.png)
+![](http://puu.sh/FKvvn/a37a768f4b.png)
 
 other:
 - neutral gyms for gym_teams ![](http://puu.sh/FKtrr/d7ff1ccf4c.png)
