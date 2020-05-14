@@ -197,14 +197,23 @@ class Boards(commands.Cog):
                 reward_items = list()
                 lat_list = list()
                 lon_list = list()
+                
                 for quest_json, quest_text, lat, lon, stop_name, stop_id in quests:
                     quest_json = json.loads(quest_json)
 
                     found_rewards = True
                     emote = ""
+                    mon_id = 0
+                    item_id = 0
 
-                    item_id = quest_json[0]["item"]["item"]
-                    mon_id = quest_json[0]["pokemon_encounter"]["pokemon_id"]
+                    if self.bot.config['db_scan_schema'] == "rdm":
+                        if 'pokemon_id' in quest_json[0]["info"]:
+                            mon_id = quest_json[0]["info"]["pokemon_id"]
+                        elif 'item_id' in quest_json[0]["info"]:
+                            item_id = quest_json[0]["info"]["item_id"]
+                    elif self.bot.config['db_scan_schema'] == "mad":
+                        item_id = quest_json[0]["item"]["item"]
+                        mon_id = quest_json[0]["pokemon_encounter"]["pokemon_id"]
                     if item_id in board["items"]:
                         emote = self.bot.custom_emotes[f"i{item_id}"]
                         reward_items.append([item_id, lat, lon])

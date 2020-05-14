@@ -341,9 +341,17 @@ async def quest(ctx, areaname = "", *, reward):
         quest_json = json.loads(quest_json)
 
         found_rewards = True
+        mon_id = 0
+        item_id = 0
 
-        item_id = quest_json[0]["item"]["item"]
-        mon_id = quest_json[0]["pokemon_encounter"]["pokemon_id"]
+        if bot.config['db_scan_schema'] == "rdm":
+            if 'pokemon_id' in quest_json[0]["info"]:
+                mon_id = quest_json[0]["info"]["pokemon_id"]
+            if 'item_id' in quest_json[0]["info"]:
+                item_id = quest_json[0]["info"]["item_id"]
+        elif bot.config['db_scan_schema'] == "mad":
+            item_id = quest_json[0]["item"]["item"]
+            mon_id = quest_json[0]["pokemon_encounter"]["pokemon_id"]
         if item_id in items:
             reward_items.append([item_id, lat, lon])
             emote_name = f"i{item_id}"
