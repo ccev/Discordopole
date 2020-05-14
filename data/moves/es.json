@@ -2112,7 +2112,7 @@
     "dps": 25
   },
   "326": {
-    "name": "Thunder Fang",
+    "name": "Colmillo Rayo",
     "type": "Electric",
     "damage": 0,
     "duration": 0,
@@ -2120,7 +2120,7 @@
     "dps": 0
   },
   "327": {
-    "name": "Ice Fang",
+    "name": "Colmillo Hielo",
     "type": "Ice",
     "damage": 0,
     "duration": 0,
@@ -2128,7 +2128,7 @@
     "dps": 0
   },
   "328": {
-    "name": "Horn Drill",
+    "name": "Perforador",
     "type": "Normal",
     "damage": 0,
     "duration": 0,
@@ -2136,7 +2136,7 @@
     "dps": 0
   },
   "329": {
-    "name": "Fissure",
+    "name": "Fisura",
     "type": "Ground",
     "damage": 0,
     "duration": 0,
@@ -2144,7 +2144,7 @@
     "dps": 0
   },
   "330": {
-    "name": "Sacred Sword",
+    "name": "Espada Santa",
     "type": "Fighting",
     "damage": 0,
     "duration": 0,
@@ -2152,7 +2152,7 @@
     "dps": 0
   },
   "331": {
-    "name": "Flying Press",
+    "name": "Plancha Voladora",
     "type": "Fighting",
     "damage": 0,
     "duration": 0,
@@ -2160,7 +2160,7 @@
     "dps": 0
   },
   "332": {
-    "name": "Aura Sphere",
+    "name": "Esfera Aural",
     "type": "Fighting",
     "damage": 0,
     "duration": 0,
@@ -2168,7 +2168,7 @@
     "dps": 0
   },
   "333": {
-    "name": "Payback",
+    "name": "Vendetta",
     "type": "Dark",
     "damage": 0,
     "duration": 0,
@@ -2176,7 +2176,7 @@
     "dps": 0
   },
   "334": {
-    "name": "Rock Wrecker",
+    "name": "Romperrocas",
     "type": "Rock",
     "damage": 0,
     "duration": 0,
@@ -2184,7 +2184,7 @@
     "dps": 0
   },
   "335": {
-    "name": "Aeroblast",
+    "name": "Aerochorro",
     "type": "Flying",
     "damage": 0,
     "duration": 0,
@@ -2192,7 +2192,7 @@
     "dps": 0
   },
   "336": {
-    "name": "Techno Blast Normal",
+    "name": "Tecnochorro Normal",
     "type": "Normal",
     "damage": 0,
     "duration": 0,
@@ -2200,7 +2200,7 @@
     "dps": 0
   },
   "337": {
-    "name": "Techno Blast Burn",
+    "name": "Tecno Anillo ígneo",
     "type": "Fire",
     "damage": 0,
     "duration": 0,
@@ -2208,7 +2208,7 @@
     "dps": 0
   },
   "338": {
-    "name": "Techno Blast Chill",
+    "name": "Tecno explosión helada",
     "type": "Ice",
     "damage": 0,
     "duration": 0,
@@ -2216,7 +2216,7 @@
     "dps": 0
   },
   "339": {
-    "name": "Techno Blast Water",
+    "name": "Tecno Explosión de agua",
     "type": "Water",
     "damage": 0,
     "duration": 0,
@@ -2224,7 +2224,7 @@
     "dps": 0
   },
   "340": {
-    "name": "Techno Blast Shock",
+    "name": "Tecnochorro Choque explosivo",
     "type": "Electric",
     "damage": 0,
     "duration": 0,
