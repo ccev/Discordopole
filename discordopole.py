@@ -3,6 +3,8 @@ import json
 import asyncio
 import os
 import dateparser
+from dateparser.search import search_dates
+
 import matplotlib.pyplot as plt
 import pyshorteners
 
@@ -112,9 +114,17 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None):
     loading = f"{bot.locale['loading']} {mon.name} Stats"
 
     area = get_area(areaname)
+    
     if not area[1] == bot.locale['all']:
         footer_text = area[1]
         loading = f"{loading} • "
+
+    if dateparser.search.search_dates(areaname, languages=[bot.config['language']]) is not None: #check for dates in areaname
+        if dateparser.search.search_dates(f"{timespan}", languages=[bot.config['language']]) is not None: #check for dates in everything after areaname
+            timespan = f"{areaname} {timespan}"
+        else: 
+            timespan = areaname
+
     if timespan is None:
         timespan = list([datetime(2010, 1, 1, 0, 0), datetime.now()])
     else:
@@ -123,11 +133,11 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None):
         if "-" in timespan:
             timespan = list(timespan.split('-'))
             for i in [0, 1]:
-                timespan[i] = dateparser.parse(timespan[i])
+                timespan[i] = dateparser.parse(timespan[i], languages=[bot.config['language']])
 
             footer_text = f"{(bot.locale['between']).capitalize()} {timespan[0].strftime(bot.locale['time_format_dhm'])} {bot.locale['and']} {timespan[1].strftime(bot.locale['time_format_dhm'])}"
         else:
-            timespan = list([dateparser.parse(timespan), datetime.now()])
+            timespan = list([dateparser.parse(timespan, languages=[bot.config['language']]), datetime.now()])
 
             if area[1] == bot.locale['all']:
                 footer_text = f"{(bot.locale['since']).capitalize()} {timespan[0].strftime(bot.locale['time_format_dhm'])}"
@@ -341,9 +351,17 @@ async def quest(ctx, areaname = "", *, reward):
         quest_json = json.loads(quest_json)
 
         found_rewards = True
+        mon_id = 0
+        item_id = 0
 
-        item_id = quest_json[0]["item"]["item"]
-        mon_id = quest_json[0]["pokemon_encounter"]["pokemon_id"]
+        if bot.config['db_scan_schema'] == "rdm":
+            if 'pokemon_id' in quest_json[0]["info"]:
+                mon_id = quest_json[0]["info"]["pokemon_id"]
+            if 'item_id' in quest_json[0]["info"]:
+                item_id = quest_json[0]["info"]["item_id"]
+        elif bot.config['db_scan_schema'] == "mad":
+            item_id = quest_json[0]["item"]["item"]
+            mon_id = quest_json[0]["pokemon_encounter"]["pokemon_id"]
         if item_id in items:
             reward_items.append([item_id, lat, lon])
             emote_name = f"i{item_id}"
