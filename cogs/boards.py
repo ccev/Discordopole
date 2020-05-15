@@ -221,7 +221,7 @@ class Boards(commands.Cog):
                     if "stop_amount" in board['type']:
                         quest_ratio = int(round((quest_active[0][0] / stop_amount[0][0] * 100), 0))
                         text = f"{text} ({quest_ratio}%)"
-                    text = text + "\n"
+                    text = text + "\n\n"
 
                 if "lure_amount" in board['type']:
                     lure_active = await queries.statboard_lure_active(self.bot.config, area[0])
