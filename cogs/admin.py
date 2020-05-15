@@ -221,6 +221,12 @@ class Admin(commands.Cog):
                     stats.append("scanned_active")
                 elif "today" in stat:
                     stats.append("scanned_today")
+            elif "average" in stat:
+                if "iv" in stat:
+                    if "active" in stat:
+                        stats.append("average_iv_active")
+                    elif "today" in stat:
+                        stats.append("average_iv_today")
 
         areaexist = False
         for areag in self.bot.geofences:
