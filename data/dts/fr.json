@@ -46,5 +46,7 @@
     "level": "niveau",
     "egg": "Œuf",
     "loading_quests": "Chargement des quêtes",
-    "no_quests_found": "❌ Aucune quête trouvée"
+    "no_quests_found": "❌ Aucune quête trouvée",
+	"average_iv": "📊 Average IV",
+	"average_iv_of_active_mons": "📊 Average IV of active Pokémon"
 }
