@@ -176,6 +176,28 @@ async def statboard_scanned_today(config, area):
     await cursor_statboard_scanned_today.close()
     return statboard_scanned_today
 
+async def statboard_total_iv_active(config, area):
+    cursor_statboard_scanned_active = await connect_db(config)
+    if config['db_scan_schema'] == "mad":
+        await cursor_statboard_scanned_active.execute(f"select ifnull(sum((individual_attack + individual_defense + individual_stamina)/45*100),0) from pokemon where individual_attack is not NULL and disappear_time > utc_timestamp() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
+    elif config['db_scan_schema'] == "rdm":
+        await cursor_statboard_scanned_active.execute(f"select ifnull(sum(iv),0) from pokemon WHERE iv is not NULL AND expire_timestamp > UNIX_TIMESTAMP() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon))")
+    statboard_scanned_active = await cursor_statboard_scanned_active.fetchall()
+
+    await cursor_statboard_scanned_active.close()
+    return statboard_scanned_active
+
+async def statboard_total_iv_today(config, area):
+    cursor_statboard_scanned_today = await connect_db(config)
+    if config['db_scan_schema'] == "mad":
+        await cursor_statboard_scanned_today.execute(f"select ifnull(sum((individual_attack + individual_defense + individual_stamina)/45*100),0) from pokemon where individual_attack is not NULL AND CONVERT_TZ(pokemon.disappear_time,'+00:00','{config['timezone']}') > curdate() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
+    elif config['db_scan_schema'] == "rdm":
+        await cursor_statboard_scanned_today.execute(f"select ifnull(sum(iv),0) from pokemon where iv is not NULL AND CONVERT_TZ(from_unixtime(first_seen_timestamp),'+00:00','{config['timezone']}') > CURDATE() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon))")
+    statboard_scanned_today = await cursor_statboard_scanned_today.fetchall()
+
+    await cursor_statboard_scanned_today.close()
+    return statboard_scanned_today
+
 async def statboard_gym_amount(config, area):
     cursor_statboard_gym_amount = await connect_db(config)
     if config['db_scan_schema'] == "mad":

@@ -158,7 +158,7 @@ class Admin(commands.Cog):
                 elif "team" in stat:
                     stats.append("gym_teams")
             elif "raid" in stat:
-                if "level" in stat:
+                if "lvl" in stat:
                     if "1" in stat:
                         stats.append("raid_lvl_1_active")
                     elif "2" in stat:
@@ -178,7 +178,7 @@ class Admin(commands.Cog):
                 else:
                     stats.append("raid_active")
             elif "egg" in stat:
-                if "level" in stat:
+                if "lvl" in stat:
                     if "1" in stat:
                         stats.append("egg_lvl_1_active")
                     elif "2" in stat:
@@ -221,6 +221,12 @@ class Admin(commands.Cog):
                     stats.append("scanned_active")
                 elif "today" in stat:
                     stats.append("scanned_today")
+            elif "average" in stat:
+                if "iv" in stat:
+                    if "active" in stat:
+                        stats.append("average_iv_active")
+                    elif "today" in stat:
+                        stats.append("average_iv_today")
 
         areaexist = False
         for areag in self.bot.geofences:
