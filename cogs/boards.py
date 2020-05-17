@@ -110,15 +110,6 @@ class Boards(commands.Cog):
         
         for board in self.bot.boards['stats']:
             try:
-
-                if self.bot.config['use_alt_table_for_pokemon']:
-                    self.bot.config['db_host'] = self.bot.config['alt_db_host']
-                    self.bot.config['db_user'] = self.bot.config['alt_db_user']
-                    self.bot.config['db_pass'] = self.bot.config['alt_db_pass']
-                    self.bot.config['db_dbname'] = self.bot.config['alt_db_dbname']
-                    self.bot.config['db_port'] = self.bot.config['alt_db_port']
-                    self.bot.config['pokemon_table'] = self.bot.config['alt_pokemon_table']
-
                 channel = await self.bot.fetch_channel(board["channel_id"])
                 message = await channel.fetch_message(board["message_id"])
                 area = get_area(board["area"])
