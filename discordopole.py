@@ -109,14 +109,6 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None):
         return
     mon = details(stat_name, bot.config['mon_icon_repo'], bot.config['language'])
 
-    if bot.config['use_alt_table_for_pokemon']:
-        bot.config['db_host'] = bot.config['alt_db_host']
-        bot.config['db_user'] = bot.config['alt_db_user']
-        bot.config['db_pass'] = bot.config['alt_db_pass']
-        bot.config['db_dbname'] = bot.config['alt_db_dbname']
-        bot.config['db_port'] = bot.config['alt_db_port']
-        bot.config['pokemon_table'] = bot.config['alt_pokemon_table']
-
     footer_text = ""
     text = ""
     loading = f"{bot.locale['loading']} {mon.name} Stats"
