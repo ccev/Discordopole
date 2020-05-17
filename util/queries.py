@@ -27,7 +27,6 @@ async def connect_db(config):
 async def get_shiny_count(mon_id, area, starttime, endtime, config):
     if config['use_alt_table_for_pokemon']:
         cursor_shiny_count = await connect_alt_db(config)
-        config['pokemon_table'] = config['alt_pokemon_table']
     else:
         cursor_shiny_count = await connect_db(config)
     if config['db_scan_schema'] == "mad":
@@ -45,7 +44,6 @@ async def get_shiny_count(mon_id, area, starttime, endtime, config):
 async def get_shiny_total(mon_id, area, starttime, endtime, config):
     if config['use_alt_table_for_pokemon']:
         cursor_shiny_total = await connect_alt_db(config)
-        config['pokemon_table'] = config['alt_pokemon_table']
     else:
         cursor_shiny_total = await connect_db(config)
     if config['db_scan_schema'] == "mad":
@@ -63,7 +61,6 @@ async def get_shiny_total(mon_id, area, starttime, endtime, config):
 async def get_scan_numbers(mon_id, area, starttime, endtime, config):
     if config['use_alt_table_for_pokemon']:
         cursor_scan_numbers = await connect_alt_db(config)
-        config['pokemon_table'] = config['alt_pokemon_table']
     else:
         cursor_scan_numbers = await connect_db(config)
     if config['db_scan_schema'] == "mad":
@@ -79,7 +76,6 @@ async def get_scan_numbers(mon_id, area, starttime, endtime, config):
 async def get_big_numbers(mon_id, area, starttime, endtime, config):
     if config['use_alt_table_for_pokemon']:
         cursor_big_numbers = await connect_alt_db(config)
-        config['pokemon_table'] = config['alt_pokemon_table']
     else:
         cursor_big_numbers = await connect_db(config)
     if config['db_scan_schema'] == "mad":
@@ -140,7 +136,6 @@ async def get_gym_stats(config, area):
 async def statboard_mon_active(config, area):
     if config['use_alt_table_for_pokemon']:
         cursor_statboard_mon_active = await connect_alt_db(config)
-        config['pokemon_table'] = config['alt_pokemon_table']
     else:
         cursor_statboard_mon_active = await connect_db(config)
     if config['db_scan_schema'] == "mad":
@@ -155,7 +150,6 @@ async def statboard_mon_active(config, area):
 async def statboard_mon_today(config, area):
     if config['use_alt_table_for_pokemon']:
         cursor_statboard_mon_today = await connect_alt_db(config)
-        config['pokemon_table'] = config['alt_pokemon_table']
     else:
         cursor_statboard_mon_today = await connect_db(config)
     if config['db_scan_schema'] == "mad":
@@ -170,7 +164,6 @@ async def statboard_mon_today(config, area):
 async def statboard_hundos_active(config, area):
     if config['use_alt_table_for_pokemon']:
         cursor_statboard_hundos_active = await connect_alt_db(config)
-        config['pokemon_table'] = config['alt_pokemon_table']
     else:
         cursor_statboard_hundos_active = await connect_db(config)
     if config['db_scan_schema'] == "mad":
@@ -185,7 +178,6 @@ async def statboard_hundos_active(config, area):
 async def statboard_hundos_today(config, area):
     if config['use_alt_table_for_pokemon']:
         cursor_statboard_hundos_today = await connect_alt_db(config)
-        config['pokemon_table'] = config['alt_pokemon_table']
     else:
         cursor_statboard_hundos_today = await connect_db(config)
     if config['db_scan_schema'] == "mad":
@@ -200,7 +192,6 @@ async def statboard_hundos_today(config, area):
 async def statboard_scanned_active(config, area):
     if config['use_alt_table_for_pokemon']:
         cursor_statboard_scanned_active = await connect_alt_db(config)
-        config['pokemon_table'] = config['alt_pokemon_table']
     else:
         cursor_statboard_scanned_active = await connect_db(config)
     if config['db_scan_schema'] == "mad":
@@ -215,7 +206,6 @@ async def statboard_scanned_active(config, area):
 async def statboard_scanned_today(config, area):
     if config['use_alt_table_for_pokemon']:
         cursor_statboard_scanned_today = await connect_alt_db(config)
-        config['pokemon_table'] = config['alt_pokemon_table']
     else:
         cursor_statboard_scanned_today = await connect_db(config)
     if config['db_scan_schema'] == "mad":
@@ -230,7 +220,6 @@ async def statboard_scanned_today(config, area):
 async def statboard_total_iv_active(config, area):
     if config['use_alt_table_for_pokemon']:
         cursor_statboard_total_iv_active = await connect_alt_db(config)
-        config['pokemon_table'] = config['alt_pokemon_table']
     else:
         cursor_statboard_total_iv_active = await connect_db(config)
     if config['db_scan_schema'] == "mad":
@@ -245,7 +234,6 @@ async def statboard_total_iv_active(config, area):
 async def statboard_total_iv_today(config, area):
     if config['use_alt_table_for_pokemon']:
         cursor_statboard_total_iv_today = await connect_alt_db(config)
-        config['pokemon_table'] = config['alt_pokemon_table']
     else:
         cursor_statboard_total_iv_today = await connect_db(config)
     if config['db_scan_schema'] == "mad":
