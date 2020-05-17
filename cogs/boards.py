@@ -110,6 +110,15 @@ class Boards(commands.Cog):
         
         for board in self.bot.boards['stats']:
             try:
+
+                if self.bot.config['use_alt_table_for_pokemon']:
+                    self.bot.config['db_host'] = self.bot.config['alt_db_host']
+                    self.bot.config['db_user'] = self.bot.config['alt_db_user']
+                    self.bot.config['db_pass'] = self.bot.config['alt_db_pass']
+                    self.bot.config['db_dbname'] = self.bot.config['alt_db_dbname']
+                    self.bot.config['db_port'] = self.bot.config['alt_db_port']
+                    self.bot.config['pokemon_table'] = self.bot.config['alt_pokemon_table']
+
                 channel = await self.bot.fetch_channel(board["channel_id"])
                 message = await channel.fetch_message(board["message_id"])
                 area = get_area(board["area"])
@@ -153,7 +162,10 @@ class Boards(commands.Cog):
                     total_iv_active = await queries.statboard_total_iv_active(self.bot.config, area[0])
                     if not "scanned_active" in board['type']: #query for active scanned mons wont run twice if scanned_active in board
                         scanned_active = await queries.statboard_scanned_active(self.bot.config, area[0])
-                    average_iv_active = round((total_iv_active[0][0]/scanned_active[0][0]), 1)
+                    if scanned_active[0][0] == 0:
+                        average_iv_active = 0
+                    else:
+                        average_iv_active = round((total_iv_active[0][0]/scanned_active[0][0]), 1)
                     if not "average_iv_today" in board['type']:
                         text = f"{text}{self.bot.locale['average_iv_of_active_mons']}: **{average_iv_active}%** {self.bot.locale['active']}\n"
 
@@ -161,7 +173,10 @@ class Boards(commands.Cog):
                     total_iv_today = await queries.statboard_total_iv_today(self.bot.config, area[0])
                     if not "scanned_today" in board['type']: #query for today scanned mons wont run twice if scanned_today in board
                         scanned_today = await queries.statboard_scanned_today(self.bot.config, area[0])
-                    average_iv_today = round((total_iv_today[0][0]/scanned_today[0][0]), 1)
+                    if scanned_today[0][0] == 0:
+                        average_iv_today = 0
+                    else:
+                        average_iv_today = round((total_iv_today[0][0]/scanned_today[0][0]), 1)
                     if "average_iv_active" in board['type']:
                         text = f"{text}{self.bot.locale['average_iv']}: **{average_iv_active}%** {self.bot.locale['active']} | **{average_iv_today}%** {self.bot.locale['today']}\n"
                     else:
