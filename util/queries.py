@@ -102,9 +102,9 @@ async def get_active_quests(config, area):
 async def get_gym_stats(config, area):
     cursor_gym_stats = await connect_db(config)
     if config['db_scan_schema'] == "mad":
-        await cursor_gym_stats.execute(f"select count(gym.gym_id), sum(team_id = 0), sum(team_id = 1), sum(team_id=2), sum(team_id=3), sum(is_ex_raid_eligible = 1), sum(end >= utc_timestamp()) from gym left join raid on gym.gym_id = raid.gym_id where ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
+        await cursor_gym_stats.execute(f"select count(gym.gym_id), IFNULL(SUM(team_id = 0), 0), IFNULL(SUM(team_id = 1), 0), IFNULL(SUM(team_id=2), 0), IFNULL(SUM(team_id=3), 0), IFNULL(SUM(is_ex_raid_eligible = 1), 0), IFNULL(SUM(end >= utc_timestamp()), 0) from gym left join raid on gym.gym_id = raid.gym_id where ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
     elif config['db_scan_schema'] == "rdm":
-        await cursor_gym_stats.execute(f"select count(id), sum(team_id = 0), sum(team_id = 1), sum(team_id=2), sum(team_id=3), sum(ex_raid_eligible = 1), sum(raid_end_timestamp > UNIX_TIMESTAMP()) from gym where ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon))")
+        await cursor_gym_stats.execute(f"select count(id), IFNULL(SUM(team_id = 0), 0), IFNULL(SUM(team_id = 1), 0), IFNULL(SUM(team_id=2), 0), IFNULL(SUM(team_id=3), 0), IFNULL(SUM(ex_raid_eligible = 1), 0), IFNULL(SUM(raid_end_timestamp > UNIX_TIMESTAMP()), 0) from gym where ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon))")
     gym_stats = await cursor_gym_stats.fetchall()
 
     await cursor_gym_stats.close()
