@@ -47,5 +47,17 @@ def create_config(config_path):
     config['db_user'] = config_raw.get('DB','user')
     config['db_pass'] = config_raw.get('DB','password')
     config['db_dbname'] = config_raw.get('DB','scanner_db_name')
+    config['pokemon_table'] = config_raw.get('DB', 'pokemon_table')
+    
+    # alt DB for pokemon#
+
+    config['use_alt_table_for_pokemon'] = config_raw.getboolean('alternative_table_for_pokemon','use_alt_table_for_pokemon')
+    config['alt_db_scan_schema'] = config_raw.get('alternative_table_for_pokemon','scanner_db_schema')
+    config['alt_db_host'] = config_raw.get('alternative_table_for_pokemon','host')
+    config['alt_db_port'] = config_raw.getint('alternative_table_for_pokemon','port')
+    config['alt_db_user'] = config_raw.get('alternative_table_for_pokemon','user')
+    config['alt_db_pass'] = config_raw.get('alternative_table_for_pokemon','password')
+    config['alt_db_dbname'] = config_raw.get('alternative_table_for_pokemon','scanner_db_name')
+    config['alt_pokemon_table'] = config_raw.get('alternative_table_for_pokemon', 'pokemon_table')
 
     return config
