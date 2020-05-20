@@ -22,7 +22,7 @@ extensions = ["cogs.admin", "cogs.boards", "cogs.channels"]
 
 config = util.config.create_config("config/config.ini")
 bot = commands.Bot(command_prefix=config['prefix'], case_insensitive=1)
-bot.max_moves_in_list = 291
+bot.max_moves_in_list = 340
 bot.config = config
 short = pyshorteners.Shortener().tinyurl.short
 
@@ -63,6 +63,9 @@ if not bot.config['language'] in ["en", "de", "fr", "es"]:
 
 with open(f"data/items/{item_lang}.json", encoding="utf-8") as f:
     bot.items = json.load(f)
+
+if bot.config['use_alt_table_for_pokemon']:
+        bot.config['pokemon_table'] = config['alt_pokemon_table']
 
 ### LANG FILES STOP
 
@@ -272,6 +275,8 @@ async def gyms(ctx, areaname = ""):
 
     if total_count > 0:
         ex_odds = str(int(round((ex_count / total_count * 100), 0))).replace(".", bot.locale['decimal_dot'])
+    else:
+	    ex_odds = 0
 
     text = f"{bot.custom_emotes['gym_blue']}**{blue_count}**{bot.custom_emotes['blank']}{bot.custom_emotes['gym_red']}**{red_count}**{bot.custom_emotes['blank']}{bot.custom_emotes['gym_yellow']}**{yellow_count}**\n\n{bot.locale['total']}: **{total_count}**\n{bot.custom_emotes['ex_pass']} {bot.locale['ex_gyms']}: **{ex_count}** ({ex_odds}%)\n\n{bot.custom_emotes['raid']} {bot.locale['active_raids']}: **{raid_count}**"
 
