@@ -64,9 +64,6 @@ if not bot.config['language'] in ["en", "de", "fr", "es"]:
 with open(f"data/items/{item_lang}.json", encoding="utf-8") as f:
     bot.items = json.load(f)
 
-if bot.config['use_alt_table_for_pokemon']:
-        bot.config['pokemon_table'] = config['alt_pokemon_table']
-
 ### LANG FILES STOP
 
 with open("config/boards.json", "r", encoding="utf-8") as f:

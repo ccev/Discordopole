@@ -161,18 +161,14 @@ async def get_gym_stats(config, area):
     return gym_stats
 
 async def statboard_mon_active(config, area):
-    print(f"statboard_mon_active connecting to db:\nhost: {config['db_host']}\ndb: {config['db_dbname']}\ntable: {config['pokemon_table']}")
     cursor_statboard_mon_active = await connect_db(config)
-    print(f"statboard_mon_active starting query for {config['db_scan_schema']}")
     if config['db_scan_schema'] == "mad":
         await cursor_statboard_mon_active.execute(f"select count(pokemon_id) from {config['pokemon_table']} where disappear_time > utc_timestamp() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
     elif config['db_scan_schema'] == "rdm":
         await cursor_statboard_mon_active.execute(f"select count(id) from {config['pokemon_table']} WHERE expire_timestamp > UNIX_TIMESTAMP() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon))")
     statboard_mon_active = await cursor_statboard_mon_active.fetchall()
-    print(f"statboard_mon_active query done")
 
     await cursor_statboard_mon_active.close()
-    print(f"statboard_mon_active result: {statboard_mon_active}")
     return statboard_mon_active
 
 async def statboard_mon_today(config, area):
