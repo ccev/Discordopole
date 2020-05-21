@@ -1,7 +1,7 @@
 import aiomysql
 import asyncio
 async def connect_alt_db(config):
-    mydb = await aiomysql.connect(
+    alt_mydb = await aiomysql.connect(
         host=config['alt_db_host'],
         user=config['alt_db_user'],
         password=config['alt_db_pass'],
@@ -9,8 +9,8 @@ async def connect_alt_db(config):
         port=config['alt_db_port'],
         autocommit=True)
 
-    cursor = await mydb.cursor()
-    return cursor
+    alt_cursor = await alt_mydb.cursor()
+    return alt_cursor
 
 async def connect_db(config):
     mydb = await aiomysql.connect(
@@ -151,10 +151,7 @@ async def get_gym_stats(config, area):
     return gym_stats
 
 async def statboard_mon_active(config, area):
-    if config['use_alt_table_for_pokemon']:
-        cursor_statboard_mon_active = await connect_alt_db(config)
-    else:
-        cursor_statboard_mon_active = await connect_db(config)
+    cursor_statboard_mon_active = await connect_db(config)
     if config['db_scan_schema'] == "mad":
         await cursor_statboard_mon_active.execute(f"select count(pokemon_id) from {config['pokemon_table']} where disappear_time > utc_timestamp() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
     elif config['db_scan_schema'] == "rdm":
@@ -165,10 +162,7 @@ async def statboard_mon_active(config, area):
     return statboard_mon_active
 
 async def statboard_mon_today(config, area):
-    if config['use_alt_table_for_pokemon']:
-        cursor_statboard_mon_today = await connect_alt_db(config)
-    else:
-        cursor_statboard_mon_today = await connect_db(config)
+    cursor_statboard_mon_today = await connect_db(config)
     if config['db_scan_schema'] == "mad":
         await cursor_statboard_mon_today.execute(f"select count(pokemon_id) from {config['pokemon_table']} where CONVERT_TZ({config['pokemon_table']}.disappear_time,'+00:00','{config['timezone']}') > curdate() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
     elif config['db_scan_schema'] == "rdm":
@@ -179,10 +173,7 @@ async def statboard_mon_today(config, area):
     return statboard_mon_today
 
 async def statboard_hundos_active(config, area):
-    if config['use_alt_table_for_pokemon']:
-        cursor_statboard_hundos_active = await connect_alt_db(config)
-    else:
-        cursor_statboard_hundos_active = await connect_db(config)
+    cursor_statboard_hundos_active = await connect_db(config)
     if config['db_scan_schema'] == "mad":
         await cursor_statboard_hundos_active.execute(f"select count(pokemon_id) from {config['pokemon_table']} where individual_attack = 15 AND individual_defense = 15 AND individual_stamina = 15 AND disappear_time > utc_timestamp() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
     elif config['db_scan_schema'] == "rdm":
@@ -193,10 +184,7 @@ async def statboard_hundos_active(config, area):
     return statboard_hundos_active
 
 async def statboard_hundos_today(config, area):
-    if config['use_alt_table_for_pokemon']:
-        cursor_statboard_hundos_today = await connect_alt_db(config)
-    else:
-        cursor_statboard_hundos_today = await connect_db(config)
+    cursor_statboard_hundos_today = await connect_db(config)
     if config['db_scan_schema'] == "mad":
         await cursor_statboard_hundos_today.execute(f"select count(pokemon_id) from {config['pokemon_table']} where individual_attack = 15 AND individual_defense = 15 AND individual_stamina = 15 AND CONVERT_TZ({config['pokemon_table']}.disappear_time,'+00:00','{config['timezone']}') > curdate() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
     elif config['db_scan_schema'] == "rdm":
@@ -207,10 +195,7 @@ async def statboard_hundos_today(config, area):
     return statboard_hundos_today
 
 async def statboard_scanned_active(config, area):
-    if config['use_alt_table_for_pokemon']:
-        cursor_statboard_scanned_active = await connect_alt_db(config)
-    else:
-        cursor_statboard_scanned_active = await connect_db(config)
+    cursor_statboard_scanned_active = await connect_db(config)
     if config['db_scan_schema'] == "mad":
         await cursor_statboard_scanned_active.execute(f"select count(pokemon_id) from {config['pokemon_table']} where individual_attack is not NULL and disappear_time > utc_timestamp() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
     elif config['db_scan_schema'] == "rdm":
@@ -221,10 +206,7 @@ async def statboard_scanned_active(config, area):
     return statboard_scanned_active
 
 async def statboard_scanned_today(config, area):
-    if config['use_alt_table_for_pokemon']:
-        cursor_statboard_scanned_today = await connect_alt_db(config)
-    else:
-        cursor_statboard_scanned_today = await connect_db(config)
+    cursor_statboard_scanned_today = await connect_db(config)
     if config['db_scan_schema'] == "mad":
         await cursor_statboard_scanned_today.execute(f"select count(pokemon_id) from {config['pokemon_table']} where individual_attack is not NULL AND CONVERT_TZ({config['pokemon_table']}.disappear_time,'+00:00','{config['timezone']}') > curdate() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
     elif config['db_scan_schema'] == "rdm":
@@ -235,10 +217,7 @@ async def statboard_scanned_today(config, area):
     return statboard_scanned_today
 
 async def statboard_total_iv_active(config, area):
-    if config['use_alt_table_for_pokemon']:
-        cursor_statboard_total_iv_active = await connect_alt_db(config)
-    else:
-        cursor_statboard_total_iv_active = await connect_db(config)
+    cursor_statboard_total_iv_active = await connect_db(config)
     if config['db_scan_schema'] == "mad":
         await cursor_statboard_total_iv_active.execute(f"select ifnull(sum((individual_attack + individual_defense + individual_stamina)/45*100),0) from {config['pokemon_table']} where individual_attack is not NULL and disappear_time > utc_timestamp() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
     elif config['db_scan_schema'] == "rdm":
@@ -249,10 +228,7 @@ async def statboard_total_iv_active(config, area):
     return statboard_total_iv_active
 
 async def statboard_total_iv_today(config, area):
-    if config['use_alt_table_for_pokemon']:
-        cursor_statboard_total_iv_today = await connect_alt_db(config)
-    else:
-        cursor_statboard_total_iv_today = await connect_db(config)
+    cursor_statboard_total_iv_today = await connect_db(config)
     if config['db_scan_schema'] == "mad":
         await cursor_statboard_total_iv_today.execute(f"select ifnull(sum((individual_attack + individual_defense + individual_stamina)/45*100),0) from {config['pokemon_table']} where individual_attack is not NULL AND CONVERT_TZ({config['pokemon_table']}.disappear_time,'+00:00','{config['timezone']}') > curdate() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
     elif config['db_scan_schema'] == "rdm":
