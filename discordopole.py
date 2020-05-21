@@ -161,15 +161,18 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None, alt_timespa
         oldest_mon_date = await queries.get_oldest_mon_date(bot.config)
         if oldest_mon_date > timespan[0]:
             print(f"using alt table, because starttime older than oldest mon. starttime: {timespan[0]}, oldest mon: {oldest_mon_date}\n")
-            alt_timespan = list([timespan[0], oldest_mon_date])
-            timespan[0] = oldest_mon_date
+            if oldest_mon_date > timespan[1]:
+                alt_timespan = list([timespan[0], timespan[1]])
+            else:
+                alt_timespan = list([timespan[0], oldest_mon_date])
+                timespan = list([oldest_mon_date, timespan[1]])
             alt_shiny_count = await queries.get_shiny_count(mon.id, area[0], alt_timespan[0], alt_timespan[1], bot.config, use_alt_table=True)
             alt_shiny_total = await queries.get_shiny_total(mon.id, area[0], alt_timespan[0], alt_timespan[1], bot.config, use_alt_table=True)
             alt_scan_numbers = await queries.get_scan_numbers(mon.id, area[0], alt_timespan[0], alt_timespan[1], bot.config, use_alt_table=True)
             alt_big_numbers = await queries.get_big_numbers(mon.id, area[0], alt_timespan[0], alt_timespan[1], bot.config, use_alt_table=True)
             if alt_big_numbers[0][3] is None:
                 alt_big_numbers = ((alt_big_numbers[0][0], alt_big_numbers[0][1], alt_big_numbers[0][2], oldest_mon_date),)
-
+    print(f"alt_timespan: {alt_timespan}\ntimespan: {timespan}\n")
     shiny_count = await queries.get_shiny_count(mon.id, area[0], timespan[0], timespan[1], bot.config)
     shiny_count = shiny_count + alt_shiny_count
 
@@ -227,12 +230,15 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None, alt_timespa
         mon_total = int(mons) + int(alt_big_numbers[0][0])
         found_count = int(found) + int(alt_big_numbers[0][1])
         boosted_count = int(boosted) + int(alt_big_numbers[0][2])
-
+    
     if found_count > 0:
-        if alt_big_numbers[0][3] < big_numbers[0][3]:
+        if big_numbers[0][3] is None:
+            days = (alt_timespan[1].date() - (alt_big_numbers[0][3]).date()).days
+        elif alt_big_numbers[0][3] < big_numbers[0][3]:
             days = (timespan[1].date() - (alt_big_numbers[0][3]).date()).days
         else:
             days = (timespan[1].date() - (big_numbers[0][3]).date()).days
+
         if days < 1:
             days = 1
 
