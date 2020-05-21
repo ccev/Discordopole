@@ -117,8 +117,9 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None, alt_timespa
 
     area = get_area(areaname)
     
-    footer_text = area[1]
-    loading = f"{loading} • "
+    if not area[1] == bot.locale['all']:
+        footer_text = area[1]
+        loading = f"{loading} • "
 
     if dateparser.search.search_dates(areaname, languages=[bot.config['language']]) is not None: #check for dates in areaname
         if dateparser.search.search_dates(f"{timespan}", languages=[bot.config['language']]) is not None: #check for dates in everything after areaname
@@ -127,8 +128,7 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None, alt_timespa
             timespan = areaname
 
     if timespan is None:
-        timespan = await queries.get_oldest_mon_entry(bot.config)
-        timespan = list([dateparser.parse(timespan, languages=[bot.config['language']]), datetime.now()])
+        timespan = list([datetime(2010, 1, 1, 0, 0), datetime.now()])
     else:
         loading = ""
 
@@ -136,10 +136,17 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None, alt_timespa
             timespan = list(timespan.split('-'))
             for i in [0, 1]:
                 timespan[i] = dateparser.parse(timespan[i], languages=[bot.config['language']])
+
+            footer_text = f"{(bot.locale['between']).capitalize()} {timespan[0].strftime(bot.locale['time_format_dhm'])} {bot.locale['and']} {timespan[1].strftime(bot.locale['time_format_dhm'])}"
+
         else:
             timespan = list([dateparser.parse(timespan, languages=[bot.config['language']]), datetime.now()])
 
-    footer_text = f"{footer_text}, {(bot.locale['between']).capitalize()} {timespan[0].strftime(bot.locale['time_format_dhm'])} {bot.locale['and']} {timespan[1].strftime(bot.locale['time_format_dhm'])}"
+            if area[1] == bot.locale['all']:
+                footer_text = f"{(bot.locale['since']).capitalize()} {timespan[0].strftime(bot.locale['time_format_dhm'])}"
+            else:
+                footer_text = f"{footer_text}, {bot.locale['since']} {timespan[0].strftime(bot.locale['time_format_dhm'])}"
+
     print(f"@{ctx.author.name} requested {mon.name} stats for area {area[1]}")    
 
     embed = discord.Embed(title=f"{mon.name}", description=text)
