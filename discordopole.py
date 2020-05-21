@@ -138,6 +138,7 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None, alt_timespa
                 timespan[i] = dateparser.parse(timespan[i], languages=[bot.config['language']])
 
             footer_text = f"{(bot.locale['between']).capitalize()} {timespan[0].strftime(bot.locale['time_format_dhm'])} {bot.locale['and']} {timespan[1].strftime(bot.locale['time_format_dhm'])}"
+
         else:
             timespan = list([dateparser.parse(timespan, languages=[bot.config['language']]), datetime.now()])
 
