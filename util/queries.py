@@ -26,20 +26,20 @@ async def connect_db(config):
 
 async def get_oldest_mon_date(config, use_alt_table=False):
     if use_alt_table:
-        cursor_oldest_mon_entry = await connect_alt_db(config)
+        cursor_oldest_mon_date = await connect_alt_db(config)
     else:
-        cursor_oldest_mon_entry = await connect_db(config)
+        cursor_oldest_mon_date = await connect_db(config)
     if config['db_scan_schema'] == "mad":
-        query_oldest_mon_entry = f"select last_modified from pokemon order by last_modified asc limit 1"
+        query_oldest_mon_date = f"select min(last_modified) from pokemon"
     elif config['db_scan_schema'] == "rdm":
-        query_oldest_mon_entry = f"select from_unixtime(first_seen_timestamp) from pokemon order by first_seen_timestamp asc limit 1"
-    await cursor_oldest_mon_entry.execute(query_oldest_mon_entry)
-    oldest_mon_entry = await cursor_oldest_mon_entry.fetchall()
-    for var in oldest_mon_entry:
-        oldest_mon_entry = var[0]
+        query_oldest_mon_date = f"select from_unixtime(min(first_seen_timestamp)) from pokemon"
+    await cursor_oldest_mon_date.execute(query_oldest_mon_date)
+    oldest_mon_date = await cursor_oldest_mon_date.fetchall()
+    for var in oldest_mon_date:
+        oldest_mon_date = var[0]
 
-    await cursor_oldest_mon_entry.close()
-    return oldest_mon_entry
+    await cursor_oldest_mon_date.close()
+    return oldest_mon_date
 
 async def get_shiny_count(mon_id, area, starttime, endtime, config, use_alt_table=False):
     if use_alt_table:

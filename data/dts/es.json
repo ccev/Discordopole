@@ -20,7 +20,7 @@
     "until": "ends",
     "time_format_hm": "%-I:%M %p",
     "time_format_dhm": "%m/%d/%Y %-I:%M %p",
-    "raids": "Incorsiones",
+    "raids": "Incursiones",
     "eggs": "Huevos",
     "empty_board": "`[Nada en esta categoría. Regresa mas tarde]`",
     "all": "Todo",
