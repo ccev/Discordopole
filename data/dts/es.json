@@ -20,7 +20,7 @@
     "until": "ends",
     "time_format_hm": "%-I:%M %p",
     "time_format_dhm": "%m/%d/%Y %-I:%M %p",
-    "raids": "Incorsiones",
+    "raids": "Incursiones",
     "eggs": "Huevos",
     "empty_board": "`[Nada en esta categoría. Regresa mas tarde]`",
     "all": "Todo",
@@ -46,5 +46,7 @@
     "level": "Nivel",
     "egg": "Huevo",
     "loading_quests": "Cargando misiones",
-    "no_quests_found": "❌ No se encontraron misiones"
+    "no_quests_found": "❌ No se encontraron misiones",
+	"average_iv": "📊 Average IV",
+	"average_iv_of_active_mons": "📊 Average IV of active Pokémon"
 }

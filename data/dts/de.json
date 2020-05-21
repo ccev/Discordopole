@@ -46,5 +46,7 @@
     "level": "Level",
     "egg": "Ei",
     "loading_quests": "Lade Quests",
-    "no_quests_found": "❌ Es konnten keine Quests gefunden werden"
+    "no_quests_found": "❌ Es konnten keine Quests gefunden werden",
+	"average_iv": "📊 Durschnittliche IV",
+	"average_iv_of_active_mons": "📊 Durschnittliche IV aktiver Pokémon"
 }

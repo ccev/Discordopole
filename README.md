@@ -16,7 +16,7 @@ There are two types of frontend features:
 
 Screenshots and more information: [Board Wiki Page](https://github.com/ccev/Discordopole/wiki/Boards) and [Command Wiki Page](https://github.com/ccev/Discordopole/wiki/Commands)
 
-### Added Features in this fork
+### Added Features in this branch
 you will need to change emote repo in config/config.ini to `emote_repo = https://raw.githubusercontent.com/idna-ved/dp_emotes/master/` and use `!get emote` again in your trash server to get those new emotes
 
 Stat Boards:
@@ -31,7 +31,7 @@ Stat Boards:
 - raid_lvl_4_active: amount of active lvl 4 raids
 - raid_lvl_5_active: amount of active lvl 5 raids
 
-you can use `!boards create stats all raid lvl all` instead of `!boards create stats all raid lvl 1, raid lvl 2, raid lvl 3, raid lvl 4, raid lvl 5` to show lvl 1-5 raids
+you can use `!board create stats area raid lvl all` instead of `!board create stats area raid lvl 1, raid lvl 2, raid lvl 3, raid lvl 4, raid lvl 5` to show lvl 1-5 raids
 
 - egg_lvl_1_active: amount of active lvl 1 eggs
 - egg_lvl_2_active: amount of active lvl 2 eggs
@@ -39,7 +39,7 @@ you can use `!boards create stats all raid lvl all` instead of `!boards create s
 - egg_lvl_4_active: amount of active lvl 4 eggs
 - egg_lvl_5_active: amount of active lvl 5 eggs
 
-you can use `!boards create stats all egg lvl all` instead of `!boards create stats all egg lvl 1, egg lvl 2, egg lvl 3, egg lvl 4, egg lvl 5` to show lvl 1-5 eggs
+you can use `!board create stats area egg lvl all` instead of `!board create stats area egg lvl 1, egg lvl 2, egg lvl 3, egg lvl 4, egg lvl 5` to show lvl 1-5 eggs
 
 ![](http://puu.sh/FKteB/14f6d3ffdd.png)
 
@@ -50,6 +50,12 @@ you can use `!boards create stats all egg lvl all` instead of `!boards create st
 
 ![](http://puu.sh/FKvvn/a37a768f4b.png)
 
+- average_iv_active: average iv of alle scanned active mons
+- average_iv_today: average iv of alle scanned mons of the day
+
+![](http://puu.sh/FKVDP/89f0f29eac.png)
+
 other:
 - neutral gyms for gym_teams ![](http://puu.sh/FKtrr/d7ff1ccf4c.png)
 - select timeframe without area for command !pokemon
+- you can use an alternative pokemon table for pokemon command. you will have to expand your `config.ini`. see `config_example/config.ini`. pokemon command will use alternative table, if timespan start is older than oldest pokemon in main table. 
