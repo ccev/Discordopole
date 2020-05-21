@@ -22,7 +22,7 @@ extensions = ["cogs.admin", "cogs.boards", "cogs.channels"]
 
 config = util.config.create_config("config/config.ini")
 bot = commands.Bot(command_prefix=config['prefix'], case_insensitive=1)
-bot.max_moves_in_list = 291
+bot.max_moves_in_list = 340
 bot.config = config
 short = pyshorteners.Shortener().tinyurl.short
 
@@ -106,12 +106,11 @@ def isUser(role_ids, channel_id):
         return False
 
 @bot.command(pass_context=True, aliases=bot.config['pokemon_aliases'])
-async def pokemon(ctx, stat_name, areaname = "", *, timespan = None):
+async def pokemon(ctx, stat_name, areaname = "", *, timespan = None, alt_timespan = None):
     if not isUser(ctx.author.roles, ctx.channel.id):
         print(f"@{ctx.author.name} tried to use !pokemon but is no user")
         return
     mon = details(stat_name, bot.config['mon_icon_repo'], bot.config['language'])
-
     footer_text = ""
     text = ""
     loading = f"{bot.locale['loading']} {mon.name} Stats"
@@ -153,11 +152,30 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None):
     embed.set_thumbnail(url=mon.icon)
     embed.set_footer(text=f"{loading}{footer_text}", icon_url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
     message = await ctx.send(embed=embed)
+   
+    alt_shiny_count = 0
+    alt_shiny_total = 0
+    alt_scan_numbers = ((0, 0, 0, 0),)
+    alt_big_numbers = ((0, 0, 0, datetime.now()),)
+    if bot.config['use_alt_table_for_pokemon']:
+        oldest_mon_date = await queries.get_oldest_mon_date(bot.config)
+        if oldest_mon_date > timespan[0]:
+            print(f"using alt table, because starttime older than oldest mon. starttime: {timespan[0]}, oldest mon: {oldest_mon_date}\n")
+            alt_timespan = list([timespan[0], oldest_mon_date])
+            timespan[0] = oldest_mon_date
+            alt_shiny_count = await queries.get_shiny_count(mon.id, area[0], alt_timespan[0], alt_timespan[1], bot.config, use_alt_table=True)
+            alt_shiny_total = await queries.get_shiny_total(mon.id, area[0], alt_timespan[0], alt_timespan[1], bot.config, use_alt_table=True)
+            alt_scan_numbers = await queries.get_scan_numbers(mon.id, area[0], alt_timespan[0], alt_timespan[1], bot.config, use_alt_table=True)
+            alt_big_numbers = await queries.get_big_numbers(mon.id, area[0], alt_timespan[0], alt_timespan[1], bot.config, use_alt_table=True)
+            if alt_big_numbers[0][3] is None:
+                alt_big_numbers = ((alt_big_numbers[0][0], alt_big_numbers[0][1], alt_big_numbers[0][2], oldest_mon_date),)
 
     shiny_count = await queries.get_shiny_count(mon.id, area[0], timespan[0], timespan[1], bot.config)
+    shiny_count = shiny_count + alt_shiny_count
 
     if shiny_count > 0:
         shiny_total = await queries.get_shiny_total(mon.id, area[0], timespan[0], timespan[1], bot.config)
+        shiny_total = shiny_total + alt_shiny_total
         shiny_odds = int(round((shiny_total / shiny_count), 0))
         text = text + f"{bot.locale['shinies']}: **1:{shiny_odds}** ({shiny_count:_}/{shiny_total:_})\n"
     else:
@@ -170,11 +188,11 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None):
 
     scan_numbers = await queries.get_scan_numbers(mon.id, area[0], timespan[0], timespan[1], bot.config)
     for scanned, hundos, zeros, nineties in scan_numbers:
-        scanned_total = int(scanned)
+        scanned_total = int(scanned) + int(alt_scan_numbers[0][0])
         if scanned_total > 0:
-            hundo_count = int(hundos)
-            zero_count = int(zeros)
-            ninety_count = int(nineties)
+            hundo_count = int(hundos) + int(alt_scan_numbers[0][1])
+            zero_count = int(zeros) + int(alt_scan_numbers[0][2])
+            ninety_count = int(nineties) + int(alt_scan_numbers[0][3])
         else:
             hundo_count = 0
             zero_count = 0
@@ -206,16 +224,15 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None):
 
     big_numbers = await queries.get_big_numbers(mon.id, area[0], timespan[0], timespan[1], bot.config)
     for mons, found, boosted, time in big_numbers:
-        mon_total = int(mons)
-        if found is not None:
-            found_count = int(found)
-            boosted_count = int(boosted)
-        else:
-            found_count = 0
-            boosted_count = 0
+        mon_total = int(mons) + int(alt_big_numbers[0][0])
+        found_count = int(found) + int(alt_big_numbers[0][1])
+        boosted_count = int(boosted) + int(alt_big_numbers[0][2])
 
     if found_count > 0:
-        days = (timespan[1].date() - (big_numbers[0][3]).date()).days
+        if alt_big_numbers[0][3] < big_numbers[0][3]:
+            days = (timespan[1].date() - (alt_big_numbers[0][3]).date()).days
+        else:
+            days = (timespan[1].date() - (big_numbers[0][3]).date()).days
         if days < 1:
             days = 1
 
@@ -275,6 +292,8 @@ async def gyms(ctx, areaname = ""):
 
     if total_count > 0:
         ex_odds = str(int(round((ex_count / total_count * 100), 0))).replace(".", bot.locale['decimal_dot'])
+    else:
+	    ex_odds = 0
 
     text = f"{bot.custom_emotes['gym_blue']}**{blue_count}**{bot.custom_emotes['blank']}{bot.custom_emotes['gym_red']}**{red_count}**{bot.custom_emotes['blank']}{bot.custom_emotes['gym_yellow']}**{yellow_count}**\n\n{bot.locale['total']}: **{total_count}**\n{bot.custom_emotes['ex_pass']} {bot.locale['ex_gyms']}: **{ex_count}** ({ex_odds}%)\n\n{bot.custom_emotes['raid']} {bot.locale['active_raids']}: **{raid_count}**"
 
