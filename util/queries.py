@@ -27,12 +27,14 @@ async def connect_db(config):
 async def get_oldest_mon_date(config, use_alt_table=False):
     if use_alt_table:
         cursor_oldest_mon_date = await connect_alt_db(config)
+        table = config['alt_pokemon_table']
     else:
         cursor_oldest_mon_date = await connect_db(config)
+        table = config['pokemon_table']
     if config['db_scan_schema'] == "mad":
-        query_oldest_mon_date = f"select min(last_modified) from pokemon"
+        query_oldest_mon_date = f"select min(last_modified) from {table}"
     elif config['db_scan_schema'] == "rdm":
-        query_oldest_mon_date = f"select from_unixtime(min(first_seen_timestamp)) from pokemon"
+        query_oldest_mon_date = f"select from_unixtime(min(first_seen_timestamp)) from {table}"
     await cursor_oldest_mon_date.execute(query_oldest_mon_date)
     oldest_mon_date = await cursor_oldest_mon_date.fetchall()
     for var in oldest_mon_date:
@@ -44,12 +46,14 @@ async def get_oldest_mon_date(config, use_alt_table=False):
 async def get_shiny_count(mon_id, area, starttime, endtime, config, use_alt_table=False):
     if use_alt_table:
         cursor_shiny_count = await connect_alt_db(config)
+        table = config['alt_pokemon_table']
     else:
         cursor_shiny_count = await connect_db(config)
+        table = config['pokemon_table']
     if config['db_scan_schema'] == "mad":
-        query_shiny_count = f"select count({config['pokemon_table']}.pokemon_id) from {config['pokemon_table']} join trs_stats_detect_raw stats on cast(stats.type_id as unsigned int) = {config['pokemon_table']}.encounter_id where stats.is_shiny=1 and {config['pokemon_table']}.pokemon_id={mon_id} AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude)) AND disappear_time > convert_tz('{starttime}', '{config['timezone']}', '+00:00') AND disappear_time < convert_tz('{endtime}', '{config['timezone']}', '+00:00')"
+        query_shiny_count = f"select count({table}.pokemon_id) from {table} join trs_stats_detect_raw stats on cast(stats.type_id as unsigned int) = {table}.encounter_id where stats.is_shiny=1 and {table}.pokemon_id={mon_id} AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude)) AND disappear_time > convert_tz('{starttime}', '{config['timezone']}', '+00:00') AND disappear_time < convert_tz('{endtime}', '{config['timezone']}', '+00:00')"
     elif config['db_scan_schema'] == "rdm":
-        query_shiny_count = f"select count(pokemon_id) from {config['pokemon_table']} where shiny = 1 AND pokemon_id = {mon_id} AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon)) AND first_seen_timestamp > UNIX_TIMESTAMP(convert_tz('{starttime}', '{config['timezone']}', '+00:00')) AND first_seen_timestamp < UNIX_TIMESTAMP(convert_tz('{endtime}', '{config['timezone']}', '+00:00'))"
+        query_shiny_count = f"select count(pokemon_id) from {table} where shiny = 1 AND pokemon_id = {mon_id} AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon)) AND first_seen_timestamp > UNIX_TIMESTAMP(convert_tz('{starttime}', '{config['timezone']}', '+00:00')) AND first_seen_timestamp < UNIX_TIMESTAMP(convert_tz('{endtime}', '{config['timezone']}', '+00:00'))"
     await cursor_shiny_count.execute(query_shiny_count)
     shiny_count = await cursor_shiny_count.fetchall()
     for var in shiny_count:
@@ -61,12 +65,14 @@ async def get_shiny_count(mon_id, area, starttime, endtime, config, use_alt_tabl
 async def get_shiny_total(mon_id, area, starttime, endtime, config, use_alt_table=False):
     if use_alt_table:
         cursor_shiny_total = await connect_alt_db(config)
+        table = config['alt_pokemon_table']
     else:
         cursor_shiny_total = await connect_db(config)
+        table = config['pokemon_table']
     if config['db_scan_schema'] == "mad":
-        query_total_shiny_count = f"select count(pokemon_id) from {config['pokemon_table']} where pokemon_id={mon_id} and disappear_time > utc_timestamp() - INTERVAL 8 WEEK and individual_attack is not null AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude)) AND disappear_time > convert_tz('{starttime}', '{config['timezone']}', '+00:00') AND disappear_time < convert_tz('{endtime}', '{config['timezone']}', '+00:00')"
+        query_total_shiny_count = f"select count(pokemon_id) from {table} where pokemon_id={mon_id} and disappear_time > utc_timestamp() - INTERVAL 8 WEEK and individual_attack is not null AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude)) AND disappear_time > convert_tz('{starttime}', '{config['timezone']}', '+00:00') AND disappear_time < convert_tz('{endtime}', '{config['timezone']}', '+00:00')"
     elif config['db_scan_schema'] == "rdm":
-        query_total_shiny_count = f"SELECT count(pokemon_id) from {config['pokemon_table']} WHERE pokemon_id = {mon_id} and atk_iv is not null AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon)) and first_seen_timestamp > UNIX_TIMESTAMP(convert_tz('{starttime}', '{config['timezone']}', '+00:00')) AND first_seen_timestamp < UNIX_TIMESTAMP(convert_tz('{endtime}', '{config['timezone']}', '+00:00'))"
+        query_total_shiny_count = f"SELECT count(pokemon_id) from {table} WHERE pokemon_id = {mon_id} and atk_iv is not null AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon)) and first_seen_timestamp > UNIX_TIMESTAMP(convert_tz('{starttime}', '{config['timezone']}', '+00:00')) AND first_seen_timestamp < UNIX_TIMESTAMP(convert_tz('{endtime}', '{config['timezone']}', '+00:00'))"
     await cursor_shiny_total.execute(query_total_shiny_count)
     shiny_total = await cursor_shiny_total.fetchall()
     for var in shiny_total:
@@ -78,12 +84,14 @@ async def get_shiny_total(mon_id, area, starttime, endtime, config, use_alt_tabl
 async def get_scan_numbers(mon_id, area, starttime, endtime, config, use_alt_table=False):
     if use_alt_table:
         cursor_scan_numbers = await connect_alt_db(config)
+        table = config['alt_pokemon_table']
     else:
         cursor_scan_numbers = await connect_db(config)
+        table = config['pokemon_table']
     if config['db_scan_schema'] == "mad":
-        query_hundo_count = f"select count(pokemon_id) as scanned, ifnull(SUM(individual_attack = 15 AND individual_defense = 15 AND individual_stamina = 15), 0) AS iv100, ifnull(SUM(individual_attack = 0 AND individual_defense = 0 AND individual_stamina = 0), 0) AS iv0, ifnull(SUM(individual_attack + individual_defense + individual_stamina >= 41), 0) AS iv90 from {config['pokemon_table']} where pokemon_id = {mon_id} and individual_attack IS NOT NULL AND disappear_time > convert_tz('{starttime}', '{config['timezone']}', '+00:00') AND disappear_time < convert_tz('{endtime}', '{config['timezone']}', '+00:00') AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))"
+        query_hundo_count = f"select count(pokemon_id) as scanned, ifnull(SUM(individual_attack = 15 AND individual_defense = 15 AND individual_stamina = 15), 0) AS iv100, ifnull(SUM(individual_attack = 0 AND individual_defense = 0 AND individual_stamina = 0), 0) AS iv0, ifnull(SUM(individual_attack + individual_defense + individual_stamina >= 41), 0) AS iv90 from {table} where pokemon_id = {mon_id} and individual_attack IS NOT NULL AND disappear_time > convert_tz('{starttime}', '{config['timezone']}', '+00:00') AND disappear_time < convert_tz('{endtime}', '{config['timezone']}', '+00:00') AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))"
     elif config['db_scan_schema'] == "rdm":
-        query_hundo_count = f"select count(id) as scanned, ifnull(SUM(iv = 100), 0) AS iv100, ifnull(SUM(iv = 0), 0) AS iv0, ifnull(SUM(iv > 90), 0) AS iv90 from {config['pokemon_table']} where pokemon_id = {mon_id} and iv IS NOT NULL AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon)) AND first_seen_timestamp > UNIX_TIMESTAMP(convert_tz('{starttime}', '{config['timezone']}', '+00:00')) AND first_seen_timestamp < UNIX_TIMESTAMP(convert_tz('{endtime}', '{config['timezone']}', '+00:00'))"
+        query_hundo_count = f"select count(id) as scanned, ifnull(SUM(iv = 100), 0) AS iv100, ifnull(SUM(iv = 0), 0) AS iv0, ifnull(SUM(iv > 90), 0) AS iv90 from {table} where pokemon_id = {mon_id} and iv IS NOT NULL AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon)) AND first_seen_timestamp > UNIX_TIMESTAMP(convert_tz('{starttime}', '{config['timezone']}', '+00:00')) AND first_seen_timestamp < UNIX_TIMESTAMP(convert_tz('{endtime}', '{config['timezone']}', '+00:00'))"
     await cursor_scan_numbers.execute(query_hundo_count)
     hundo_count = await cursor_scan_numbers.fetchall()
 
@@ -93,12 +101,14 @@ async def get_scan_numbers(mon_id, area, starttime, endtime, config, use_alt_tab
 async def get_big_numbers(mon_id, area, starttime, endtime, config, use_alt_table=False):
     if use_alt_table:
         cursor_big_numbers = await connect_alt_db(config)
+        table = config['alt_pokemon_table']
     else:
         cursor_big_numbers = await connect_db(config)
+        table = config['pokemon_table']
     if config['db_scan_schema'] == "mad":
-        query_big_count = f"select count(pokemon_id), ifnull(sum(pokemon_id = {mon_id}), 0), ifnull(sum(weather_boosted_condition > 0 and pokemon_id = {mon_id}), 0), min(disappear_time) from {config['pokemon_table']} WHERE disappear_time > convert_tz('{starttime}', '{config['timezone']}', '+00:00') AND disappear_time < convert_tz('{endtime}', '{config['timezone']}', '+00:00') AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))"
+        query_big_count = f"select count(pokemon_id), ifnull(sum(pokemon_id = {mon_id}), 0), ifnull(sum(weather_boosted_condition > 0 and pokemon_id = {mon_id}), 0), min(disappear_time) from {table} WHERE disappear_time > convert_tz('{starttime}', '{config['timezone']}', '+00:00') AND disappear_time < convert_tz('{endtime}', '{config['timezone']}', '+00:00') AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))"
     elif config['db_scan_schema'] == "rdm":
-        query_big_count = f"select count(id), ifnull(sum(pokemon_id = {mon_id}), 0), ifnull(sum(weather > 0 and pokemon_id = {mon_id}), 0), FROM_UNIXTIME(min(first_seen_timestamp)) from {config['pokemon_table']} WHERE ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon)) AND first_seen_timestamp > UNIX_TIMESTAMP(convert_tz('{starttime}', '{config['timezone']}', '+00:00')) AND first_seen_timestamp < UNIX_TIMESTAMP(convert_tz('{endtime}', '{config['timezone']}', '+00:00'))"
+        query_big_count = f"select count(id), ifnull(sum(pokemon_id = {mon_id}), 0), ifnull(sum(weather > 0 and pokemon_id = {mon_id}), 0), FROM_UNIXTIME(min(first_seen_timestamp)) from {table} WHERE ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon)) AND first_seen_timestamp > UNIX_TIMESTAMP(convert_tz('{starttime}', '{config['timezone']}', '+00:00')) AND first_seen_timestamp < UNIX_TIMESTAMP(convert_tz('{endtime}', '{config['timezone']}', '+00:00'))"
     await cursor_big_numbers.execute(query_big_count)
     big_numbers = await cursor_big_numbers.fetchall()
 
