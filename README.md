@@ -58,4 +58,4 @@ you can use `!board create stats area egg lvl all` instead of `!board create sta
 other:
 - neutral gyms for gym_teams ![](http://puu.sh/FKtrr/d7ff1ccf4c.png)
 - select timeframe without area for command !pokemon
-- you can use an alternative pokemon table. you will have to expand your `config.ini`. see `config_example/config.ini`
+- you can use an alternative pokemon table for pokemon command. you will have to expand your `config.ini`. see `config_example/config.ini`. pokemon command will use alternative table, if timespan start is older than oldest pokemon in main table. 
