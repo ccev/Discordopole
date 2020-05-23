@@ -59,3 +59,4 @@ other:
 - neutral gyms for gym_teams ![](http://puu.sh/FKtrr/d7ff1ccf4c.png)
 - select timeframe without area for command !pokemon
 - you can use an alternative pokemon table for pokemon command. you will have to expand your `config.ini`. see `config_example/config.ini`. pokemon command will use alternative table, if timespan start is older than oldest pokemon in main table. 
+- new config option `show_used_timespan_in_footer`. if True, footer will show everytime used timespan and area for pokemon command

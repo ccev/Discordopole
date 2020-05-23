@@ -38,6 +38,7 @@ def create_config(config_path):
     config['pokemon_aliases'] = json.loads(config_raw.get('Commands','pokemon_aliases'))
     config['gyms_aliases'] = json.loads(config_raw.get('Commands','gyms_aliases'))
     config['quest_aliases'] = json.loads(config_raw.get('Commands','quest_aliases'))
+    config['timespan_in_footer'] = config_raw.getboolean('Commands','show_used_timespan_in_footer')
 
 
     # DB #
@@ -52,12 +53,12 @@ def create_config(config_path):
     # alt DB for pokemon#
 
     config['use_alt_table_for_pokemon'] = config_raw.getboolean('alternative_table_for_pokemon','use_alt_table_for_pokemon')
-    config['alt_db_scan_schema'] = config_raw.get('alternative_table_for_pokemon','scanner_db_schema')
-    config['alt_db_host'] = config_raw.get('alternative_table_for_pokemon','host')
-    config['alt_db_port'] = config_raw.getint('alternative_table_for_pokemon','port')
-    config['alt_db_user'] = config_raw.get('alternative_table_for_pokemon','user')
-    config['alt_db_pass'] = config_raw.get('alternative_table_for_pokemon','password')
-    config['alt_db_dbname'] = config_raw.get('alternative_table_for_pokemon','scanner_db_name')
-    config['alt_pokemon_table'] = config_raw.get('alternative_table_for_pokemon', 'pokemon_table')
+    config['alt_db_scan_schema'] = config_raw.get('alternative_table_for_pokemon','alt_scanner_db_schema')
+    config['alt_db_host'] = config_raw.get('alternative_table_for_pokemon','alt_host')
+    config['alt_db_port'] = config_raw.getint('alternative_table_for_pokemon','alt_port')
+    config['alt_db_user'] = config_raw.get('alternative_table_for_pokemon','alt_user')
+    config['alt_db_pass'] = config_raw.get('alternative_table_for_pokemon','alt_password')
+    config['alt_db_dbname'] = config_raw.get('alternative_table_for_pokemon','alt_scanner_db_name')
+    config['alt_pokemon_table'] = config_raw.get('alternative_table_for_pokemon', 'alt_pokemon_table')
 
     return config

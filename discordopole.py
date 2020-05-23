@@ -64,9 +64,6 @@ if not bot.config['language'] in ["en", "de", "fr", "es"]:
 with open(f"data/items/{item_lang}.json", encoding="utf-8") as f:
     bot.items = json.load(f)
 
-if bot.config['use_alt_table_for_pokemon']:
-        bot.config['pokemon_table'] = config['alt_pokemon_table']
-
 ### LANG FILES STOP
 
 with open("config/boards.json", "r", encoding="utf-8") as f:
@@ -116,41 +113,73 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None, alt_timespa
     loading = f"{bot.locale['loading']} {mon.name} Stats"
 
     area = get_area(areaname)
-    
-    if not area[1] == bot.locale['all']:
+
+    if not area[1] == bot.locale['all'] and not config['timespan_in_footer']:
         footer_text = area[1]
         loading = f"{loading} • "
+    elif config['timespan_in_footer']:
+        footer_text = area[1]
+        loading = f"{loading}"
 
     if dateparser.search.search_dates(areaname, languages=[bot.config['language']]) is not None: #check for dates in areaname
         if dateparser.search.search_dates(f"{timespan}", languages=[bot.config['language']]) is not None: #check for dates in everything after areaname
             timespan = f"{areaname} {timespan}"
         else: 
             timespan = areaname
+    elif dateparser.search.search_dates(f"{areaname} {timespan}", languages=[bot.config['language']]) is not None and (dateparser.search.search_dates(timespan, languages=[bot.config['language']]) is None):
+        timespan = f"{areaname} {timespan}"
 
-    if timespan is None:
-        timespan = list([datetime(2010, 1, 1, 0, 0), datetime.now()])
-    else:
-        loading = ""
+    print(f"timespan found in command: {timespan}")
+    if config['timespan_in_footer']:
+        if config['use_alt_table_for_pokemon']:
+            oldest_mon_date = await queries.get_oldest_mon_date(bot.config, use_alt_table=True)
+            if oldest_mon_date is None:
+                oldest_mon_date = await queries.get_oldest_mon_date(bot.config, use_alt_table=False)
+        else:
+            oldest_mon_date = await queries.get_oldest_mon_date(bot.config, use_alt_table=False)
 
-        if "-" in timespan:
+        if timespan is None:
+            timespan = list([oldest_mon_date, datetime.now()])
+        elif "-" in timespan:
             timespan = list(timespan.split('-'))
             for i in [0, 1]:
                 timespan[i] = dateparser.parse(timespan[i], languages=[bot.config['language']])
-
-            footer_text = f"{(bot.locale['between']).capitalize()} {timespan[0].strftime(bot.locale['time_format_dhm'])} {bot.locale['and']} {timespan[1].strftime(bot.locale['time_format_dhm'])}"
         else:
             timespan = list([dateparser.parse(timespan, languages=[bot.config['language']]), datetime.now()])
 
-            if area[1] == bot.locale['all']:
-                footer_text = f"{(bot.locale['since']).capitalize()} {timespan[0].strftime(bot.locale['time_format_dhm'])}"
+        if timespan[0] < oldest_mon_date:
+            timespan = list([oldest_mon_date, timespan[1]])
+
+        footer_text = f"{footer_text}, {(bot.locale['between']).capitalize()} {timespan[0].strftime(bot.locale['time_format_dhm'])} {bot.locale['and']} {timespan[1].strftime(bot.locale['time_format_dhm'])}"
+    else:
+        if timespan is None:
+            timespan = list([datetime(2010, 1, 1, 0, 0), datetime.now()])
+        else:
+            loading = ""
+
+            if "-" in timespan:
+                timespan = list(timespan.split('-'))
+                for i in [0, 1]:
+                    timespan[i] = dateparser.parse(timespan[i], languages=[bot.config['language']])
+
+                footer_text = f"{(bot.locale['between']).capitalize()} {timespan[0].strftime(bot.locale['time_format_dhm'])} {bot.locale['and']} {timespan[1].strftime(bot.locale['time_format_dhm'])}"
+
             else:
-                footer_text = f"{footer_text}, {bot.locale['since']} {timespan[0].strftime(bot.locale['time_format_dhm'])}"
+                timespan = list([dateparser.parse(timespan, languages=[bot.config['language']]), datetime.now()])
+
+                if area[1] == bot.locale['all']:
+                    footer_text = f"{(bot.locale['since']).capitalize()} {timespan[0].strftime(bot.locale['time_format_dhm'])}"
+                else:
+                    footer_text = f"{footer_text}, {bot.locale['since']} {timespan[0].strftime(bot.locale['time_format_dhm'])}"
 
     print(f"@{ctx.author.name} requested {mon.name} stats for area {area[1]}")    
 
     embed = discord.Embed(title=f"{mon.name}", description=text)
     embed.set_thumbnail(url=mon.icon)
-    embed.set_footer(text=f"{loading}{footer_text}", icon_url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
+    if config['timespan_in_footer']:
+        embed.set_footer(text=f"{loading}", icon_url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
+    else:
+        embed.set_footer(text=f"{loading}{footer_text}", icon_url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
     message = await ctx.send(embed=embed)
    
     alt_shiny_count = 0
@@ -161,8 +190,11 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None, alt_timespa
         oldest_mon_date = await queries.get_oldest_mon_date(bot.config)
         if oldest_mon_date > timespan[0]:
             print(f"using alt table, because starttime older than oldest mon. starttime: {timespan[0]}, oldest mon: {oldest_mon_date}\n")
-            alt_timespan = list([timespan[0], oldest_mon_date])
-            timespan[0] = oldest_mon_date
+            if oldest_mon_date > timespan[1]:
+                alt_timespan = list([timespan[0], timespan[1]])
+            else:
+                alt_timespan = list([timespan[0], oldest_mon_date])
+                timespan = list([oldest_mon_date, timespan[1]])
             alt_shiny_count = await queries.get_shiny_count(mon.id, area[0], alt_timespan[0], alt_timespan[1], bot.config, use_alt_table=True)
             alt_shiny_total = await queries.get_shiny_total(mon.id, area[0], alt_timespan[0], alt_timespan[1], bot.config, use_alt_table=True)
             alt_scan_numbers = await queries.get_scan_numbers(mon.id, area[0], alt_timespan[0], alt_timespan[1], bot.config, use_alt_table=True)
@@ -227,12 +259,15 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None, alt_timespa
         mon_total = int(mons) + int(alt_big_numbers[0][0])
         found_count = int(found) + int(alt_big_numbers[0][1])
         boosted_count = int(boosted) + int(alt_big_numbers[0][2])
-
+    
     if found_count > 0:
-        if alt_big_numbers[0][3] < big_numbers[0][3]:
+        if big_numbers[0][3] is None:
+            days = (alt_timespan[1].date() - (alt_big_numbers[0][3]).date()).days
+        elif alt_big_numbers[0][3] < big_numbers[0][3]:
             days = (timespan[1].date() - (alt_big_numbers[0][3]).date()).days
         else:
             days = (timespan[1].date() - (big_numbers[0][3]).date()).days
+
         if days < 1:
             days = 1
 
