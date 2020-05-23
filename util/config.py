@@ -38,6 +38,7 @@ def create_config(config_path):
     config['pokemon_aliases'] = json.loads(config_raw.get('Commands','pokemon_aliases'))
     config['gyms_aliases'] = json.loads(config_raw.get('Commands','gyms_aliases'))
     config['quest_aliases'] = json.loads(config_raw.get('Commands','quest_aliases'))
+    config['timespan_in_footer'] = config_raw.getboolean('Commands','show_used_timespan_in_footer')
 
 
     # DB #
