@@ -222,7 +222,7 @@ class Boards(commands.Cog):
                         hundos_active = ((hundos_active[0][0] + alt_hundos_active[0][0],),)
 
                     if not "hundos_today" in board['type']:
-                        text = f"{text}{self.bot.locale['hundos']}: **{hundos_active[0][0]:,}** {self.bot.locale['active']}\n\n"
+                        text = f"{text}{self.bot.locale['hundos']}: **{hundos_active[0][0]:,}** {self.bot.locale['active']}\n"
 
                 if "hundos_today" in board['type']:
                     hundos_today = await queries.statboard_hundos_today(self.bot.config, area[0])
@@ -231,13 +231,33 @@ class Boards(commands.Cog):
                         hundos_today = ((hundos_today[0][0] + alt_hundos_today[0][0],),)
 
                     if "hundos_active" in board['type']:
-                        text = f"{text}{self.bot.locale['hundos']}: **{hundos_active[0][0]:,}** {self.bot.locale['active']} | **{hundos_today[0][0]:,}** {self.bot.locale['today']}\n\n"
+                        text = f"{text}{self.bot.locale['hundos']}: **{hundos_active[0][0]:,}** {self.bot.locale['active']} | **{hundos_today[0][0]:,}** {self.bot.locale['today']}\n"
                     else:
-                        text = f"{text}{self.bot.locale['hundos']} {self.bot.locale['today']}: **{hundos_today[0][0]:,}**\n\n"
+                        text = f"{text}{self.bot.locale['hundos']} {self.bot.locale['today']}: **{hundos_today[0][0]:,}**\n"
+
+                if "iv0_active" in board['type']:
+                    iv0_active = await queries.statboard_iv0_active(self.bot.config, area[0])
+                    if self.bot.config['use_alt_table_for_pokemon'] and oldest_mon_date > now_minus_60_min:
+                        alt_iv0_active = await queries.statboard_iv0_active(self.bot.config, area[0], use_alt_table=True)
+                        iv0_active = ((iv0_active[0][0] + alt_iv0_active[0][0],),)
+
+                    if not "iv0_today" in board['type']:
+                        text = f"{text}{self.bot.locale['0']}: **{iv0_active[0][0]:,}** {self.bot.locale['active']}\n"
+
+                if "iv0_today" in board['type']:
+                    iv0_today = await queries.statboard_iv0_today(self.bot.config, area[0])
+                    if self.bot.config['use_alt_table_for_pokemon'] and oldest_mon_date > date_today:
+                        alt_iv0_today = await queries.statboard_iv0_today(self.bot.config, area[0], use_alt_table=True)
+                        iv0_today = ((iv0_today[0][0] + alt_iv0_today[0][0],),)
+
+                    if "iv0_active" in board['type']:
+                        text = f"{text}{self.bot.locale['0']}: **{iv0_active[0][0]:,}** {self.bot.locale['active']} | **{iv0_today[0][0]:,}** {self.bot.locale['today']}\n"
+                    else:
+                        text = f"{text}{self.bot.locale['0']} {self.bot.locale['today']}: **{hundos_today[0][0]:,}**\n"
 
                 if "gym_amount" in board['type']:
                     gym_amount = await queries.statboard_gym_amount(self.bot.config, area[0])
-                    text = f"{text}{self.bot.custom_emotes['gym_grey']} **{gym_amount[0][0]:,}** {self.bot.locale['total_gyms']}\n"
+                    text = f"{text}\n{self.bot.custom_emotes['gym_grey']} **{gym_amount[0][0]:,}** {self.bot.locale['total_gyms']}\n"
 
                 if "gym_teams" in board['type']:
                     gym_teams = await queries.statboard_gym_teams(self.bot.config, area[0])

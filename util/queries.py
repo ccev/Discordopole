@@ -230,6 +230,40 @@ async def statboard_hundos_today(config, area, use_alt_table=False):
     await cursor_statboard_hundos_today.close()
     return statboard_hundos_today
 
+async def statboard_iv0_active(config, area, use_alt_table=False):
+    if use_alt_table:
+        cursor_statboard_iv0_active = await connect_alt_db(config)
+        table = config['alt_pokemon_table']
+    else:
+        cursor_statboard_iv0_active = await connect_db(config)
+        table = 'pokemon'
+
+    if config['db_scan_schema'] == "mad":
+        await cursor_statboard_iv0_active.execute(f"select count(pokemon_id) from {table} where individual_attack = 0 AND individual_defense = 0 AND individual_stamina = 0 AND disappear_time > utc_timestamp() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
+    elif config['db_scan_schema'] == "rdm":
+        await cursor_statboard_iv0_active.execute(f"select count(id) from {table} WHERE iv = 0 AND expire_timestamp > UNIX_TIMESTAMP() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon))")
+    statboard_iv0_active = await cursor_statboard_iv0_active.fetchall()
+
+    await cursor_statboard_iv0_active.close()
+    return statboard_iv0_active
+
+async def statboard_iv0_today(config, area, use_alt_table=False):
+    if use_alt_table:
+        cursor_statboard_iv0_today = await connect_alt_db(config)
+        table = config['alt_pokemon_table']
+    else:
+        cursor_statboard_iv0_today = await connect_db(config)
+        table = 'pokemon'
+
+    if config['db_scan_schema'] == "mad":
+        await cursor_statboard_iv0_today.execute(f"select count(pokemon_id) from {table} where individual_attack = 0 AND individual_defense = 0 AND individual_stamina = 0 AND CONVERT_TZ({table}.disappear_time,'+00:00','{config['timezone']}') > curdate() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
+    elif config['db_scan_schema'] == "rdm":
+        await cursor_statboard_iv0_today.execute(f"select count(id) from {table} where iv = 0 AND CONVERT_TZ(from_unixtime(first_seen_timestamp),'+00:00','{config['timezone']}') > CURDATE() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon))")
+    statboard_iv0_today = await cursor_statboard_iv0_today.fetchall()
+
+    await cursor_statboard_iv0_today.close()
+    return statboard_iv0_today
+
 async def statboard_scanned_active(config, area, use_alt_table=False):
     if use_alt_table:
         cursor_statboard_scanned_active = await connect_alt_db(config)
