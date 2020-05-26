@@ -43,17 +43,16 @@ you can use `!board create stats area egg lvl all` instead of `!board create sta
 
 ![](http://puu.sh/FKteB/14f6d3ffdd.png)
 
-- hundos_active: amount of active hundos
-- hundos_today: total amount of hundos today
 - scanned_active: amount of active scanned mons
 - scanned_today: total amount of scanned mons today
-
-![](http://puu.sh/FKvvn/a37a768f4b.png)
-
 - average_iv_active: average iv of alle scanned active mons
 - average_iv_today: average iv of alle scanned mons of the day
+- hundos_active: amount of active hundos
+- hundos_today: total amount of hundos today
+- iv0_active: amount of active mon with 0% iv
+- iv0_today: total amount of mon with 0% iv
 
-![](http://puu.sh/FKVDP/89f0f29eac.png)
+![](http://puu.sh/FPbMn/37c6c137a2.png)
 
 other:
 - neutral gyms for gym_teams ![](http://puu.sh/FKtrr/d7ff1ccf4c.png)

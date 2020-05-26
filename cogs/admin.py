@@ -216,6 +216,11 @@ class Admin(commands.Cog):
                     stats.append("hundos_active")
                 elif "today" in stat:
                     stats.append("hundos_today")
+            elif "iv0" in stat:
+                if "active" in stat:
+                    stats.append("iv0_active")
+                elif "today" in stat:
+                    stats.append("iv0_today")
             elif "scanned" in stat:
                 if "active" in stat:
                     stats.append("scanned_active")
