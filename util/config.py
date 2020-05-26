@@ -48,7 +48,6 @@ def create_config(config_path):
     config['db_user'] = config_raw.get('DB','user')
     config['db_pass'] = config_raw.get('DB','password')
     config['db_dbname'] = config_raw.get('DB','scanner_db_name')
-    config['pokemon_table'] = config_raw.get('DB', 'pokemon_table')
     
     # alt DB for pokemon#
 
@@ -60,5 +59,6 @@ def create_config(config_path):
     config['alt_db_pass'] = config_raw.get('alternative_table_for_pokemon','alt_password')
     config['alt_db_dbname'] = config_raw.get('alternative_table_for_pokemon','alt_scanner_db_name')
     config['alt_pokemon_table'] = config_raw.get('alternative_table_for_pokemon', 'alt_pokemon_table')
+    config['alt_shiny_table'] = config_raw.get('alternative_table_for_pokemon', 'alt_shiny_table')
 
     return config
