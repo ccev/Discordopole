@@ -118,7 +118,6 @@ class Boards(commands.Cog):
                     oldest_mon_date = await queries.get_oldest_mon_date(self.bot.config)
                     date_today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
                     now_minus_60_min = datetime.now() - timedelta(minutes = 60)
-                    print(f"oldest mon: {oldest_mon_date}\ntoday: {date_today}\n now - 60min: {now_minus_60_min}")
 
                 if "mon_active" in board['type']:
                     mon_active = await queries.statboard_mon_active(self.bot.config, area[0])
