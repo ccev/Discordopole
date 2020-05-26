@@ -150,7 +150,7 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None, alt_timespa
         if timespan[0] < oldest_mon_date:
             timespan = list([oldest_mon_date, timespan[1]])
 
-        footer_text = f"{footer_text}, {(bot.locale['between']).capitalize()} {timespan[0].strftime(bot.locale['time_format_dhm'])} {bot.locale['and']} {timespan[1].strftime(bot.locale['time_format_dhm'])}"
+        footer_text = f"{footer_text}, {(bot.locale['between'])} {timespan[0].strftime(bot.locale['time_format_dhm'])} {bot.locale['and']} {timespan[1].strftime(bot.locale['time_format_dhm'])}"
     else:
         if timespan is None:
             timespan = list([datetime(2010, 1, 1, 0, 0), datetime.now()])
