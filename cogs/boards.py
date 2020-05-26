@@ -2,9 +2,10 @@ import discord
 import asyncio
 import json
 import pyshorteners
+import dateparser
 
 from discord.ext import tasks, commands
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 
 from discordopole import get_area
 from util.mondetails import details
@@ -114,14 +115,27 @@ class Boards(commands.Cog):
                 message = await channel.fetch_message(board["message_id"])
                 area = get_area(board["area"])
                 text = ""
+                if self.bot.config['use_alt_table_for_pokemon']:
+                    oldest_mon_date = await queries.get_oldest_mon_date(self.bot.config)
+                    date_today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+                    now_minus_60_min = datetime.now() - timedelta(minutes = 60)
+                    print(f"oldest mon: {oldest_mon_date}\ntoday: {date_today}\n now - 60min: {now_minus_60_min}")
 
                 if "mon_active" in board['type']:
                     mon_active = await queries.statboard_mon_active(self.bot.config, area[0])
+                    if self.bot.config['use_alt_table_for_pokemon'] and oldest_mon_date > now_minus_60_min:
+                        alt_mon_active = await queries.statboard_mon_active(self.bot.config, area[0], use_alt_table=True)
+                        mon_active = ((mon_active[0][0] + alt_mon_active[0][0],),)
+
                     if not "mon_today" in board['type']:
                         text = f"{text}{self.bot.custom_emotes['pokeball']} **{mon_active[0][0]:,}** {self.bot.locale['active_pokemon']}\n\n"
 
                 if "mon_today" in board['type']:
                     mon_today = await queries.statboard_mon_today(self.bot.config, area[0])
+                    if self.bot.config['use_alt_table_for_pokemon'] and oldest_mon_date > date_today:
+                        alt_mon_today = await queries.statboard_mon_today(self.bot.config, area[0], use_alt_table=True)
+                        mon_today = ((mon_today[0][0] + alt_mon_today[0][0],),)
+
                     if "mon_active" in board['type']:
                         text = f"{text}{self.bot.custom_emotes['pokeball']} **{mon_active[0][0]:,}** {self.bot.locale['active_pokemon']} | **{mon_today[0][0]:,}** {self.bot.locale['today']}\n\n"
                     else:
@@ -129,7 +143,15 @@ class Boards(commands.Cog):
 
                 if "scanned_active" in board['type']:
                     scanned_active = await queries.statboard_scanned_active(self.bot.config, area[0])
-                    mon_active = await queries.statboard_mon_active(self.bot.config, area[0])
+                    if not "mon_active" in board['type']:
+                        mon_active = await queries.statboard_mon_active(self.bot.config, area[0])
+                    if self.bot.config['use_alt_table_for_pokemon'] and oldest_mon_date > now_minus_60_min:
+                        alt_scanned_active = await queries.statboard_scanned_active(self.bot.config, area[0], use_alt_table=True)
+                        scanned_active = ((scanned_active[0][0] + alt_scanned_active[0][0],),)
+                        if not "mon_active" in board['type']:
+                            alt_mon_active = await queries.statboard_mon_active(self.bot.config, area[0], use_alt_table=True)
+                            mon_active = ((mon_active[0][0] + alt_mon_active[0][0],),)
+
                     if scanned_active[0][0] == 0:
                         scanned_active_ratio = 0
                     else:
@@ -139,7 +161,15 @@ class Boards(commands.Cog):
 
                 if "scanned_today" in board['type']:
                     scanned_today = await queries.statboard_scanned_today(self.bot.config, area[0])
-                    mon_today = await queries.statboard_mon_today(self.bot.config, area[0])
+                    if not "mon_today" in board['type']:
+                        mon_today = await queries.statboard_mon_today(self.bot.config, area[0])
+                    if self.bot.config['use_alt_table_for_pokemon'] and oldest_mon_date > date_today:
+                        alt_scanned_today = await queries.statboard_scanned_today(self.bot.config, area[0], use_alt_table=True)
+                        scanned_today = ((scanned_today[0][0] + alt_scanned_today[0][0],),)
+                        if not "mon_today" in board['type']:
+                            alt_mon_today = await queries.statboard_mon_today(self.bot.config, area[0], use_alt_table=True)
+                            mon_today = ((mon_today[0][0] + alt_mon_today[0][0],),)
+
                     if mon_today[0][0] == 0:
                         scanned_today_ratio = 0
                     else:
@@ -153,6 +183,13 @@ class Boards(commands.Cog):
                     total_iv_active = await queries.statboard_total_iv_active(self.bot.config, area[0])
                     if not "scanned_active" in board['type']: #query for active scanned mons wont run twice if scanned_active in board
                         scanned_active = await queries.statboard_scanned_active(self.bot.config, area[0])
+                    if self.bot.config['use_alt_table_for_pokemon'] and oldest_mon_date > now_minus_60_min:
+                        alt_total_iv_active = await queries.statboard_total_iv_active(self.bot.config, area[0], use_alt_table=True)
+                        total_iv_active = ((total_iv_active[0][0] + alt_total_iv_active[0][0],),)
+                        if not "scanned_active" in board['type']:
+                            alt_scanned_active = await queries.statboard_scanned_active(self.bot.config, area[0], use_alt_table=True)
+                            scanned_active = ((scanned_active[0][0] + alt_scanned_active[0][0],),)
+
                     if scanned_active[0][0] == 0:
                         average_iv_active = 0
                     else:
@@ -164,6 +201,13 @@ class Boards(commands.Cog):
                     total_iv_today = await queries.statboard_total_iv_today(self.bot.config, area[0])
                     if not "scanned_today" in board['type']: #query for today scanned mons wont run twice if scanned_today in board
                         scanned_today = await queries.statboard_scanned_today(self.bot.config, area[0])
+                    if self.bot.config['use_alt_table_for_pokemon'] and oldest_mon_date > date_today:
+                        alt_total_iv_today = await queries.statboard_total_iv_today(self.bot.config, area[0], use_alt_table=True)
+                        total_iv_today = ((total_iv_today[0][0] + alt_total_iv_today[0][0],),)
+                        if not "scanned_today" in board['type']:
+                            alt_scanned_today = await queries.statboard_scanned_today(self.bot.config, area[0], use_alt_table=True)
+                            scanned_today = ((scanned_today[0][0] + alt_scanned_today[0][0],),)
+
                     if scanned_today[0][0] == 0:
                         average_iv_today = 0
                     else:
@@ -175,11 +219,19 @@ class Boards(commands.Cog):
 
                 if "hundos_active" in board['type']:
                     hundos_active = await queries.statboard_hundos_active(self.bot.config, area[0])
+                    if self.bot.config['use_alt_table_for_pokemon'] and oldest_mon_date > now_minus_60_min:
+                        alt_hundos_active = await queries.statboard_hundos_active(self.bot.config, area[0], use_alt_table=True)
+                        hundos_active = ((hundos_active[0][0] + alt_hundos_active[0][0],),)
+
                     if not "hundos_today" in board['type']:
                         text = f"{text}{self.bot.locale['hundos']}: **{hundos_active[0][0]:,}** {self.bot.locale['active']}\n\n"
 
                 if "hundos_today" in board['type']:
                     hundos_today = await queries.statboard_hundos_today(self.bot.config, area[0])
+                    if self.bot.config['use_alt_table_for_pokemon'] and oldest_mon_date > date_today:
+                        alt_hundos_today = await queries.statboard_hundos_today(self.bot.config, area[0], use_alt_table=True)
+                        hundos_today = ((hundos_today[0][0] + alt_hundos_today[0][0],),)
+
                     if "hundos_active" in board['type']:
                         text = f"{text}{self.bot.locale['hundos']}: **{hundos_active[0][0]:,}** {self.bot.locale['active']} | **{hundos_today[0][0]:,}** {self.bot.locale['today']}\n\n"
                     else:
