@@ -51,9 +51,9 @@ async def get_shiny_count(mon_id, area, starttime, endtime, config, use_alt_tabl
     else:
         cursor_shiny_count = await connect_db(config)
         table = 'pokemon'
-        shiny_table = 'trs_stats_detect_raw'
+        shiny_table = 'trs_stats_detect_mon_raw'
     if config['db_scan_schema'] == "mad":
-        query_shiny_count = f"select count({table}.pokemon_id) from {table} join {shiny_table} stats on cast(stats.type_id as unsigned int) = {table}.encounter_id where stats.is_shiny=1 and {table}.pokemon_id={mon_id} AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude)) AND disappear_time > convert_tz('{starttime}', '{config['timezone']}', '+00:00') AND disappear_time < convert_tz('{endtime}', '{config['timezone']}', '+00:00')"
+        query_shiny_count = f"select count({table}.pokemon_id) from {table} join {shiny_table} stats on stats.encounter_id = {table}.encounter_id where stats.is_shiny=1 and {table}.pokemon_id={mon_id} AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude)) AND disappear_time > convert_tz('{starttime}', '{config['timezone']}', '+00:00') AND disappear_time < convert_tz('{endtime}', '{config['timezone']}', '+00:00')"
     elif config['db_scan_schema'] == "rdm":
         query_shiny_count = f"select count(pokemon_id) from {table} where shiny = 1 AND pokemon_id = {mon_id} AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon)) AND first_seen_timestamp > UNIX_TIMESTAMP(convert_tz('{starttime}', '{config['timezone']}', '+00:00')) AND first_seen_timestamp < UNIX_TIMESTAMP(convert_tz('{endtime}', '{config['timezone']}', '+00:00'))"
     await cursor_shiny_count.execute(query_shiny_count)
