@@ -22,8 +22,8 @@ class Channels(commands.Cog):
         #    gym_name = gym_name[0:27] + "..."
 
         if not mon_id is None and mon_id > 0:
-            mon_name = details.id(mon_id, self.bot.config['language'])
-            mon_img = f"{self.bot.config['mon_icon_repo']}pokemon_icon_{str(mon_id).zfill(3)}_{str(form).zfill(2)}.png"
+            mon_name = details.id(mon_id, self.bot.config.language)
+            mon_img = f"{self.bot.config.mon_icon_repo}pokemon_icon_{str(mon_id).zfill(3)}_{str(form).zfill(2)}.png"
 
             if move_1 > self.bot.max_moves_in_list:
                 move_1 = "?"
@@ -43,7 +43,7 @@ class Channels(commands.Cog):
             embed.set_author(name=mon_name, icon_url=mon_img)
         else:
             egg_name = f"{self.bot.locale['level']} {level} {self.bot.locale['egg']}"
-            egg_img = f"{self.bot.config['emote_repo']}raid_egg_{level}.png"
+            egg_img = f"{self.bot.config.emote_repo}raid_egg_{level}.png"
 
             embed = discord.Embed(title=gym_name, description=f"{self.bot.locale['hatches_at']} **{start}**\n{self.bot.locale['lasts_until']} **{end}**\n\n[Google Maps](https://www.google.com/maps/search/?api=1&query={lat},{lon}) | [Apple Maps](https://maps.apple.com/maps?daddr={lat},{lon})")
             embed.set_thumbnail(url=gym_img)

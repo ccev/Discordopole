@@ -43,7 +43,7 @@ class Boards(commands.Cog):
                                 form_letter = f"{self.bot.forms[str(mon_id)][str(form)][0]} "
                         
                         if not mon_id is None and mon_id > 0:
-                            mon_name = details.id(mon_id, self.bot.config['language'])
+                            mon_name = details.id(mon_id, self.bot.config.language)
                             if move_1 > self.bot.max_moves_in_list:
                                 move_1 = "?"
                             else:
@@ -373,12 +373,12 @@ class Boards(commands.Cog):
                     mon_id = 0
                     item_id = 0
 
-                    if self.bot.config['db_scan_schema'] == "rdm":
+                    if self.bot.config.db_scan_schema == "rdm":
                         if 'pokemon_id' in quest_json[0]["info"]:
                             mon_id = quest_json[0]["info"]["pokemon_id"]
                         elif 'item_id' in quest_json[0]["info"]:
                             item_id = quest_json[0]["info"]["item_id"]
-                    elif self.bot.config['db_scan_schema'] == "mad":
+                    elif self.bot.config.db_scan_schema == "mad":
                         item_id = quest_json[0]["item"]["item"]
                         mon_id = quest_json[0]["pokemon_encounter"]["pokemon_id"]
                     if item_id in board["items"]:
@@ -396,7 +396,7 @@ class Boards(commands.Cog):
                         lat_list.append(lat)
                         lon_list.append(lon)
 
-                        if self.bot.config['use_map']:
+                        if self.bot.config.use_map:
                             map_url = self.bot.map_url.quest(lat, lon, stop_id)
                         else:
                             map_url = f"https://www.google.com/maps/search/?api=1&query={lat},{lon}"
@@ -411,7 +411,7 @@ class Boards(commands.Cog):
 
                 static_map_img = ""
                 if length > 0:
-                    if self.bot.config['use_static']:
+                    if self.bot.config.use_static:
                         static_map_img = await self.bot.static_map.quest(lat_list, lon_list, reward_items, reward_mons, self.bot.custom_emotes)
                 else:
                     text = self.bot.locale["empty_board"]  
@@ -422,9 +422,9 @@ class Boards(commands.Cog):
 
                 if (len(board["items"]) + len(board["mons"])) == 1:
                     if len(board["items"]) == 1:
-                        embed.set_thumbnail(url=f"{self.bot.config['mon_icon_repo']}rewards/reward_{board['items'][0]}_1.png")
+                        embed.set_thumbnail(url=f"{self.bot.config.mon_icon_repo}rewards/reward_{board['items'][0]}_1.png")
                     elif len(board["mons"]) == 1:
-                        embed.set_thumbnail(url=f"{self.bot.config['mon_icon_repo']}pokemon_icon_{str(board['mons'][0]).zfill(3)}_00.png")
+                        embed.set_thumbnail(url=f"{self.bot.config.mon_icon_repo}pokemon_icon_{str(board['mons'][0]).zfill(3)}_00.png")
 
                 await message.edit(embed=embed)
                 await asyncio.sleep(2)

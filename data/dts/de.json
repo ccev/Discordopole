@@ -9,7 +9,7 @@
     "scanned": "🤖 Auf IV gescannt",
     "total_found": "🗺️ Insgesamt gefunden",
     "total": "🗺️ Insgesamt",
-    "total_gyms": "Arenen insgesamt",
+    "total_gyms": "{x} Arenen insgesamt",
     "total_stops": "Pokéstops insgesamt",
     "day": "Tag",
     "loading": "Lade",
@@ -27,10 +27,10 @@
     "since": "seit",
     "ex_gyms": "EX Arenen",
 	"active": "aktiv",
-    "active_raids": "Aktive Raids",
+    "active_raids": "{x} aktive Raids",
     "active_pokemon": "Aktive Pokémon",
     "active_grunts": "Aktive Rüpel",
-    "active_eggs": "Aktive Eier",
+    "active_eggs": "{x} aktive Eier",
     "active_lures": "Aktive Lockmodule",
     "between": "zwischen",
     "and": "und",
@@ -48,5 +48,6 @@
     "loading_quests": "Lade Quests",
     "no_quests_found": "❌ Es konnten keine Quests gefunden werden",
 	"average_iv": "📊 Durschnittliche IV",
-	"average_iv_of_active_mons": "📊 Durschnittliche IV aktiver Pokémon"
+    "average_iv_of_active_mons": "📊 Durschnittliche IV aktiver Pokémon",
+    "level_egg": "Level {level} Ei"
 }

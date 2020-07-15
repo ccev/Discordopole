@@ -17,14 +17,14 @@ class Admin(commands.Cog):
 
     @commands.group(pass_context=True)
     async def board(self, ctx):
-        if not ctx.message.author.id in self.bot.config['admins']:
+        if not ctx.message.author.id in self.bot.config.admins:
             return
         if ctx.invoked_subcommand is None:
             await ctx.send("`create/delete`")
 
     @board.group(pass_context=True)
     async def create(self, ctx):
-        if not ctx.message.author.id in self.bot.config['admins']:
+        if not ctx.message.author.id in self.bot.config.admins:
             print(f"@{ctx.author.name} tried to create an empty Board but is no Admin")
             return
         if ctx.invoked_subcommand is None:
@@ -38,7 +38,7 @@ class Admin(commands.Cog):
 
     @board.command(pass_context=True)
     async def delete(self, ctx, deleted_message_id):
-        if not ctx.message.author.id in self.bot.config['admins']:
+        if not ctx.message.author.id in self.bot.config.admins:
             print(f"@{ctx.author.name} tried to create a delete a Board but is no Admin")
             return
         message_found = False
@@ -64,7 +64,7 @@ class Admin(commands.Cog):
 
     @create.command(pass_context=True)
     async def raid(self, ctx, area, levels):
-        if not ctx.message.author.id in self.bot.config['admins']:
+        if not ctx.message.author.id in self.bot.config.admins:
             print(f"@{ctx.author.name} tried to create a Raid Board but is no Admin")
             return
         print("Creating Raid Board")
@@ -88,7 +88,7 @@ class Admin(commands.Cog):
             await message.edit(embed=embed)
             return
         await ctx.message.delete()
-        self.bot.boards['raids'].append({"channel_id": message.channel.id, "message_id": message.id, "title": self.bot.locale['raids'], "area": area, "timezone": self.bot.config['timezone'], "wait": 15, "levels": level_list, "ex": False})
+        self.bot.boards['raids'].append({"channel_id": message.channel.id, "message_id": message.id, "title": self.bot.locale['raids'], "area": area, "timezone": self.bot.config.timezone, "wait": 15, "levels": level_list, "ex": False})
 
         with open("config/boards.json", "w") as f:
             f.write(json.dumps(self.bot.boards, indent=4))
@@ -100,7 +100,7 @@ class Admin(commands.Cog):
 
     @create.command(pass_context=True)
     async def egg(self, ctx, area, levels):
-        if not ctx.message.author.id in self.bot.config['admins']:
+        if not ctx.message.author.id in self.bot.config.admins:
             print(f"@{ctx.author.name} tried to create a Egg Board but is no Admin")
             return
         print("Creating Egg Board")
@@ -124,7 +124,7 @@ class Admin(commands.Cog):
             await message.edit(embed=embed)
             return
         await ctx.message.delete()
-        self.bot.boards['eggs'].append({"channel_id": message.channel.id, "message_id": message.id, "title": self.bot.locale['eggs'], "area": area, "timezone": self.bot.config['timezone'], "wait": 15, "levels": level_list, "ex": False})
+        self.bot.boards['eggs'].append({"channel_id": message.channel.id, "message_id": message.id, "title": self.bot.locale['eggs'], "area": area, "timezone": self.bot.config.timezone, "wait": 15, "levels": level_list, "ex": False})
 
         with open("config/boards.json", "w") as f:
             f.write(json.dumps(self.bot.boards, indent=4))
@@ -136,7 +136,7 @@ class Admin(commands.Cog):
 
     @create.command(pass_context=True)
     async def stats(self, ctx, area, *, types):
-        if not ctx.message.author.id in self.bot.config['admins']:
+        if not ctx.message.author.id in self.bot.config.admins:
             print(f"@{ctx.author.name} tried to create a Stat Board but is no Admin")
             return
         print("Creating Stat Board")
@@ -242,7 +242,7 @@ class Admin(commands.Cog):
             await message.edit(embed=embed)
             return
         await ctx.message.delete()
-        self.bot.boards['stats'].append({"channel_id": message.channel.id, "message_id": message.id, "title": self.bot.locale['stats'], "area": area, "timezone": self.bot.config['timezone'], "wait": 15, "type": stats})
+        self.bot.boards['stats'].append({"channel_id": message.channel.id, "message_id": message.id, "title": self.bot.locale['stats'], "area": area, "timezone": self.bot.config.timezone, "wait": 15, "type": stats})
 
         with open("config/boards.json", "w") as f:
             f.write(json.dumps(self.bot.boards, indent=4))
@@ -254,7 +254,7 @@ class Admin(commands.Cog):
 
     @create.command(pass_context=True)
     async def raidchannel(self, ctx, channel_name, area, levels):
-        if not ctx.message.author.id in self.bot.config['admins']:
+        if not ctx.message.author.id in self.bot.config.admins:
             print(f"@{ctx.author.name} tried to create a Raid Channel but is no Admin")
             return
         print("Creating Raid Channel")
@@ -282,7 +282,7 @@ class Admin(commands.Cog):
             return
 
         await ctx.message.delete()
-        self.bot.boards['raid_channels'].append({"channel_id": channel.id, "area": area, "timezone": self.bot.config['timezone'], "wait": 15, "levels": level_list})
+        self.bot.boards['raid_channels'].append({"channel_id": channel.id, "area": area, "timezone": self.bot.config.timezone, "wait": 15, "levels": level_list})
 
         with open("config/boards.json", "w") as f:
             f.write(json.dumps(self.bot.boards, indent=4))
@@ -294,7 +294,7 @@ class Admin(commands.Cog):
 
     @create.command(pass_context=True)
     async def quest(self, ctx, area, *, rewards):
-        if not ctx.message.author.id in self.bot.config['admins']:
+        if not ctx.message.author.id in self.bot.config.admins:
             print(f"@{ctx.author.name} tried to create a Quest Board but is no Admin")
             return
         print("Creating Quest Board")
@@ -323,7 +323,7 @@ class Admin(commands.Cog):
                     found_item_id = item_id
                     item_found = True
             if not item_found:
-                mon = details(reward, self.bot.config['mon_icon_repo'], self.bot.config['language'])
+                mon = details(reward, self.bot.config.mon_icon_repo, self.bot.config.language)
                 mons.append(mon.id)
 
         await ctx.message.delete()
@@ -336,7 +336,7 @@ class Admin(commands.Cog):
         await message.edit(embed=embed)
         print("Wrote Quest Board to config/boards.json - Now downloading Emotes")
 
-        guild = await self.bot.fetch_guild(self.bot.config['host_server'])
+        guild = await self.bot.fetch_guild(self.bot.config.host_server)
         existing_emotes = await guild.fetch_emojis()
         for mon_id in mons:
             emote_exist = False
@@ -345,7 +345,7 @@ class Admin(commands.Cog):
                     emote_exist = True
             if not emote_exist:
                 try:
-                    image = await self.download_url(f"{self.bot.config['mon_icon_repo']}pokemon_icon_{str(mon_id).zfill(3)}_00.png")
+                    image = await self.download_url(f"{self.bot.config.mon_icon_repo}pokemon_icon_{str(mon_id).zfill(3)}_00.png")
                     emote = await guild.create_custom_emoji(name=f"m{mon_id}", image=image)
                     emote_ref = f"<:{emote.name}:{emote.id}>"
                     embed_emotes = f"{embed_emotes}\n{emote_ref} `{emote_ref}`"
@@ -370,7 +370,7 @@ class Admin(commands.Cog):
                     emote_exist = True
             if not emote_exist:
                 try:
-                    image = await self.download_url(f"{self.bot.config['mon_icon_repo']}rewards/reward_{item}_1.png")
+                    image = await self.download_url(f"{self.bot.config.mon_icon_repo}rewards/reward_{item}_1.png")
                     emote = await guild.create_custom_emoji(name=f"i{item}", image=image)
                     emote_ref = f"<:{emote.name}:{emote.id}>"
                     embed_emotes = f"{embed_emotes}\n{emote_ref} `{emote_ref}`"
@@ -412,14 +412,14 @@ class Admin(commands.Cog):
 
     @commands.group(pass_context=True)
     async def get(self, ctx):
-        if not ctx.message.author.id in self.bot.config['admins']:
+        if not ctx.message.author.id in self.bot.config.admins:
             return
         if ctx.invoked_subcommand is None:
             await ctx.send("Be more specific")
 
     @get.command(pass_context=True)
     async def emotes(self, ctx, quick_name=""):
-        if not ctx.message.author.id in self.bot.config['admins']:
+        if not ctx.message.author.id in self.bot.config.admins:
             print(f"@{ctx.author.name} tried to import emotes but is no Admin")
             return
 
@@ -454,11 +454,11 @@ class Admin(commands.Cog):
                 embed.description = f"{embed.description}Removed Emote `{emote.name}`\n"
                 await message.edit(embed=embed)
         embed.description = ""
-        print(f"Done. Now importing all needed emotes from repo {self.bot.config['emote_repo']}")
+        print(f"Done. Now importing all needed emotes from repo {self.bot.config.emote_repo}")
 
         for emote_name in needed_emote_names:
             try:
-                image = await self.download_url(f"{self.bot.config['emote_repo']}{emote_name}.png")
+                image = await self.download_url(f"{self.bot.config.emote_repo}{emote_name}.png")
                 emote = await ctx.guild.create_custom_emoji(name=emote_name, image=image)
                 emote_ref = f"<:{emote.name}:{emote.id}>"
                 embed.description = f"{embed.description}{emote_ref} `{emote_ref}`\n"
@@ -476,7 +476,7 @@ class Admin(commands.Cog):
 
     @get.command(pass_context=True)
     async def updates(self, ctx):
-        if not ctx.message.author.id in self.bot.config['admins']:
+        if not ctx.message.author.id in self.bot.config.admins:
             print(f"@{ctx.author.name} tried to import emotes but is no Admin")
             return
         await ctx.send("Seeing if there's new stuff to add to Discordopole...")
