@@ -1,5 +1,8 @@
 {
-    "raid_board": "{ex_emote}**{gym_name}**: ends {end}\n**{mon_name}**{form_letter} - *{quick_move} / {charge_move}*",
-    "egg_board": "{egg_emote}{ex_emote}**{gym_name}**: {start} – {end}",
-    "quest_board": "{reward_emote} [{stop_name}]({map_url})",
+    "board_entries": {
+        "quest": "{emote} [{short_stop_name}]({map_link})",
+        "raid": "{ex_emote} **{short_gym_name}**: Until {end}\n{boss_emote} **{boss_name}** - *{move_1} / {move_2}*\n",
+        "egg": "{boss_emote} {ex_emote} **{short_gym_name}**: {start} – {end}",
+        "hundo": "{mon_name}"
+    }
 }

@@ -1,17 +1,7 @@
 {
-    "raids": [
-        
-    ],
-    "raid_channels": [
-
-    ],
-    "quests": [
-
-    ],
-    "eggs": [
-        
-    ],
-    "stats": [
-        
-    ]
+    "raids": [],
+    "raid_channels": [],
+    "quests": [],
+    "eggs": [],
+    "stats": []
 }

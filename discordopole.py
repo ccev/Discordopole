@@ -1,571 +1,73 @@
 import discord
-import json
-import asyncio
-import os
-import dateparser
-from dateparser.search import search_dates
 
-import matplotlib.pyplot as plt
-import pyshorteners
-
-from datetime import datetime, date
 from discord.ext import commands
 
-from util.mondetails import details
-from cogs.admin import Admin
-import util.queries as queries
-from util.queries import Queries
-from util.config import Config
-from util.util import isUser, Mon, Item
-from util.templates import Templates
-from util.boards import QuestBoard, RaidBoard, StatBoard
-import util.maps
+from dp.utils.config import Config
+from dp.utils.queries import Queries
+from dp.utils.logging import log
+from dp.utils.util import get_json_file
+from dp.utils.models.templates import Templates
+from dp.utils.models.maps import MapUrl, StaticMap
 
-#extensions = ["cogs.admin", "cogs.boards", "cogs.channels", "cogs.misc", "cogs.stats"]
-extensions = ["cogs.admin", "cogs.boards", "cogs.channels"]
+log.info("Initializing...")
 
 config = Config("config/config.ini")
+log.info("Parsed config")
+
 bot = commands.Bot(command_prefix=config.prefix, case_insensitive=1)
-bot.max_moves_in_list = 340
 bot.config = config
+
 bot.queries = Queries(bot)
-short = pyshorteners.Shortener().tinyurl.short
+log.info("Imported queries")
 
-if bot.config.use_map:
-    bot.map_url = util.maps.MapUrl(config.map, config.map_url)
+# File Loading
+needed_langs = {
+    "locale": ["de", "en", "es", "fr", "pl"],
+    "mons": ["de", "en", "es", "fr"],
+    "items": ["de", "en", "es", "fr"],
+    "forms": ["de", "en", "es", "fr"],
+    "moves": ["de", "en", "es", "fr"]
+}
 
-# TODO: Templates
-bot.templates = Templates(bot, "template_json")
-
-if not os.path.exists("data/raid_cache.json"):
-    f = open("data/raid_cache.json", 'w+')
-    f.write("{}")
-    f.close()
-
-### LANG FILES
-
-dts_lang = bot.config.language
-if not bot.config.language in ["en", "de", "fr", "es", "pl"]:
-    dts_lang = "en"
-
-with open(f"data/mon_names/{dts_lang}.json", encoding="utf-8") as f:
-    bot.mon_names = json.load(f)
-
-with open(f"data/dts/{dts_lang}.json", encoding="utf-8") as f:
-    bot.locale = json.load(f)
-
-move_lang = bot.config.language
-if not bot.config.language in ["en", "de", "fr", "es"]:
-    move_lang = "en"
-
-with open(f"data/moves/{move_lang}.json", encoding="utf-8") as f:
-    bot.moves = json.load(f)
-
-form_lang = bot.config.language
-if not bot.config.language in ["en", "de", "fr", "es"]:
-    form_lang = "en"
-
-with open(f"data/forms/{form_lang}.json", encoding="utf-8") as f:
-    bot.forms = json.load(f)
-
-item_lang = bot.config.language
-if not bot.config.language in ["en", "de", "fr", "es"]:
-    item_lang = "en"
-
-with open(f"data/items/{item_lang}.json", encoding="utf-8") as f:
-    bot.item_names = json.load(f)
-
-### LANG FILES STOP
-
-with open("config/boards.json", "r", encoding="utf-8") as f:
-    bot.boards = json.load(f)
-
-with open("config/geofence.json", encoding="utf-8") as f:
-    bot.geofences = json.load(f)
-
-with open("config/emotes.json", encoding="utf-8") as f:
-    bot.custom_emotes = json.load(f)
-
-with open(f"data/raidcp.json", encoding="utf-8") as f:
-    bot.raidcp = json.load(f)
-
-def get_area(areaname):
-    stringfence = "-100 -100, -100 100, 100 100, 100 -100, -100 -100"
-    namefence = bot.locale['all']
-    for area in bot.geofences:
-        if area['name'].lower() == areaname.lower():
-            namefence = area['name'].capitalize()
-            stringfence = ""
-            for coordinates in area['path']:
-                stringfence = f"{stringfence}{coordinates[0]} {coordinates[1]},"
-            stringfence = f"{stringfence}{area['path'][0][0]} {area['path'][0][1]}"
-    area_list = [stringfence, namefence]
-    return area_list
-
-@bot.command(pass_context=True, aliases=bot.config.pokemon_aliases)
-async def pokemon(ctx, stat_name, areaname = "", *, timespan = None, alt_timespan = None):
-    if not isUser(bot, ctx.author.roles, ctx.channel.id):
-        print(f"@{ctx.author.name} tried to use !pokemon but is no user")
-        return
-    mon = details(stat_name, bot.config.mon_icon_repo, bot.config.language)
-    footer_text = ""
-    text = ""
-    loading = f"{bot.locale['loading']} {mon.name} Stats"
-
-    area = get_area(areaname)
-
-    if not area[1] == bot.locale['all'] and not config.timespan_in_footer:
-        footer_text = area[1]
-        loading = f"{loading} • "
-    elif config.timespan_in_footer:
-        footer_text = area[1]
-        loading = f"{loading}"
-
-    if dateparser.search.search_dates(areaname, languages=[bot.config.language]) is not None: #check for dates in areaname
-        if dateparser.search.search_dates(f"{timespan}", languages=[bot.config.language]) is not None: #check for dates in everything after areaname
-            timespan = f"{areaname} {timespan}"
-        else: 
-            timespan = areaname
-    elif dateparser.search.search_dates(f"{areaname} {timespan}", languages=[bot.config.language]) is not None and (dateparser.search.search_dates(timespan, languages=[bot.config.language]) is None):
-        timespan = f"{areaname} {timespan}"
-
-    print(f"timespan found in command: {timespan}")
-    if config.timespan_in_footer:
-        if config['use_alt_table_for_pokemon']:
-            oldest_mon_date = await queries.get_oldest_mon_date(bot.config, use_alt_table=True)
-            if oldest_mon_date is None:
-                oldest_mon_date = await queries.get_oldest_mon_date(bot.config, use_alt_table=False)
-        else:
-            oldest_mon_date = await queries.get_oldest_mon_date(bot.config, use_alt_table=False)
-
-        if timespan is None:
-            timespan = list([oldest_mon_date, datetime.now()])
-        elif "-" in timespan:
-            timespan = list(timespan.split('-'))
-            for i in [0, 1]:
-                timespan[i] = dateparser.parse(timespan[i], languages=[bot.config.language])
-        else:
-            timespan = list([dateparser.parse(timespan, languages=[bot.config.language]), datetime.now()])
-
-        if timespan[0] < oldest_mon_date:
-            timespan = list([oldest_mon_date, timespan[1]])
-
-        footer_text = f"{footer_text}, {(bot.locale['between'])} {timespan[0].strftime(bot.locale['time_format_dhm'])} {bot.locale['and']} {timespan[1].strftime(bot.locale['time_format_dhm'])}"
+for k, v in needed_langs.items():
+    if bot.config.language not in v:
+        needed_langs[k] = "en"
     else:
-        if timespan is None:
-            timespan = list([datetime(2010, 1, 1, 0, 0), datetime.now()])
-        else:
-            loading = ""
-
-            if "-" in timespan:
-                timespan = list(timespan.split('-'))
-                for i in [0, 1]:
-                    timespan[i] = dateparser.parse(timespan[i], languages=[bot.config.language])
-
-                footer_text = f"{(bot.locale['between']).capitalize()} {timespan[0].strftime(bot.locale['time_format_dhm'])} {bot.locale['and']} {timespan[1].strftime(bot.locale['time_format_dhm'])}"
-
-            else:
-                timespan = list([dateparser.parse(timespan, languages=[bot.config.language]), datetime.now()])
-
-                if area[1] == bot.locale['all']:
-                    footer_text = f"{(bot.locale['since']).capitalize()} {timespan[0].strftime(bot.locale['time_format_dhm'])}"
-                else:
-                    footer_text = f"{footer_text}, {bot.locale['since']} {timespan[0].strftime(bot.locale['time_format_dhm'])}"
-
-    print(f"@{ctx.author.name} requested {mon.name} stats for area {area[1]}")    
-
-    embed = discord.Embed(title=f"{mon.name}", description=text)
-    embed.set_thumbnail(url=mon.icon)
-    if config.timespan_in_footer:
-        embed.set_footer(text=f"{loading}", icon_url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
-    else:
-        embed.set_footer(text=f"{loading}{footer_text}", icon_url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
-    message = await ctx.send(embed=embed)
-   
-    alt_shiny_count = 0
-    alt_shiny_total = 0
-    alt_scan_numbers = ((0, 0, 0, 0),)
-    alt_big_numbers = ((0, 0, 0, datetime.now()),)
-    if bot.config['use_alt_table_for_pokemon']:
-        oldest_mon_date = await queries.get_oldest_mon_date(bot.config)
-        if oldest_mon_date > timespan[0]:
-            print(f"using alt table, because starttime older than oldest mon. starttime: {timespan[0]}, oldest mon: {oldest_mon_date}\n")
-            if oldest_mon_date > timespan[1]:
-                alt_timespan = list([timespan[0], timespan[1]])
-            else:
-                alt_timespan = list([timespan[0], oldest_mon_date])
-                timespan = list([oldest_mon_date, timespan[1]])
-            alt_shiny_count = await queries.get_shiny_count(mon.id, area[0], alt_timespan[0], alt_timespan[1], bot.config, use_alt_table=True)
-            alt_shiny_total = await queries.get_shiny_total(mon.id, area[0], alt_timespan[0], alt_timespan[1], bot.config, use_alt_table=True)
-            alt_scan_numbers = await queries.get_scan_numbers(mon.id, area[0], alt_timespan[0], alt_timespan[1], bot.config, use_alt_table=True)
-            alt_big_numbers = await queries.get_big_numbers(mon.id, area[0], alt_timespan[0], alt_timespan[1], bot.config, use_alt_table=True)
-            if alt_big_numbers[0][3] is None:
-                alt_big_numbers = ((alt_big_numbers[0][0], alt_big_numbers[0][1], alt_big_numbers[0][2], oldest_mon_date),)
-
-    shiny_count = await queries.get_shiny_count(mon.id, area[0], timespan[0], timespan[1], bot.config)
-    shiny_count = shiny_count + alt_shiny_count
-
-    if shiny_count > 0:
-        shiny_total = await queries.get_shiny_total(mon.id, area[0], timespan[0], timespan[1], bot.config)
-        shiny_total = shiny_total + alt_shiny_total
-        shiny_odds = int(round((shiny_total / shiny_count), 0))
-        text = text + f"{bot.locale['shinies']}: **1:{shiny_odds}** ({shiny_count:_}/{shiny_total:_})\n"
-    else:
-        text = text + f"{bot.locale['shinies']}: **0**\n"
-
-    embed.description = text.replace("_", bot.locale['decimal_comma']) 
-    await message.edit(embed=embed)
-
-    print(f"     [1/3] Shiny Data for {mon.name} Stats")
-
-    scan_numbers = await queries.get_scan_numbers(mon.id, area[0], timespan[0], timespan[1], bot.config)
-    for scanned, hundos, zeros, nineties in scan_numbers:
-        scanned_total = int(scanned) + int(alt_scan_numbers[0][0])
-        if scanned_total > 0:
-            hundo_count = int(hundos) + int(alt_scan_numbers[0][1])
-            zero_count = int(zeros) + int(alt_scan_numbers[0][2])
-            ninety_count = int(nineties) + int(alt_scan_numbers[0][3])
-        else:
-            hundo_count = 0
-            zero_count = 0
-            ninety_count = 0
-
-    if hundo_count > 0:
-        hundo_odds = int(round((scanned_total / hundo_count), 0))
-        text = text + f"{bot.locale['hundos']}: **{hundo_count:_}** (1:{hundo_odds})\n\n"
-    else:
-        text = text + f"{bot.locale['hundos']}: **0/{scanned_total:_}**\n\n"
-
-
-    if ninety_count > 0:
-        ninety_odds = round((scanned_total / ninety_count), 0)
-        text = text + f"{bot.locale['90']}: **{ninety_count:_}** (1:{int(ninety_odds)}) | "
-    else:
-        text = text + f"{bot.locale['90']}: **0** | "
-
-    if zero_count > 0:
-        zero_odds = round((scanned_total / zero_count), 0)
-        text = text + f"{bot.locale['0']}: **{zero_count:_}** (1:{int(zero_odds)})\n"
-    else:
-        text = text + f"{bot.locale['0']}: **0**\n"
-
-    embed.description = text.replace("_", bot.locale['decimal_comma']) 
-    await message.edit(embed=embed)
-
-    print(f"     [2/3] Scan Data for {mon.name} Stats")
-
-    big_numbers = await queries.get_big_numbers(mon.id, area[0], timespan[0], timespan[1], bot.config)
-    for mons, found, boosted, time in big_numbers:
-        mon_total = int(mons) + int(alt_big_numbers[0][0])
-        found_count = int(found) + int(alt_big_numbers[0][1])
-        boosted_count = int(boosted) + int(alt_big_numbers[0][2])
-    
-    if found_count > 0:
-        if big_numbers[0][3] is None:
-            days = (alt_timespan[1].date() - (alt_big_numbers[0][3]).date()).days
-        elif alt_big_numbers[0][3] < big_numbers[0][3]:
-            days = (timespan[1].date() - (alt_big_numbers[0][3]).date()).days
-        else:
-            days = (timespan[1].date() - (big_numbers[0][3]).date()).days
-
-        if days < 1:
-            days = 1
-
-        mon_odds = int(round((mon_total / found_count), 0))
-        mon_rate = str(round((found_count / days), 1)).replace(".", bot.locale['decimal_dot'])
-
-        text = text.replace(f"\n{bot.locale['90']}", f"{bot.locale['rarity']}: **1:{mon_odds}**\n{bot.locale['rate']}: **{mon_rate}/{bot.locale['day']}**\n\n{bot.locale['90']}")
-
-        boosted_odds = str(round((boosted_count / found_count * 100), 1)).replace(".", bot.locale['decimal_dot'])
-        text = text + f"{bot.locale['weatherboost']}: **{boosted_odds}%**\n"
-
-        scanned_odds = str(round((scanned_total / found_count * 100), 1)).replace(".", bot.locale['decimal_dot'])
-        text = text + f"{bot.locale['scanned']}: **{scanned_odds}%**\n\n"
-
-        text = text + f"{bot.locale['total_found']}: **{found_count:_}**"
-    else:
-        text = text.replace(f"\n{bot.locale['90']}", f"{bot.locale['rarity']}: **0**\n{bot.locale['rate']}: **0/{bot.locale['day']}**\n\n{bot.locale['90']}")
-        text = text + f"{bot.locale['weatherboost']}: **0%**\n{bot.locale['scanned']}: **0**\n\n{bot.locale['total_found']}: **0**"
-
-    embed.description = text.replace("_", bot.locale['decimal_comma'])
-    embed.set_footer(text=footer_text)
-    await message.edit(embed=embed)
-
-    print(f"     [3/3] Total Data for {mon.name} Stats")
-    print(f"Done with {mon.name} Stats.")
-
-@bot.command(pass_context=True, aliases=bot.config.gyms_aliases)
-async def gyms(ctx, areaname = ""):
-    if not isUser(bot, ctx.author.roles, ctx.channel.id):
-        print(f"@{ctx.author.name} tried to use !gyms but is no user")
-        return
-    footer_text = ""
-    text = ""
-    loading = bot.locale['loading_gym_stats']
-
-    area = get_area(areaname)
-    if not area[1] == bot.locale['all']:
-        footer_text = area[1]
-        loading = f"{loading} • {footer_text}"
-
-    print(f"@{ctx.author.name} requested gym stats for area {area[1]}")
-
-    embed = discord.Embed(title=bot.locale['gym_stats'], description=text)
-    embed.set_footer(text=loading, icon_url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
-    message = await ctx.send(embed=embed)
-
-    gym_stats = await queries.get_gym_stats(bot.config, area[0])
-
-    for total, neutral, mystic, valor, instinct, ex, raids in gym_stats:
-        total_count = int(total)
-        white_count = int(neutral)
-        blue_count = int(mystic)
-        red_count = int(valor)
-        yellow_count = int(instinct)
-        ex_count = int(ex)
-        raid_count = int(raids)
-
-    if total_count > 0:
-        ex_odds = str(int(round((ex_count / total_count * 100), 0))).replace(".", bot.locale['decimal_dot'])
-    else:
-	    ex_odds = 0
-
-    text = f"{bot.custom_emotes['gym_blue']}**{blue_count}**{bot.custom_emotes['blank']}{bot.custom_emotes['gym_red']}**{red_count}**{bot.custom_emotes['blank']}{bot.custom_emotes['gym_yellow']}**{yellow_count}**\n\n{bot.locale['total']}: **{total_count}**\n{bot.custom_emotes['ex_pass']} {bot.locale['ex_gyms']}: **{ex_count}** ({ex_odds}%)\n\n{bot.custom_emotes['raid']} {bot.locale['active_raids']}: **{raid_count}**"
-
-    embed.description=text
-    await message.edit(embed=embed)
-
-    # Pie chart
-    sizes = [white_count, blue_count, red_count, yellow_count]
-    colors = ['lightgrey', '#42a5f5', '#ef5350', '#fdd835']
-    plt.pie(sizes, labels=None, colors=colors, autopct='', startangle=120, wedgeprops={"edgecolor":"black", 'linewidth':5, 'linestyle': 'solid', 'antialiased': True})
-    plt.axis('equal')
-    plt.gca().set_axis_off()
-    #plt.subplots_adjust(top = 1, bottom = 0, right = 1, left = 0, hspace = 0, wspace = 0)
-    plt.margins(0.01)
-    #plt.gca().xaxis.set_major_locator(plt.NullLocator())
-    #plt.gca().yaxis.set_major_locator(plt.NullLocator())
-    plt.savefig('gym_stats.png', transparent=True, bbox_inches = 'tight', pad_inches = 0)
-
-    channel = await bot.fetch_channel(bot.config.host_channel)
-    image_msg = await channel.send(file=discord.File("gym_stats.png"))
-    image = image_msg.attachments[0].url
-
-    embed.set_footer(text="")
-    embed.description=text
-    embed.set_thumbnail(url=image)
-    embed.set_footer(text=footer_text)
-    await message.edit(embed=embed)
-    os.remove("gym_stats.png")
-    print("Done with Gym Stats")
-
-@bot.command(pass_context=True, aliases=bot.config.quest_aliases)
-async def quest(ctx, areaname = "", *, wanted_rewards):
-    if not isUser(bot, ctx.author.roles, ctx.channel.id):
-        print(f"@{ctx.author.name} tried to use !quest but is no user")
-        return
-    """footer_text = ""
-    text = ""
-    loading = bot.locale['loading_quests']
-
-    area = get_area(areaname)
-    if not area[1] == bot.locale['all']:
-        footer_text = area[1]
-        loading = f"{loading} • {footer_text}"
-
-    print(f"@{ctx.author.name} requested quests for area {area[1]}")
-
-    embed = discord.Embed(title=bot.locale['quests'], description=text)
-    embed.set_footer(text=loading, icon_url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")"""
-    #message = await ctx.send(embed=embed)
-    """"
-    items = list()
-    mons = list()
-    item_found = False
-    for item_id in bot.items:
-        if bot.items[str(item_id)].lower() == reward.lower():
-            #embed.set_thumbnail(url=f"{bot.config.mon_icon_repo}rewards/reward_{item_id}_1.png")
-            #embed.title = f"{bot.items[item_id]['name']} {bot.locale['quests']}"
-            items.append(int(item_id))
-            item_found = True
-    if not item_found:
-        mon = details(reward, bot.config.mon_icon_repo, bot.config.language)
-        #embed.set_thumbnail(url=f"{bot.config.mon_icon_repo}pokemon_icon_{str(mon.id).zfill(3)}_00.png")
-        #embed.title = f"{mon.name} {bot.locale['quests']}"
-        mons.append(mon.id)
-    
-    #await message.edit(embed=embed)"""
-    """
-
-    quests = await queries.get_active_quests(bot.config, area[0])
-
-    length = 0
-    reward_mons = list()
-    reward_items = list()
-    lat_list = list()
-    lon_list = list()
-
-    for quest_json, quest_text, lat, lon, stop_name, stop_id in quests:
-        quest_json = json.loads(quest_json)
-
-        found_rewards = True
-        mon_id = 0
-        item_id = 0
-
-        if bot.config.db_scan_schema == "rdm":
-            if 'pokemon_id' in quest_json[0]["info"]:
-                mon_id = quest_json[0]["info"]["pokemon_id"]
-            if 'item_id' in quest_json[0]["info"]:
-                item_id = quest_json[0]["info"]["item_id"]
-        elif bot.config.db_scan_schema == "mad":
-            item_id = quest_json[0]["item"]["item"]
-            mon_id = quest_json[0]["pokemon_encounter"]["pokemon_id"]
-        if item_id in items:
-            reward_items.append([item_id, lat, lon])
-            emote_name = f"i{item_id}"
-            emote_img = f"{bot.config.mon_icon_repo}rewards/reward_{item_id}_1.png"
-        elif mon_id in mons:
-            reward_mons.append([mon_id, lat, lon])
-            emote_name = f"m{mon_id}"
-            emote_img = f"{bot.config.mon_icon_repo}pokemon_icon_{str(mon_id).zfill(3)}_00.png"
-        else:
-            found_rewards = False
-
-        if found_rewards:
-            if len(stop_name) >= 30:
-                stop_name = stop_name[0:27] + "..."
-            lat_list.append(lat)
-            lon_list.append(lon)
-
-            if bot.config.use_map:
-                map_url = bot.map_url.quest(lat, lon, stop_id)
-            else:
-                map_url = f"https://www.google.com/maps/search/?api=1&query={lat},{lon}"
-            map_url = short(map_url)
-
-            entry = f"[{stop_name}]({map_url})\n"
-            if length + len(entry) >= 2048:
-                break
-            else:
-                text = text + entry
-                length = length + len(entry)
-
-    embed.description = text
-    image = ""
-    if length > 0:
-        if bot.config.use_static:
-            if bot.config.static_provider == "mapbox":
-                guild = await bot.fetch_guild(bot.config.host_server)
-                existing_emotes = await guild.fetch_emojis()
-                emote_exist = False
-                for existing_emote in existing_emotes:
-                    if emote_name == existing_emote.name:
-                        emote_exist = True
-                if not emote_exist:
-                    try:
-                        image = await Admin.download_url("", emote_img)
-                        emote = await guild.create_custom_emoji(name=emote_name, image=image)
-                        emote_ref = f"<:{emote.name}:{emote.id}>"
-
-                        if emote_name in bot.custom_emotes:
-                            bot.custom_emotes[emote_name] = emote_ref
-                        else:
-                            bot.custom_emotes.update({emote_name: emote_ref})
-                    except Exception as err:
-                        print(err)
-                        print(f"Error while importing emote {emote_name}")
-
-                image = await bot.static_map.quest(lat_list, lon_list, reward_items, reward_mons, bot.custom_emotes)
-
-                if not emote_exist:
-                    await emote.delete()
-                    bot.custom_emotes.pop(emote_name)
-
-            elif bot.config.static_provider == "tileserver":
-                image = await bot.static_map.quest(lat_list, lon_list, reward_items, reward_mons, bot.custom_emotes)
-    else:
-        embed.description = bot.locale["no_quests_found"]
-
-    embed.set_footer(text=footer_text)
-    embed.set_image(url=image)"""
-
-    items = []
-    mons = []
-    rewards = wanted_rewards.split(",")
-
-    for reward in rewards:
-        mon = Mon(bot, mon_name=reward)
-        item = Item(bot, item_name=reward)
-        if mon.match >= item.match:
-            mons.append(mon)
-        else:
-            items.append(item)
-
-    wanted = {
-        "title": bot.locale["quests"],
-        "area": areaname,
-        "static_map": True,
-        "mons": mons,
-        "items": items
-    }
-    questmessage = QuestBoard(bot, wanted)
-    await questmessage.generate_empty_embed()
-    message = await ctx.send(embed=questmessage.embed)
-    await questmessage.get()
-    await message.edit(embed=questmessage.embed)
-    await questmessage.delete_emotes()
-    await asyncio.sleep(2)
-
-@bot.command(pass_context=True)
-async def raid(ctx, areaname = ""):
-    if not isUser(bot, ctx.author.roles, ctx.channel.id):
-        print(f"@{ctx.author.name} tried to use !quest but is no user")
-        return
-
-    wanted = {
-        "title": bot.locale["raids"],
-        "area": areaname,
-        "static_map": True,
-        "levels": [5]
-    }
-    raidboard = RaidBoard(bot, wanted, False)
-    await raidboard.get()
-    await ctx.send(embed=raidboard.embed)
-    await asyncio.sleep(2)
-
-@bot.command(pass_context=True)
-async def stats(ctx, areaname, stats):
-    stats = stats.split(",")
-    board = {
-        "title": bot.locale["stats"],
-        "area": areaname,
-        "type": stats
-    }
-    print(stats)
-    statboard = StatBoard(bot, board)
-    await statboard.get_stats()
-    await ctx.send(embed=statboard.embed)
-
-@bot.command(pass_context=True)
-async def test(ctx):
-    q = QueriesT(bot)
-    r = await q.execute("select count(*) from pokemon")
-    print(r)
-
-@bot.command(pass_context=True)
-async def hi(ctx):
-    await ctx.send("hi")
+        needed_langs[k] = bot.config.language
+
+bot.locale = get_json_file(f"dp/data/locale/{needed_langs['locale']}.json")
+bot.mon_names = get_json_file(f"dp/data/mon_names/{needed_langs['mons']}.json")
+bot.item_names = get_json_file(f"dp/data/items/{needed_langs['items']}.json")
+bot.forms = get_json_file(f"dp/data/forms/{needed_langs['forms']}.json")
+bot.moves = get_json_file(f"dp/data/moves/{needed_langs['moves']}.json")
+log.info("Loaded Language files")
+
+## Config files
+
+bot.templates = Templates(bot, get_json_file("config/templates.json"))
+bot.map_url = MapUrl(config.map, config.map_url)
+bot.boards = get_json_file("config/boards.json")
+bot.geofences = get_json_file("config/geofence.json")
+bot.custom_emotes = get_json_file("config/emotes.json")
+log.info("Loaded rest of the needed data")
+
+# Cog Loading
+
+cogs = [
+#    "dp.cogs.usercommands",
+    "dp.cogs.admincommands",
+    "dp.cogs.boardloop",
+#    "dp.cogs.channelloop"
+]
+for extension in cogs:
+    bot.load_extension(extension)
+log.info("Loaded cogs. Connecting to Discord now")
 
 @bot.event
 async def on_ready():
     #await bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.watching, name="Discordopole"))
-    print("Connected to Discord. Ready to take commands.")
+    log.success("Connected to Discord. Ready to take commands.")
+    trash_channel = await bot.fetch_channel(bot.config.host_channel)
+    bot.static_map = StaticMap(bot, trash_channel)
 
-    if bot.config.use_static:
-        trash_channel = await bot.fetch_channel(bot.config.host_channel)
-        bot.static_map = util.maps.StaticMap(bot, trash_channel)
-
-if __name__ == "__main__":
-    for extension in extensions:
-        bot.load_extension(extension)
-    bot.run(bot.config.bot_token)
+bot.run(bot.config.bot_token)
