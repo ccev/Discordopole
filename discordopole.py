@@ -20,7 +20,7 @@ extensions = ["cogs.admin", "cogs.boards", "cogs.channels"]
 
 config = util.config.create_config("config/config.ini")
 bot = commands.Bot(command_prefix=config['prefix'], case_insensitive=1)
-bot.max_moves_in_list = 291
+bot.max_moves_in_list = 340
 bot.config = config
 short = pyshorteners.Shortener().tinyurl.short
 
@@ -326,7 +326,7 @@ async def quest(ctx, areaname = "", *, reward):
         embed.set_thumbnail(url=f"{bot.config['mon_icon_repo']}pokemon_icon_{str(mon.id).zfill(3)}_00.png")
         embed.title = f"{mon.name} {bot.locale['quests']}"
         mons.append(mon.id)
-    
+
     await message.edit(embed=embed)
 
     quests = await queries.get_active_quests(bot.config, area[0])
@@ -336,14 +336,22 @@ async def quest(ctx, areaname = "", *, reward):
     reward_items = list()
     lat_list = list()
     lon_list = list()
-
+    item_id = 0
+    mon_id = 0
     for quest_json, quest_text, lat, lon, stop_name, stop_id in quests:
         quest_json = json.loads(quest_json)
 
         found_rewards = True
 
-        item_id = quest_json[0]["item"]["item"]
-        mon_id = quest_json[0]["pokemon_encounter"]["pokemon_id"]
+        if bot.config['db_scan_schema'] == "rdm":
+            if 'pokemon_id' in quest_json[0]["info"]:
+                mon_id = quest_json[0]["info"]["pokemon_id"]
+            if 'item_id' in quest_json[0]["info"]:
+                item_id = quest_json[0]["info"]["item_id"]
+        elif bot.config['db_scan_schema'] == "mad":
+            item_id = quest_json[0]["item"]["item"]
+            mon_id = quest_json[0]["pokemon_encounter"]["pokemon_id"]
+
         if item_id in items:
             reward_items.append([item_id, lat, lon])
             emote_name = f"i{item_id}"

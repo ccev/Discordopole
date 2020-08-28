@@ -126,27 +126,91 @@ class Boards(commands.Cog):
                         text = f"{text}{self.bot.custom_emotes['pokeball']} **{mon_active[0][0]:,}** {self.bot.locale['active_pokemon']} | **{mon_today[0][0]:,}** {self.bot.locale['today']}\n\n"
                     else:
                         text = f"{text}{self.bot.custom_emotes['pokeball']} **{mon_today[0][0]:,}** {self.bot.locale['pokemon_seen_today']}\n\n"
-                
+
+                if "scanned_active" in board['type']:
+                    scanned_active = await queries.statboard_scanned_active(self.bot.config, area[0])
+                    mon_active = await queries.statboard_mon_active(self.bot.config, area[0])
+                    if scanned_active[0][0] == 0:
+                        scanned_active_ratio = 0
+                    else:
+                        scanned_active_ratio = int(round((scanned_active[0][0] / mon_active[0][0] * 100), 0))
+                    if not "scanned_today" in board['type']:
+                        text = f"{text}{self.bot.locale['scanned']}: **{scanned_ratio}%**\n"
+
+                if "scanned_today" in board['type']:
+                    scanned_today = await queries.statboard_scanned_today(self.bot.config, area[0])
+                    mon_today = await queries.statboard_mon_today(self.bot.config, area[0])
+                    if mon_today[0][0] == 0:
+                        scanned_today_ratio = 0
+                    else:
+                        scanned_today_ratio = int(round((scanned_today[0][0] / mon_today[0][0] * 100), 0))
+                    if "scanned_active" in board['type']:
+                        text = f"{text}{self.bot.locale['scanned']}: **{scanned_active_ratio}%** | **{scanned_today_ratio}%** {self.bot.locale['today']}\n"
+                    else:
+                        text = f"{text}{self.bot.locale['scanned']} {self.bot.locale['today']}: **{scanned_today_ratio}%**\n"
+
+                if "hundos_active" in board['type']:
+                    hundos_active = await queries.statboard_hundos_active(self.bot.config, area[0])
+                    if not "hundos_today" in board['type']:
+                        text = f"{text}{self.bot.locale['hundos']}: **{hundos_active[0][0]:,}**\n\n"
+
+                if "hundos_today" in board['type']:
+                    hundos_today = await queries.statboard_hundos_today(self.bot.config, area[0])
+                    if "hundos_active" in board['type']:
+                        text = f"{text}{self.bot.locale['hundos']}: **{hundos_active[0][0]:,}** | **{hundos_today[0][0]:,}** {self.bot.locale['today']}\n\n"
+                    else:
+                        text = f"{text}{self.bot.locale['hundos']} {self.bot.locale['today']}: **{hundos_today[0][0]:,}**\n\n"
+
                 if "gym_amount" in board['type']:
                     gym_amount = await queries.statboard_gym_amount(self.bot.config, area[0])
                     text = f"{text}{self.bot.custom_emotes['gym_white']} **{gym_amount[0][0]:,}** {self.bot.locale['total_gyms']}\n"
 
-                if "raid_active" in board['type']:
-                    raid_active = await queries.statboard_raid_active(self.bot.config, area[0])
-                    if not "egg_active" in board['type']:
-                        text = f"{text}{self.bot.custom_emotes['raid']} **{raid_active[0][0]:,}** {self.bot.locale['active_raids']}\n"
+                if "gym_teams" in board['type']:
+                    gym_teams = await queries.statboard_gym_teams(self.bot.config, area[0])
+                    text = f"{text}{self.bot.custom_emotes['gym_blue']}**{gym_teams[0][1]}**{self.bot.custom_emotes['blank']}{self.bot.custom_emotes['gym_red']}**{gym_teams[0][2]}**{self.bot.custom_emotes['blank']}{self.bot.custom_emotes['gym_yellow']}**{gym_teams[0][3]}**\n\n"
 
-                if "egg_active" in board['type']:
+                if ("raid_active" or "raid_lvl1_active" or "raid_lvl2_active" or "raid_lvl3_active" or "raid_lvl4_active" or "raid_lvl5_active") in board['type']:
+                    raid_active = await queries.statboard_raid_active(self.bot.config, area[0])
+                    if "raid_active" in board['type'] and not "egg_active" in board['type']:
+                        text = f"{text}{self.bot.custom_emotes['raid']} **{raid_active[0][0]:,}** {self.bot.locale['active_raids']}\n"
+                    if "raid_lvl5_active" in board['type'] and not "egg_lvl5_active" in board['type']:
+                        text = f"{text}5⭐ **{raid_active[0][5]:,}** {self.bot.locale['raids']}\n"
+                    if "raid_lvl4_active" in board['type'] and not "egg_lvl4_active" in board['type']:
+                        text = f"{text}4⭐ **{raid_active[0][4]:,}** {self.bot.locale['raids']}\n"
+                    if "raid_lvl3_active" in board['type'] and not "egg_lvl3_active" in board['type']:
+                        text = f"{text}3⭐ **{raid_active[0][3]:,}** {self.bot.locale['raids']}\n"
+                    if "raid_lvl2_active" in board['type'] and not "egg_lvl2_active" in board['type']:
+                        text = f"{text}2⭐ **{raid_active[0][2]:,}** {self.bot.locale['raids']}\n"
+                    if "raid_lvl1_active" in board['type'] and not "egg_lvl1_active" in board['type']:
+                        text = f"{text}1⭐ **{raid_active[0][1]:,}** {self.bot.locale['raids']}\n"
+
+                if ("egg_active" or "egg_lvl1_active" or "egg_lvl2_active" or "egg_lvl3_active" or "egg_lvl4_active" or "egg_lvl5_active") in board['type']:
                     egg_active = await queries.statboard_egg_active(self.bot.config, area[0])
                     if "raid_active" in board['type']:
                         text = f"{text}{self.bot.custom_emotes['raid']} **{raid_active[0][0]:,}** {self.bot.locale['active_raids']} | **{egg_active[0][0]:,}** {self.bot.locale['eggs']}\n"
-                    else:
+                    elif "egg_active" in board['type']:
                         text = f"{text}{self.bot.custom_emotes['raid_egg_1']} **{egg_active[0][0]:,}** {self.bot.locale['active_eggs']}\n"
+                    if "raid_lvl5_active" in board['type']:
+                        text = f"{text}5⭐: **{raid_active[0][5]:,}** {self.bot.locale['raids']} | **{egg_active[0][5]:,}** {self.bot.locale['eggs']}\n"
+                    elif "egg_lvl5_active" in board['type']:
+                        text = f"{text}{self.bot.custom_emotes['raid_egg_5']} **{egg_active[0][5]:,}** {self.bot.locale['active_eggs']}\n"
+                    if "raid_lvl4_active" in board['type']:
+                        text = f"{text}4⭐: **{raid_active[0][4]:,}** {self.bot.locale['raids']} | **{egg_active[0][4]:,}** {self.bot.locale['eggs']}\n"
+                    elif "egg_lvl4_active" in board['type']:
+                        text = f"{text}{self.bot.custom_emotes['raid_egg_4']} **{egg_active[0][4]:,}** {self.bot.locale['active_eggs']}\n"
+                    if "raid_lvl3_active" in board['type']:
+                        text = f"{text}3⭐: **{raid_active[0][3]:,}** {self.bot.locale['raids']} | **{egg_active[0][3]:,}** {self.bot.locale['eggs']}\n"
+                    elif "egg_lvl3_active" in board['type']:
+                        text = f"{text}{self.bot.custom_emotes['raid_egg_3']} **{egg_active[0][3]:,}** {self.bot.locale['active_eggs']}\n"
+                    if "raid_lvl2_active" in board['type']:
+                        text = f"{text}2⭐: **{raid_active[0][2]:,}** {self.bot.locale['raids']} | **{egg_active[0][2]:,}** {self.bot.locale['eggs']}\n"
+                    elif "egg_lvl2_active" in board['type']:
+                        text = f"{text}{self.bot.custom_emotes['raid_egg_2']} **{egg_active[0][2]:,}** {self.bot.locale['active_eggs']}\n"
+                    if "raid_lvl1_active" in board['type']:
+                        text = f"{text}1⭐: **{raid_active[0][1]:,}** {self.bot.locale['raids']} | **{egg_active[0][1]:,}** {self.bot.locale['eggs']}\n"
+                    elif "egg_lvl2_active" in board['type']:
+                        text = f"{text}{self.bot.custom_emotes['raid_egg_1']} **{egg_active[0][1]:,}** {self.bot.locale['active_eggs']}\n"
                 
-                if "gym_teams" in board['type']:
-                    gym_teams = await queries.statboard_gym_teams(self.bot.config, area[0])
-                    text = f"{text}{self.bot.custom_emotes['gym_blue']}**{gym_teams[0][1]}**{self.bot.custom_emotes['blank']}{self.bot.custom_emotes['gym_red']}**{gym_teams[0][2]}**{self.bot.custom_emotes['blank']}{self.bot.custom_emotes['gym_yellow']}**{gym_teams[0][3]}**\n"
-
                 if "stop_amount" in board['type']:
                     stop_amount = await queries.statboard_stop_amount(self.bot.config, area[0])
                     text = f"{text}\n{self.bot.custom_emotes['pokestop']} **{stop_amount[0][0]:,}** {self.bot.locale['total_stops']}\n"
@@ -197,14 +261,24 @@ class Boards(commands.Cog):
                 reward_items = list()
                 lat_list = list()
                 lon_list = list()
+                mon_id = 0
+                item_id = 0
+
                 for quest_json, quest_text, lat, lon, stop_name, stop_id in quests:
                     quest_json = json.loads(quest_json)
 
                     found_rewards = True
                     emote = ""
 
-                    item_id = quest_json[0]["item"]["item"]
-                    mon_id = quest_json[0]["pokemon_encounter"]["pokemon_id"]
+                    if self.bot.config['db_scan_schema'] == "rdm":
+                        if 'pokemon_id' in quest_json[0]["info"]:
+                            mon_id = quest_json[0]["info"]["pokemon_id"]
+                        elif 'item_id' in quest_json[0]["info"]:
+                            item_id = quest_json[0]["info"]["item_id"]
+                    elif self.bot.config['db_scan_schema'] == "mad":
+                        item_id = quest_json[0]["item"]["item"]
+                        mon_id = quest_json[0]["pokemon_encounter"]["pokemon_id"]
+
                     if item_id in board["items"]:
                         emote = self.bot.custom_emotes[f"i{item_id}"]
                         reward_items.append([item_id, lat, lon])

@@ -1773,7 +1773,7 @@
     "damage": 16,
     "duration": 1200,
     "energy": 8,
-    "dps": 13.33
+    "dps": 13.3
   },
   "284": {
     "name": "Surf",
@@ -1844,7 +1844,7 @@
     "type": "Fire",
     "damage": 60,
     "duration": 1600,
-    "energy": 20,
+    "energy": 33,
     "dps": 37.5
   },
   "293": {
@@ -1852,7 +1852,7 @@
     "type": "Ice",
     "damage": 60,
     "duration": 1600,
-    "energy": 20,
+    "energy": 33,
     "dps": 37.5
   },
   "294": {
@@ -1860,255 +1860,375 @@
     "type": "Rock",
     "damage": 60,
     "duration": 1600,
-    "energy": 20,
+    "energy": 33,
     "dps": 37.5
   },
   "295": {
     "name": "Weather Ball Water",
     "type": "Water",
-    "damage": 5,
-    "duration": 1300,
-    "energy": 20,
-    "dps": 3.8
+    "damage": 60,
+    "duration": 1600,
+    "energy": 33,
+    "dps": 37.5
   },
   "296": {
     "name": "Frenzy Plant",
     "type": "Grass",
-    "damage": 5,
-    "duration": 1300,
-    "energy": 20,
-    "dps": 3.8
+    "damage": 100,
+    "duration": 2600,
+    "energy": 100,
+    "dps": 38.4
   },
   "297": {
     "name": "Smack Down",
     "type": "Rock",
-    "damage": 5,
-    "duration": 1300,
-    "energy": 20,
-    "dps": 3.8
+    "damage": 16,
+    "duration": 1200,
+    "energy": 8,
+    "dps": 13.3
   },
   "298": {
     "name": "Blast Burn",
     "type": "Fire",
-    "damage": 5,
-    "duration": 1300,
-    "energy": 20,
-    "dps": 3.8
+    "damage": 110,
+    "duration": 3300,
+    "energy": 100,
+    "dps": 33.3
   },
   "299": {
     "name": "Hydro Cannon",
     "type": "Water",
-    "damage": 5,
-    "duration": 1300,
-    "energy": 20,
-    "dps": 3.8
+    "damage": 90,
+    "duration": 1900,
+    "energy": 100,
+    "dps": 47.4
   },
   "300": {
     "name": "Last Resort",
     "type": "Normal",
-    "damage": 5,
-    "duration": 1300,
-    "energy": 20,
-    "dps": 3.8
+    "damage": 90,
+    "duration": 2700,
+    "energy": 100,
+    "dps": 31
   },
   "301": {
     "name": "Meteor Mash",
     "type": "Steel",
-    "damage": 5,
-    "duration": 1300,
-    "energy": 20,
-    "dps": 3.8
+    "damage": 100,
+    "duration": 2600,
+    "energy": 100,
+    "dps": 38.4
   },
   "302": {
     "name": "Skull Bash",
     "type": "Normal",
-    "damage": 5,
-    "duration": 1300,
-    "energy": 20,
-    "dps": 3.8
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
   },
   "303": {
     "name": "Acid Spray",
     "type": "Poison",
-    "damage": 5,
-    "duration": 1300,
-    "energy": 20,
-    "dps": 3.8
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
   },
   "304": {
     "name": "Earth Power",
     "type": "Ground",
-    "damage": 5,
-    "duration": 1300,
-    "energy": 20,
-    "dps": 3.8
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
   },
   "305": {
     "name": "Crabhammer",
     "type": "Water",
-    "damage": 5,
-    "duration": 1300,
-    "energy": 20,
-    "dps": 3.8
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
   },
   "306": {
     "name": "Lunge",
     "type": "Bug",
-    "damage": 5,
-    "duration": 1300,
-    "energy": 20,
-    "dps": 3.8
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
   },
   "307": {
     "name": "Crush Claw",
     "type": "Normal",
-    "damage": 5,
-    "duration": 1300,
-    "energy": 20,
-    "dps": 3.8
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
   },
   "308": {
     "name": "Octazooka",
     "type": "Water",
-    "damage": 5,
-    "duration": 1300,
-    "energy": 20,
-    "dps": 3.8
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
   },
   "309": {
     "name": "Mirror Shot",
     "type": "Steel",
-    "damage": 5,
-    "duration": 1300,
-    "energy": 20,
-    "dps": 3.8
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
   },
   "310": {
     "name": "Superpower",
     "type": "Fighting",
-    "damage": 5,
-    "duration": 1300,
-    "energy": 20,
-    "dps": 3.8
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
   },
   "311": {
     "name": "Fell Stinger",
     "type": "Bug",
-    "damage": 5,
-    "duration": 1300,
-    "energy": 20,
-    "dps": 3.8
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
   },
   "312": {
     "name": "Leaf Tornado",
     "type": "Grass",
-    "damage": 5,
-    "duration": 1300,
-    "energy": 20,
-    "dps": 3.8
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
   },
   "313": {
     "name": "Leech Life",
     "type": "Bug",
-    "damage": 5,
-    "duration": 1300,
-    "energy": 20,
-    "dps": 3.8
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
   },
   "314": {
     "name": "Drain Punch",
     "type": "Fighting",
-    "damage": 5,
-    "duration": 1300,
-    "energy": 20,
-    "dps": 3.8
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
   },
   "315": {
     "name": "Shadow Bone",
     "type": "Ghost",
-    "damage": 5,
-    "duration": 1300,
-    "energy": 20,
-    "dps": 3.8
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
   },
   "316": {
     "name": "Muddy Water",
     "type": "Water",
-    "damage": 5,
-    "duration": 1300,
-    "energy": 20,
-    "dps": 3.8
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
   },
   "317": {
     "name": "Blaze Kick",
     "type": "Fire",
-    "damage": 5,
-    "duration": 1300,
-    "energy": 20,
-    "dps": 3.8
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
   },
   "318": {
     "name": "Razor Shell",
     "type": "Water",
-    "damage": 5,
-    "duration": 1300,
-    "energy": 20,
-    "dps": 3.8
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
   },
   "319": {
-    "name": "Power Up Punch",
+    "name": "Power-Up Punch",
     "type": "Fighting",
-    "damage": 50,
-    "duration": 2000,
-    "energy": 33,
-    "dps": 25
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
   },
   "320": {
     "name": "Charm",
     "type": "Fairy",
-    "damage": 50,
-    "duration": 2000,
-    "energy": 33,
-    "dps": 25
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
   },
   "321": {
     "name": "Giga Impact",
     "type": "Normal",
-    "damage": 50,
-    "duration": 2000,
-    "energy": 33,
-    "dps": 25
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
   },
   "322": {
     "name": "Frustration",
     "type": "Normal",
-    "damage": 50,
-    "duration": 2000,
-    "energy": 33,
-    "dps": 25
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
   },
   "323": {
     "name": "Return",
     "type": "Normal",
-    "damage": 50,
-    "duration": 2000,
-    "energy": 33,
-    "dps": 25
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
   },
   "324": {
     "name": "Synchronoise",
     "type": "Psychic",
-    "damage": 50,
-    "duration": 2000,
-    "energy": 33,
-    "dps": 25
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
   },
   "325": {
     "name": "Lock-On",
     "type": "Normal",
-    "damage": 50,
-    "duration": 2000,
-    "energy": 33,
-    "dps": 25
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "326": {
+    "name": "Thunder Fang",
+    "type": "Electric",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "327": {
+    "name": "Ice Fang",
+    "type": "Ice",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "328": {
+    "name": "Horn Drill",
+    "type": "Normal",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "329": {
+    "name": "Fissure",
+    "type": "Ground",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "330": {
+    "name": "Sacred Sword",
+    "type": "Fighting",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "331": {
+    "name": "Flying Press",
+    "type": "Fighting",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "332": {
+    "name": "Aura Sphere",
+    "type": "Fighting",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "333": {
+    "name": "Payback",
+    "type": "Dark",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "334": {
+    "name": "Rock Wrecker",
+    "type": "Rock",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "335": {
+    "name": "Aeroblast",
+    "type": "Flying",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "336": {
+    "name": "Techno Blast Normal",
+    "type": "Normal",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "337": {
+    "name": "Techno Blast Burn",
+    "type": "Fire",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "338": {
+    "name": "Techno Blast Chill",
+    "type": "Ice",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "339": {
+    "name": "Techno Blast Water",
+    "type": "Water",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "340": {
+    "name": "Techno Blast Shock",
+    "type": "Electric",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
   }
 }
