@@ -2110,5 +2110,125 @@
     "duration": 2000,
     "energy": 33,
     "dps": 25
+  },
+  "326": {
+    "name": "Colmillo Rayo",
+    "type": "Electric",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "327": {
+    "name": "Colmillo Hielo",
+    "type": "Ice",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "328": {
+    "name": "Perforador",
+    "type": "Normal",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "329": {
+    "name": "Fisura",
+    "type": "Ground",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "330": {
+    "name": "Espada Santa",
+    "type": "Fighting",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "331": {
+    "name": "Plancha Voladora",
+    "type": "Fighting",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "332": {
+    "name": "Esfera Aural",
+    "type": "Fighting",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "333": {
+    "name": "Vendetta",
+    "type": "Dark",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "334": {
+    "name": "Romperrocas",
+    "type": "Rock",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "335": {
+    "name": "Aerochorro",
+    "type": "Flying",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "336": {
+    "name": "Tecnochorro Normal",
+    "type": "Normal",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "337": {
+    "name": "Tecno Anillo ígneo",
+    "type": "Fire",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "338": {
+    "name": "Tecno explosión helada",
+    "type": "Ice",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "339": {
+    "name": "Tecno Explosión de agua",
+    "type": "Water",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "340": {
+    "name": "Tecnochorro Choque explosivo",
+    "type": "Electric",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
   }
 }
