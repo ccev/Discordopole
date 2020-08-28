@@ -576,7 +576,7 @@ class Boards(commands.Cog):
 
                     if "raid_lvl_6_active" in board['type']:
 
-                        text = f"{text}5⭐: **{raid_active[0][6]:,}** {self.bot.locale['raids']} | **{egg_active[0][6]:,}** {self.bot.locale['eggs']}\n"
+                        text = f"{text}6⭐: **{raid_active[0][6]:,}** {self.bot.locale['raids']} | **{egg_active[0][6]:,}** {self.bot.locale['eggs']}\n"
 
                     elif "egg_lvl_6_active" in board['type']:
 
