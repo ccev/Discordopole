@@ -75,7 +75,7 @@ class Admin(commands.Cog):
         level_list = list(levels.split(','))
         level_list = list(map(int, level_list))
 
-        if all(i > 5 or i < 1 for i in level_list):
+        if all(i > 6 or i < 1 for i in level_list):
             embed.description = "Couldn't create Raid Board. Try chosing other levels."
             await message.edit(embed=embed)
             return
@@ -169,7 +169,10 @@ class Admin(commands.Cog):
                         stats.append("raid_lvl_4_active")
                     elif "5" in stat:
                         stats.append("raid_lvl_5_active")
+                    elif "6" in stat:
+                        stats.append("raid_lvl_6_active")
                     elif "all" in stat:
+                        stats.append("raid_lvl_5_active")
                         stats.append("raid_lvl_5_active")
                         stats.append("raid_lvl_4_active")
                         stats.append("raid_lvl_3_active")
@@ -189,7 +192,10 @@ class Admin(commands.Cog):
                         stats.append("egg_lvl_4_active")
                     elif "5" in stat:
                         stats.append("egg_lvl_5_active")
+                    elif "6" in stat:
+                        stats.append("egg_lvl_6_active")
                     elif "all" in stat:
+                        stats.append("egg_lvl_6_active")
                         stats.append("egg_lvl_5_active")
                         stats.append("egg_lvl_4_active")
                         stats.append("egg_lvl_3_active")
@@ -268,7 +274,7 @@ class Admin(commands.Cog):
         level_list = list(levels.split(','))
         level_list = list(map(int, level_list))
 
-        if all(i > 5 or i < 1 for i in level_list):
+        if all(i > 6 or i < 1 for i in level_list):
             embed.description = "Couldn't create Raid Channel. Try chosing other levels."
             await message.edit(embed=embed)
             return
