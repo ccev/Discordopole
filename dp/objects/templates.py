@@ -8,6 +8,7 @@ class Templates():
         self.raid_board_entry = self.get_entry("raid")
         self.egg_board_entry = self.get_entry("egg")
         self.hundo_board_entry = self.get_entry("hundo")
+        self.grunt_board_entry = self.get_entry("grunt")
     
     def get_entry(self, name):
         return self.templates.get("board_entries", {}).get(name, "")
@@ -20,6 +21,9 @@ class Templates():
 
     def hundo_board(self):
         self.template = HundoBoardEntry(self.bot, self.templates)
+
+    def grunt_board(self):
+        self.template = GruntBoardEntry(self.bot, self.templates)
 
 class QuestBoardEntry(Templates):
     def get(self, reward):
@@ -75,4 +79,12 @@ class HundoBoardEntry(Templates):
         entry = self.hundo_board_entry.format(
             mon_name=mon.name
         )
+        return entry
+
+class GruntBoardEntry(Templates):
+    def get(self, grunt):
+        entry = self.grunt_board_entry.format(
+            
+        )
+        entry += "\n"
         return entry

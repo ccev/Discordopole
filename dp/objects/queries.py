@@ -6,9 +6,9 @@ class Queries():
         self.bot = bot
         self.generate_queries()
         
-    async def execute(self, query_string, sql_fence="", table=""):
+    async def execute(self, query_string, sql_fence="", table="", extra=""):
         query = self.queries.get(query_string, query_string)
-        query = query.format(area=sql_fence, timezone="+02:00", table="pokemon") #TODO TIMEZONES, EXTRA TABLES
+        query = query.format(area=sql_fence, timezone="+02:00", table="pokemon", extra=extra) #TODO TIMEZONES, EXTRA TABLES
         pool = await aiomysql.create_pool(host=self.bot.config.db_host, port=self.bot.config.db_port, user=self.bot.config.db_user, password=self.bot.config.db_pass, db=self.bot.config.db_dbname)
         async with pool.acquire() as conn:
             async with conn.cursor() as cursor:
@@ -26,7 +26,8 @@ class Queries():
             }
             self.queries = {
                 "active_raids": "SELECT gym.gym_id, Unix_timestamp(CONVERT_TZ(spawn,'+00:00','{timezone}')) AS starts, Unix_timestamp(CONVERT_TZ(end,'+00:00','{timezone}')) AS ends, latitude, longitude, ifnull(pokemon_id, 0), move_1, move_2, name, is_ex_raid_eligible, level, url, raid.form FROM gym LEFT JOIN gymdetails ON gym.gym_id = gymdetails.gym_id LEFT JOIN raid ON gym.gym_id = raid.gym_id WHERE name IS NOT NULL AND end > UTC_TIMESTAMP() AND " + generics["area"] + " ORDER BY end;",
-                "active_quests": "select quest_reward, quest_task, latitude, longitude, name, pokestop_id from trs_quest left join pokestop on trs_quest.GUID = pokestop.pokestop_id WHERE quest_timestamp > UNIX_TIMESTAMP(CURDATE()) AND " + generics["area"] + " ORDER BY quest_item_id ASC, quest_pokemon_id ASC, name;"
+                "active_quests": "select quest_reward, quest_task, latitude, longitude, name, pokestop_id from trs_quest left join pokestop on trs_quest.GUID = pokestop.pokestop_id WHERE quest_timestamp > UNIX_TIMESTAMP(CURDATE()) AND " + generics["area"] + " ORDER BY quest_item_id ASC, quest_pokemon_id ASC, name;",
+                "active_grunts": "SELECT pokestop_id, name, image, latitude, longitude, CONVERT_TZ(incident_start,'+00:00','{timezone}'), CONVERT_TZ(incident_expiration,'+00:00','{timezone}') as end, incident_grunt_type where incident_grunt_type in ({extra}) and end > UTC_TIMESTAMP AND " + generics["area"] + " ORDER BY end;"
 
                 """
                 #Stat Board
