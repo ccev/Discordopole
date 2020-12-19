@@ -2,8 +2,8 @@ import aiomysql
 import asyncio
 
 class Queries():
-    def __init__(self, bot):
-        self.bot = bot
+    def __init__(self, config):
+        self.config = config
         self.generate_queries()
         
     async def execute(self, query_string, sql_fence="", table="", extra=""):

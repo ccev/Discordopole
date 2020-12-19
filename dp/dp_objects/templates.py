@@ -17,7 +17,7 @@ class Templates():
         self.template = QuestBoardEntry(self.bot, self.templates)
 
     def raid_board(self):
-        self.template = RaidBoardEntry(self.bot, self.templates)
+        return RaidBoardEntry(self.bot, self.templates)
 
     def hundo_board(self):
         self.template = HundoBoardEntry(self.bot, self.templates)

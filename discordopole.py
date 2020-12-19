@@ -3,41 +3,37 @@ import requests
 
 from discord.ext import commands
 
-from dp.objects import Config, Queries, Templates, MapUrl, StaticMap, GameData
+from dp.dp_objects import Config, Queries, Templates, MapUrl, StaticMap, GameData
 from dp.utils.logging import log
 from dp.utils.util import get_json_file
 
 class DPfiles:
-    def __init__(self):
+    def __init__(self, config):
         self.boards = get_json_file("config/boards.json")
         self.geofences = get_json_file("config/geofence.json")
         self.custom_emotes = get_json_file("config/emotes.json")
-        self.available_grunts = {}
+
+        if config.language not in ["de", "en", "es", "fr", "pl"]:
+            config.language = "en"
+        self.locale = get_json_file(f"dp/data/locale/{config.language}.json")
 
 class DPvars:
     def __init__(self):
-        self.config = None
-        self.bot = None
-        self.queries = None
+        self.config = Config("config/config.ini")
+        self.bot = commands.Bot(command_prefix=self.config.prefix, case_insensitive=1)
+        self.queries = Queries(self.config)
         self.gamedata = None
-        self.templates = None
-        self.map_url = None
+        self.templates = Templates(self.config, get_json_file("config/templates.json"))
+        self.map_url = MapUrl(self.config.map, self.config.map_url)
         self.static_map = None
 
-        self.files = DPfiles()
+        self.files = DPfiles(self.config)
 
-
+log.info("Initializing Discordopole")
 dp = DPvars()
 
-log.info("Initializing...")
-
-dp.config = Config("config/config.ini")
-log.info("Parsed config")
-
-dp.bot = commands.Bot(command_prefix=dp.config.prefix, case_insensitive=1)
-
-dp.queries = Queries(dp.bot)
-log.info("Imported queries")
+log.info("Loading Pogo data")
+dp.gamedata = GameData(dp.config.language)
 
 """# File Loading
 needed_langs = {
@@ -61,23 +57,6 @@ bot.forms = get_json_file(f"dp/data/forms/{needed_langs['forms']}.json")
 bot.moves = get_json_file(f"dp/data/moves/{needed_langs['moves']}.json")
 log.info("Loaded Language files")"""
 
-log.info("Loading up-to-date proto and gamemaster data...")
-dp.gamedata = GameData(dp.config.language)
-
-## Config files
-
-dp.templates = Templates(dp.config, get_json_file("config/templates.json"))
-dp.map_url = MapUrl(dp.config.map, dp.config.map_url)
-
-for gid, data in requests.get("https://raw.githubusercontent.com/ccev/pogoinfo/info/grunts.json").json().items():
-    encounters = data.get("encounters", {}).get("first", [])
-    if data.get("second_reward", False):
-        encounters += data.get("encounters", {}).get("second", [])
-    #encounters = [int(e.split("_")[0]) for e in encounters]
-    dp.files.available_grunts[gid] = encounters
-
-log.info("Loaded rest of the needed data")
-
 # Cog Loading
 
 cogs = [
@@ -88,12 +67,12 @@ cogs = [
 ]
 for extension in cogs:
     dp.bot.load_extension(extension)
-log.info("Loaded cogs. Connecting to Discord now")
+log.info("Connecting to Discord")
 
 @dp.bot.event
 async def on_ready():
     #await bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.watching, name="Discordopole"))
-    log.success("Connected to Discord. Ready to take commands.")
+    log.success("Done loading. Ready for action.")
     trash_channel = await dp.bot.fetch_channel(dp.config.host_channel)
     dp.static_map = StaticMap(dp.bot, trash_channel)
 

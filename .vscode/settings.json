@@ -1,0 +1,5 @@
+{
+    "python.linting.pylintArgs": [
+        "--disable=import-error,no-member"
+    ]
+}

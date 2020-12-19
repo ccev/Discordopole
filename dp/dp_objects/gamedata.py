@@ -75,6 +75,14 @@ class GameData:
                 except:
                     pass
 
+        self.available_grunts = {}
+        for gid, data in requests.get("https://raw.githubusercontent.com/ccev/pogoinfo/info/grunts.json").json().items():
+            encounters = data.get("encounters", {}).get("first", [])
+            if data.get("second_reward", False):
+                encounters += data.get("encounters", {}).get("second", [])
+            #encounters = [int(e.split("_")[0]) for e in encounters]
+            self.available_grunts[gid] = encounters
+
     def get_proto(self, url):
         proto = requests.get(url).text
 
