@@ -4,15 +4,13 @@ import requests
 from io import BytesIO
 from tileserver import Tileserver
 
-from discordopole import dp
-
 class StaticMap:
-    def __init__(self, trash_channel):
-        if not dp.config.tileserver_url:
+    def __init__(self, tileserver_url, trash_channel):
+        if not tileserver_url:
             self.use = False
         else:
             self.use = True
-            self.tileserver = Tileserver(dp.config.tileserver_url)
+            self.tileserver = Tileserver(tileserver_url)
         self.trash_channel = trash_channel
 
     async def multiples(self, objs):

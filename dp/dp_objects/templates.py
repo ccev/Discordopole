@@ -1,10 +1,11 @@
 from datetime import datetime
 
-from discordopole import dp
-
 class Templates():
-    def __init__(self, templates):
+    def __init__(self, dp, templates):
         self.templates = templates
+        self.locale = dp.files.locale
+        self.map_url = dp.map_url
+
         self.quest_entry = self.get_entry("quest")
         self.raid_board_entry = self.get_entry("raid")
         self.egg_board_entry = self.get_entry("egg")
@@ -37,7 +38,7 @@ class QuestBoardEntry(Templates):
 
             lat=reward.stop.lat,
             lon=reward.stop.lon,
-            map_link=dp.map_url.stop(reward.stop),
+            map_link=self.map_url.stop(reward.stop),
 
             reward_name=reward.item.name,
             reward_id=reward.item.id
@@ -56,8 +57,8 @@ class RaidBoardEntry(Templates):
             boss_emote=raid.boss.emote,
 
             level=raid.level,
-            start=raid.start.strftime(dp.files.locale['time_format_hm']),
-            end=raid.end.strftime(dp.files.locale['time_format_hm']),
+            start=raid.start.strftime(self.files.locale['time_format_hm']),
+            end=raid.end.strftime(self.files.locale['time_format_hm']),
 
             gym_name=raid.gym.name,
             short_gym_name=raid.gym.short_name,
@@ -65,7 +66,7 @@ class RaidBoardEntry(Templates):
 
             lat=raid.gym.lat,
             lon=raid.gym.lon,
-            map_link=dp.map_url.gym(raid.gym),
+            map_link=self.map_url.gym(raid.gym),
 
             boss_name=raid.boss.name,
             move_1=raid.boss.move_1.name,

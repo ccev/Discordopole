@@ -9,7 +9,7 @@ class Queries():
     async def execute(self, query_string, sql_fence="", table="", extra=""):
         query = self.queries.get(query_string, query_string)
         query = query.format(area=sql_fence, timezone="+02:00", table="pokemon", extra=extra) #TODO TIMEZONES, EXTRA TABLES
-        pool = await aiomysql.create_pool(host=self.bot.config.db_host, port=self.bot.config.db_port, user=self.bot.config.db_user, password=self.bot.config.db_pass, db=self.bot.config.db_dbname)
+        pool = await aiomysql.create_pool(host=self.config.db_host, port=self.config.db_port, user=self.config.db_user, password=self.config.db_pass, db=self.config.db_dbname)
         async with pool.acquire() as conn:
             async with conn.cursor() as cursor:
                 await cursor.execute(query)
@@ -19,7 +19,7 @@ class Queries():
         return r
     
     def generate_queries(self):
-        if self.bot.config.db_scan_schema == "mad":
+        if self.config.db_scan_schema == "mad":
             generics = {
                 "area": "" + "ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))",
                 "timezone": "CONVERT_TZ({table}.{column},'+00:00','{timezone}')"
@@ -54,7 +54,7 @@ class Queries():
                 "quest_active": "select count(GUID) from pokestop left join trs_quest on pokestop.pokestop_id = trs_quest.GUID where quest_timestamp > UNIX_TIMESTAMP(CURDATE()) and " + generics["area"]
             """
             }
-        elif self.bot.config.db_scan_schema == "rdm":
+        elif self.config.db_scan_schema == "rdm":
             generics = {
                 "area": "ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon))"
             }

@@ -26,11 +26,12 @@ class DPvars:
         self.bot = commands.Bot(command_prefix=self.config.prefix, case_insensitive=1)
         self.queries = Queries(self.config)
         self.gamedata = None
-        self.templates = Templates(self.config, get_json_file("config/templates.json"))
         self.map_url = MapUrl(self.config.map, self.config.map_url)
         self.static_map = None
 
         self.files = DPfiles(self.config)
+
+        self.templates = Templates(self, get_json_file("config/templates.json"))
 
 log.info("Initializing Discordopole")
 dp = DPvars()
@@ -64,7 +65,7 @@ log.info("Loaded Language files")"""
 
 cogs = [
 #    "dp.cogs.usercommands",
-    "dp.cogs.admincommands",
+#    "dp.cogs.admincommands",
     "dp.cogs.boardloop",
 #    "dp.cogs.channelloop"
 ]
@@ -77,6 +78,6 @@ async def on_ready():
     #await bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.watching, name="Discordopole"))
     log.success("Done loading. Ready for action.")
     trash_channel = await dp.bot.fetch_channel(dp.config.host_channel)
-    dp.static_map = StaticMap(dp.bot, trash_channel)
+    dp.static_map = StaticMap(trash_channel, dp.config.tileserver_url)
 
 dp.bot.run(dp.config.bot_token)

@@ -1,7 +1,6 @@
 import discord
 import asyncio
 import json
-import pyshorteners
 
 from discord.ext import tasks, commands
 from datetime import datetime, date, timedelta
