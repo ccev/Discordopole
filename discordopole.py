@@ -16,6 +16,9 @@ class DPfiles:
         if config.language not in ["de", "en", "es", "fr", "pl"]:
             config.language = "en"
         self.locale = get_json_file(f"dp/data/locale/{config.language}.json")
+        if config.language not in ["de", "en", "es", "fr"]:
+            config.language = "en"
+        self.form_locale = get_json_file(f"dp/data/forms/{config.language}.json")
 
 class DPvars:
     def __init__(self):

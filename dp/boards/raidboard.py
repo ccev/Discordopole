@@ -3,21 +3,26 @@ from datetime import datetime
 from dp.boards import Board
 from dp.pogo import Mon, Gym
 
-class Raid():
-    def __init__(self, dp, level, start, end, gym, boss):
+class RaidEgg:
+    def __init__(self, dp, level):
+        self.id = level
+        self.name = dp.files.locale["level_egg"].format(level=level)
+        self.img = f"{dp.config.emote_repo}raid_egg_{level}.png"
+        self.emote = dp.files.custom_emotes.get(f"raid_egg_{level}", "")
+
+class Raid:
+    def __init__(self, dp, level, start, end, gym, mon_id, move_1, move_2, form_id):
         self.level = level
         self.start = datetime.fromtimestamp(start)
         self.end = datetime.fromtimestamp(end)
         self.gym = gym
 
-        if boss.name != "?":
-            self.egg = False
-            self.boss = boss
-        else:
+        if mon_id is None:
             self.egg = True
-            self.boss = Mon(dp)
-            self.boss.custom(self.level, dp.files.locale["level_egg"].format(level=self.level), f"{dp.config.emote_repo}raid_egg_{self.level}.png")
-            self.boss.emote = dp.files.custom_emotes.get(f"raid_egg_{self.level}", "")
+            self.boss = RaidEgg(dp, self.level)
+        else:
+            self.egg = False
+            self.boss = Mon(dp, mon_id, move_1, move_2, form_id)
     
     async def create_emote(self):
         await self.boss.get_emote()
@@ -50,8 +55,7 @@ class RaidBoard(Board):
             if self.board["ex"] and (not ex):
                 continue
             gym = Gym(self.dp.files.custom_emotes, gym_id, lat, lon, name, gym_img, ex)
-            mon = Mon(self.dp, mon_id, move_1=move_1, move_2=move_2, form=form)
-            raid = Raid(self.dp, level, start, end, gym, mon)
+            raid = Raid(self.dp, level, start, end, gym, mon_id, move_1, move_2, form)
             if self.egg_board and raid.egg:
                 self.raids.append(raid)
             elif (not self.egg_board) and (not raid.egg):

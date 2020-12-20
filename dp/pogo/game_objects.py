@@ -26,52 +26,59 @@ class Gym(Stop):
         else:
             self.ex_emote = ""
 
-class Mon():
-    def __init__(self, dp, mon_id=None, mon_name=None, move_1=1, move_2=1, form=0):
-        self.dp = dp
-        self.id, self.name, self.match = mon_item_matching(dp, mon_id, mon_name, bot.mon_names)
-        self.move_1 = self.Move(dp, move_1)
-        self.move_2 = self.Move(dp, move_2)
-        self.form = self.Form(dp, self.id, form)
+class GameObject:
+    def __init__(self):
         self.emote = ""
-        self.dp_emote = None
+        self.dp_emote = ""
+
+    async def stanrd_get_emote(self, emote_name):
+        self.emote = self.dp.files.custom_emotes.get(emote_name, "")
+
+        if self.emote == "":
+            self.dp_emote = DPEmote(self.dp)
+            await self.dp_emote.create(self.img, emote_name)
+            self.emote = self.dp_emote.ref
+
+class Mon(GameObject):
+    def __init__(self, dp, mon_id=None, move_1=1, move_2=1, form=0):
+        self.dp = dp
+        self.id = mon_id
+        self.name = dp.gamedata.mon_locale.get(self.id, "?")
+        self.move_1 = self.Move(dp.gamedata, move_1)
+        self.move_2 = self.Move(dp.gamedata, move_2)
+        self.form = self.Form(dp.files, self.id, form)
             
         self.img = dp.config.mon_icon_repo + f"pokemon_icon_{str(self.id).zfill(3)}_{str(self.form.id).zfill(2)}.png"
-
-    def custom(self, m_id, m_name, m_img):
-        self.id = m_id
-        self.name = m_name
-        self.img = m_img
 
     async def get_emote(self, emote_name=None):
         if emote_name is None:
             emote_name = f"m{self.id}"
-        await mon_item_emote(self, emote_name)
+        await self.stanrd_get_emote(emote_name)
         
-    class Move():
-        def __init__(self, bot, move_id):
-            self.name = bot.moves.get(str(move_id), "?")
+    class Move:
+        def __init__(self, gamedata, move_id):
+            self.name = gamedata.move_locale.get(str(move_id), "?")
             self.id = move_id
     
-    class Form():
-        def __init__(self, bot, mid, fid):
+    class Form:
+        def __init__(self, files, mid, fid):
             if fid is None:
                 fid = 0
             self.id = fid
-            self.name = bot.forms.get(str(mid), {}).get(str(fid), "")
+            self.name = files.form_locale.get(str(mid), {}).get(str(fid), "")
             try:
                 self.short_name = self.name[0]
             except:
                 self.short_name = ""
 
-class Item():
-    def __init__(self, bot, item_id=None, item_name=None):
-        self.id, self.name, self.match = mon_item_matching(bot, item_id, item_name, bot.item_names)
-        self.emote = ""
-        self.dp_emote = None
-        self.img = bot.config.mon_icon_repo + f"rewards/reward_{self.id}_1.png"
+class Item(GameObject):
+    def __init__(self, dp, item_id=None):
+        self.dp = dp
+        self.id = item_id
+        self.name = dp.gamedata.item_locale.get(self.id, "?")
+        self.img = dp.config.mon_icon_repo + f"rewards/reward_{self.id}_1.png"
     
     async def get_emote(self, emote_name=None):
         if emote_name is None:
             emote_name = f"i{self.id}"
-        await mon_item_emote(self, emote_name)
+        await self.stanrd_get_emote(emote_name)
