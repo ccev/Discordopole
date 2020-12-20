@@ -31,7 +31,7 @@ class GameObject:
         self.emote = ""
         self.dp_emote = ""
 
-    async def stanrd_get_emote(self, emote_name):
+    async def standard_get_emote(self, emote_name):
         self.emote = self.dp.files.custom_emotes.get(emote_name, "")
 
         if self.emote == "":
@@ -53,7 +53,7 @@ class Mon(GameObject):
     async def get_emote(self, emote_name=None):
         if emote_name is None:
             emote_name = f"m{self.id}"
-        await self.stanrd_get_emote(emote_name)
+        await self.standard_get_emote(emote_name)
         
     class Move:
         def __init__(self, gamedata, move_id):
@@ -81,4 +81,4 @@ class Item(GameObject):
     async def get_emote(self, emote_name=None):
         if emote_name is None:
             emote_name = f"i{self.id}"
-        await self.stanrd_get_emote(emote_name)
+        await self.standard_get_emote(emote_name)
