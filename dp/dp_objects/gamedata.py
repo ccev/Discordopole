@@ -1,15 +1,15 @@
-import requests
 import math
 import re
-import json
+import requests
 
 class GameData:
     def __init__(self, config_locale):
-        self.item_ids = self.get_proto("https://raw.githubusercontent.com/Furtif/POGOProtos/master/src/POGOProtos/Inventory/Item/ItemId.proto")
-        self.mon_ids = self.get_proto("https://raw.githubusercontent.com/Furtif/POGOProtos/master/src/POGOProtos/Enums/PokemonId.proto")
-        self.move_ids = self.get_proto("https://raw.githubusercontent.com/Furtif/POGOProtos/master/src/POGOProtos/Enums/PokemonMove.proto")
-        self.form_ids = self.get_proto("https://raw.githubusercontent.com/Furtif/POGOProtos/master/src/POGOProtos/Enums/Form.proto")
-        self.costume_ids = self.get_proto("https://raw.githubusercontent.com/Furtif/POGOProtos/master/src/POGOProtos/Enums/Costume.proto")
+        self.protos = requests.get("https://raw.githubusercontent.com/Furtif/POGOProtos/master/base/base.proto").text
+        self.item_ids = self.get_proto("Item")
+        self.mon_ids = self.get_proto("HoloPokemonId")
+        self.move_ids = self.get_proto("HoloPokemonMove")
+        self.form_ids = self.get_proto("Form")
+        self.costume_ids = self.get_proto("Costume")
 
         self.mon_forms = {}
         for proto_id, mon_id in self.mon_ids.items():
@@ -83,11 +83,11 @@ class GameData:
             #encounters = [int(e.split("_")[0]) for e in encounters]
             self.available_grunts[gid] = encounters
 
-    def get_proto(self, url):
-        proto = requests.get(url).text
+    def get_proto(self, enum):
+        proto = re.findall(f"enum {enum} "+r"{[^}]*}", self.protos)[0]
 
         final = {}
-        proto = proto.split("{\n\t")[1].split("\n}")[0]
+        proto = proto.split("{\n\t")[1].split("\n}")[0].split("\n\t}")[0]
         for entry in proto.split("\n\t"):
             k = entry.split(" =")[0]
             v = entry.split("= ")[1].split(";")[0]
@@ -110,3 +110,4 @@ class GameData:
 
 if __name__ == "__main__":
     gamedata = GameData("de")
+    print(gamedata.mon_ids)

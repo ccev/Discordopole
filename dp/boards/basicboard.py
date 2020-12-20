@@ -6,16 +6,6 @@ from datetime import datetime
 from dp.utils.util import Area, DPEmote, get_loading_footer
 from dp.pogo import Stop, Gym, Mon, Item
 
-"""
-There's a big Board class (Board()) - Each Board is a child class of that.
-When a Board is generated, it first generates a list with the objects it'll display.
-An object could e.g. be a Quest reward or a Raid.
-This object then gets transferred to the big generate_text() function which takes
-care of embed generation, templates, etc. - frontend stuff that's the same across
-all boards basically. Templates are generated in utils/templates.py, most smaller
-classes used can be found in utils/util.py
-"""
-
 class Board():
     def __init__(self, dp, board):
         self.board = board
@@ -40,7 +30,7 @@ class Board():
             text += entry
 
         if len(objs) == 0:
-            text = self.bot.locale["empty_board"]
+            text = self.dp.files.locale["empty_board"]
             self.static_map = ""
 
         self.embed_details(text)

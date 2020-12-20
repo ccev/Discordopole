@@ -1,8 +1,9 @@
 from datetime import datetime
 
+from discordopole import dp
+
 class Templates():
-    def __init__(self, bot, templates):
-        self.bot = bot
+    def __init__(self, templates):
         self.templates = templates
         self.quest_entry = self.get_entry("quest")
         self.raid_board_entry = self.get_entry("raid")
@@ -14,16 +15,16 @@ class Templates():
         return self.templates.get("board_entries", {}).get(name, "")
 
     def quest(self):
-        self.template = QuestBoardEntry(self.bot, self.templates)
+        return QuestBoardEntry(self.templates)
 
     def raid_board(self):
-        return RaidBoardEntry(self.bot, self.templates)
+        return RaidBoardEntry(self.templates)
 
     def hundo_board(self):
-        self.template = HundoBoardEntry(self.bot, self.templates)
+        return HundoBoardEntry(self.templates)
 
     def grunt_board(self):
-        self.template = GruntBoardEntry(self.bot, self.templates)
+        return GruntBoardEntry(self.templates)
 
 class QuestBoardEntry(Templates):
     def get(self, reward):
@@ -36,7 +37,7 @@ class QuestBoardEntry(Templates):
 
             lat=reward.stop.lat,
             lon=reward.stop.lon,
-            map_link=self.bot.map_url.stop(reward.stop),
+            map_link=dp.map_url.stop(reward.stop),
 
             reward_name=reward.item.name,
             reward_id=reward.item.id
@@ -55,8 +56,8 @@ class RaidBoardEntry(Templates):
             boss_emote=raid.boss.emote,
 
             level=raid.level,
-            start=raid.start.strftime(self.bot.locale['time_format_hm']),
-            end=raid.end.strftime(self.bot.locale['time_format_hm']),
+            start=raid.start.strftime(dp.files.locale['time_format_hm']),
+            end=raid.end.strftime(dp.files.locale['time_format_hm']),
 
             gym_name=raid.gym.name,
             short_gym_name=raid.gym.short_name,
@@ -64,7 +65,7 @@ class RaidBoardEntry(Templates):
 
             lat=raid.gym.lat,
             lon=raid.gym.lon,
-            map_link=self.bot.map_url.gym(raid.gym),
+            map_link=dp.map_url.gym(raid.gym),
 
             boss_name=raid.boss.name,
             move_1=raid.boss.move_1.name,
