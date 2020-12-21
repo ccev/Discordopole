@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from discordopole import dp
-from dp.boards import Board
+from dp.dp_objects import dp
+from dp.boards.basicboard import Board
 from dp.pogo import Mon, Gym
 
 class RaidEgg:

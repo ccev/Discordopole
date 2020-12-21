@@ -3,15 +3,16 @@ import json
 
 from datetime import datetime
 
-from dp.utils.util import Area, DPEmote, get_loading_footer
+from dp.utils.util import DPEmote, get_loading_footer
+from dp.utils.area import Area
 from dp.pogo import Stop, Gym, Mon, Item
+from dp.dp_objects import dp
 
 class Board():
-    def __init__(self, dp, board):
+    def __init__(self, board):
         self.board = board
-        self.dp = dp
         self.embed = discord.Embed()
-        self.area = Area(dp, board["area"])
+        self.area = Area(board["area"])
         self.static_map = ""
     
     def embed_details(self, text):
@@ -30,7 +31,7 @@ class Board():
             text += entry
 
         if len(objs) == 0:
-            text = self.dp.files.locale["empty_board"]
+            text = dp.files.locale["empty_board"]
             self.static_map = ""
 
         self.embed_details(text)

@@ -1,4 +1,4 @@
-from discordopole import dp
+from dp.dp_objects import dp
 
 class Stop():
     def __init__(self, sid, lat, lon, name, img):

@@ -67,21 +67,6 @@ class DPEmote():
         with open("config/emotes.json", "w") as emote_file:
             emote_file.write(json.dumps(self.bot.custom_emotes, indent=4))
 
-class Area():
-    def __init__(self, bot, areaname):
-        stringfence = "-100 -100, -100 100, 100 100, 100 -100, -100 -100"
-        namefence = bot.locale['all']
-        for area in bot.geofences:
-            if area['name'].lower() == areaname.lower():
-                namefence = area['name'].capitalize()
-                stringfence = ""
-                for coordinates in area['path']:
-                    stringfence = f"{stringfence}{coordinates[0]} {coordinates[1]},"
-                stringfence = f"{stringfence}{area['path'][0][0]} {area['path'][0][1]}"
-                break
-        self.sql_fence = stringfence
-        self.name = namefence
-
 
 
 def match(to_be_matched, origin_dict):
@@ -110,10 +95,3 @@ def mon_item_matching(bot, i_id, i_name, names):
         _match = 0
     return final_id, final_name, _match
 
-async def mon_item_emote(item, emote_name):
-    item.emote = item.bot.custom_emotes.get(emote_name, "")
-
-    if item.emote == "":
-        item.dp_emote = DPEmote(item.bot)
-        await item.dp_emote.create(item.img, emote_name)
-        item.emote = item.dp_emote.ref

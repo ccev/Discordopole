@@ -2,6 +2,7 @@ from datetime import datetime
 
 class Templates():
     def __init__(self, dp, templates):
+        self.dp = dp
         self.templates = templates
         self.locale = dp.files.locale
         self.map_url = dp.map_url
@@ -16,16 +17,16 @@ class Templates():
         return self.templates.get("board_entries", {}).get(name, "")
 
     def quest(self):
-        return QuestBoardEntry(self.templates)
+        return QuestBoardEntry(self.dp, self.templates)
 
     def raid_board(self):
-        return RaidBoardEntry(self.templates)
+        return RaidBoardEntry(self.dp, self.templates)
 
     def hundo_board(self):
-        return HundoBoardEntry(self.templates)
+        return HundoBoardEntry(self.dp, self.templates)
 
     def grunt_board(self):
-        return GruntBoardEntry(self.templates)
+        return GruntBoardEntry(self.dp, self.templates)
 
 class QuestBoardEntry(Templates):
     def get(self, reward):

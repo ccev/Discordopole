@@ -1,35 +1,32 @@
-import discord
-import asyncio
 import json
+import asyncio
 
 from discord.ext import tasks, commands
-from datetime import datetime, date, timedelta
 
 from dp.utils.logging import log
 from dp.utils.util import get_message
-import dp.utils.boards as boardobj
-from discordopole import dp
+from dp.boards import RaidBoard
+from dp.dp_objects import dp
 
 SECONDS = 2.0
 
 class Boards(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
         self.raidboard_loop.start()
-        self.eggboard_loop.start()
+        #self.eggboard_loop.start()
     
     async def generic_board(self, board, obj):
         await obj.get()
-        message = await get_message(self.bot, board["message_id"], board["channel_id"])
+        message = await get_message(dp.bot, board["message_id"], board["channel_id"])
         await message.edit(embed=obj.embed)
         await asyncio.sleep(board["wait"])
 
     @tasks.loop(seconds=SECONDS)   
     async def raidboard_loop(self):
-        for board in self.bot.boards.get("raids", []):
+        for board in dp.files.boards.get("raids", []):
             try:
-                await self.generic_board(board, boardobj.RaidBoard(board, is_egg_board=False))
+                await self.generic_board(board, RaidBoard(board, is_egg_board=False))
             except Exception as e:
                 log.critical(f"Error while updating Raid Board for message {board['message_id']}")
                 log.exception(e)

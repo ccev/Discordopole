@@ -4,7 +4,7 @@ import os
 
 class Config():
     def __init__(self, config_path):
-        config_raw = ConfigParser()
+        config_raw = ConfigParser(interpolation=None)
         config_raw.read("default.ini")
         config_raw.read(config_path)
 
