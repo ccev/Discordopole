@@ -29,20 +29,20 @@ class Templates():
         return GruntBoardEntry(self.dp, self.templates)
 
 class QuestBoardEntry(Templates):
-    def get(self, reward):
+    def get(self, quest):
         entry = self.quest_entry.format(
-            emote=reward.item.emote,
+            emote=quest.reward.emote,
 
-            stop_name=reward.stop.name,
-            short_stop_name=reward.stop.short_name,
-            stop_id=reward.stop.id,
+            stop_name=quest.stop.name,
+            short_stop_name=quest.stop.short_name,
+            stop_id=quest.stop.id,
 
-            lat=reward.stop.lat,
-            lon=reward.stop.lon,
-            map_link=self.map_url.stop(reward.stop),
+            lat=quest.stop.lat,
+            lon=quest.stop.lon,
+            map_link=self.map_url.stop(quest.stop),
 
-            reward_name=reward.item.name,
-            reward_id=reward.item.id
+            reward_name=quest.reward.name,
+            reward_id=quest.reward.id
         )
         entry += "\n"
         return entry

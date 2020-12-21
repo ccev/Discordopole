@@ -44,10 +44,10 @@ class StaticMap:
             self.lon = lon
             self.img = img
 
-    async def quest(self, rewards):
+    async def quest(self, quests):
         objs = []
-        for reward in rewards:
-            objs.append(self.StaticMapObject(reward.stop.lat, reward.stop.lon, reward.item.img))
+        for quest in quests:
+            objs.append(self.StaticMapObject(quest.stop.lat, quest.stop.lon, quest.reward.img))
         return await self.multiples(objs)
 
     async def raid(self, raids):
