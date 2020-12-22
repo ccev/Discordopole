@@ -29,6 +29,14 @@ class Gym(Stop):
         else:
             self.ex_emote = ""
 
+        team_ids = {
+            0: "white",
+            1: "blue",
+            2: "red",
+            3: "yellow"
+        }
+        self.img = dp.config.emote_repo + f"gym_{team_ids[self.team_id]}.png"
+
 class GameObject:
     def __init__(self):
         self.emote = ""

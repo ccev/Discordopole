@@ -14,9 +14,10 @@ class Boards(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.raidboard_loop.start()
-        #self.eggboard_loop.start()
+        self.eggboard_loop.start()
 
         self.raidboards = self.prepare_board(boards.RaidBoard, "raids", args={"is_egg_board": False})
+        self.eggboards = self.prepare_board(boards.RaidBoard, "eggs", args={"is_egg_board": True})
 
     def prepare_board(self, boardobj, boardtype, args={}):
         result = []
@@ -31,7 +32,7 @@ class Boards(commands.Cog):
             return
         message = await get_message(dp.bot, board.board["message_id"], board.board["channel_id"])
         await message.edit(embed=embed)
-        await asyncio.sleep(board["wait"])
+        await asyncio.sleep(board.board["wait"])
 
     @tasks.loop(seconds=SECONDS)   
     async def raidboard_loop(self):
@@ -44,11 +45,11 @@ class Boards(commands.Cog):
     
     @tasks.loop(seconds=SECONDS)   
     async def eggboard_loop(self):
-        for board in self.bot.boards.get("eggs", []):
+        for board in self.eggboards:
             try:
-                await self.generic_board(board, boardobj.RaidBoard(self.bot, board, is_egg_board=True))
+                await self.generic_board(board)
             except Exception as e:
-                log.critical(f"Error while updating Egg Board for message {board['message_id']}")
+                log.critical(f"Error while updating Egg Board for message {board.board['message_id']}")
                 log.exception(e)
     
     @tasks.loop(hours=1)   

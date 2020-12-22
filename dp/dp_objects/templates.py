@@ -51,29 +51,50 @@ class RaidBoardEntry(Templates):
     def get(self, raid):
         if raid.egg:
             wanted_entry = self.egg_board_entry
+
+            entry = wanted_entry.format(
+                ex_emote=raid.gym.ex_emote,
+                boss_emote=raid.boss.emote,
+
+                level=raid.level,
+                start=raid.start.strftime(self.dp.files.locale['time_format_hm']),
+                end=raid.end.strftime(self.dp.files.locale['time_format_hm']),
+
+                gym_name=raid.gym.name,
+                short_gym_name=raid.gym.short_name,
+                gym_id=raid.gym.id,
+
+                lat=raid.gym.lat,
+                lon=raid.gym.lon,
+                map_link=self.map_url.gym(raid.gym),
+
+                boss_name=raid.boss.name,
+                boss_id=raid.boss.id
+            )
         else:
             wanted_entry = self.raid_board_entry
-        entry = wanted_entry.format(
-            ex_emote=raid.gym.ex_emote,
-            boss_emote=raid.boss.emote,
 
-            level=raid.level,
-            start=raid.start.strftime(self.dp.files.locale['time_format_hm']),
-            end=raid.end.strftime(self.dp.files.locale['time_format_hm']),
+            entry = wanted_entry.format(
+                ex_emote=raid.gym.ex_emote,
+                boss_emote=raid.boss.emote,
 
-            gym_name=raid.gym.name,
-            short_gym_name=raid.gym.short_name,
-            gym_id=raid.gym.id,
+                level=raid.level,
+                start=raid.start.strftime(self.dp.files.locale['time_format_hm']),
+                end=raid.end.strftime(self.dp.files.locale['time_format_hm']),
 
-            lat=raid.gym.lat,
-            lon=raid.gym.lon,
-            map_link=self.map_url.gym(raid.gym),
+                gym_name=raid.gym.name,
+                short_gym_name=raid.gym.short_name,
+                gym_id=raid.gym.id,
 
-            boss_name=raid.boss.name,
-            move_1=raid.boss.move_1.name,
-            move_2=raid.boss.move_2.name,
-            boss_id=raid.boss.id
-        )
+                lat=raid.gym.lat,
+                lon=raid.gym.lon,
+                map_link=self.map_url.gym(raid.gym),
+
+                boss_name=raid.boss.name,
+                move_1=raid.boss.move_1.name,
+                move_2=raid.boss.move_2.name,
+                boss_id=raid.boss.id
+            )
         entry += "\n"
         return entry
 

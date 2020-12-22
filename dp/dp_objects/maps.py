@@ -1,4 +1,5 @@
 import discord
+import asyncio
 import requests
 
 from io import BytesIO
@@ -22,15 +23,21 @@ class StaticMap:
         staticmap = self.tileserver.staticmap(
             style="osm-bright",
             width=1000,
-            height=600,
+            height=500,
             scale=1
         )
         for obj in objs:
-            staticmap.add_marker(url=obj.img, lat=obj.lat, lon=obj.lon, width=32, height=32, x_offset=0, y_offset=0)
+            if obj.bg:
+                staticmap.add_marker(url=obj.bg.img, lat=obj.bg.lat, lon=obj.bg.lon, width=obj.bg.size, height=obj.bg.size, x_offset=obj.bg.x, y_offset=obj.bg.y)
+            staticmap.add_marker(url=obj.img, lat=obj.lat, lon=obj.lon, width=obj.size, height=obj.size, x_offset=obj.x, y_offset=obj.y)
 
         staticmap.auto_position()
-        result = requests.post(staticmap.tileserver.base_url+"staticmap", json=staticmap.get_dict())
+        result = requests.post(staticmap.tileserver.base_url + "staticmap", json=staticmap.get_dict())
         stream = BytesIO(result.content)
+
+        while not self.trash_channel:
+            await asyncio.sleep(1) # trash_channel is initialized elsewhere and usually takes a little longer
+
         image_msg = await self.trash_channel.send(file=discord.File(stream, filename="staticmap.png"))
         static_map = image_msg.attachments[0].url
         stream.close()
@@ -38,10 +45,15 @@ class StaticMap:
         return static_map
     
     class StaticMapObject():
-        def __init__(self, lat, lon, img):
+        def __init__(self, lat, lon, img, size=32, x=0, y=0, background=None):
             self.lat = lat
             self.lon = lon
             self.img = img
+            self.size = size
+            self.x = x
+            self.y = y
+
+            self.bg = background
 
     async def quest(self, quests):
         objs = []
@@ -52,7 +64,12 @@ class StaticMap:
     async def raid(self, raids):
         objs = []
         for raid in raids:
-            objs.append(self.StaticMapObject(raid.gym.lat, raid.gym.lon, raid.boss.img))
+            bg = self.StaticMapObject(raid.gym.lat, raid.gym.lon, raid.gym.img, size=45, y=-10)
+            if raid.egg:
+                size, x = 25, -3
+            else:
+                size, x = 35, -5
+            objs.append(self.StaticMapObject(raid.gym.lat, raid.gym.lon, raid.boss.img, size=size, y=-15, x=x, background=bg))
         return await self.multiples(objs)
 
     """async def grunt(self, raids):
