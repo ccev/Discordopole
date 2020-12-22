@@ -52,14 +52,24 @@ class GameObject:
             self.emote = self.dp_emote.ref
 
 class Mon(GameObject):
-    def __init__(self, mon_id=None, move_1=1, move_2=1, form=0):
+    def __init__(self, mon_id=None, move_1=1, move_2=1, form=0, evolution=0):
         self.id = mon_id
         self.name = dp.gamedata.mon_locale.get(self.id, "?")
+
+        mega = ""
+        if evolution:
+            self.name = "Mega " + self.name
+            mega = f"_{evolution}"
+        if evolution == 2:
+            self.name += " X"
+        elif evolution == 3:
+            self.name += " Y"
+
         self.move_1 = self.Move(move_1)
         self.move_2 = self.Move(move_2)
         self.form = self.Form(self.id, form)
             
-        self.img = dp.config.mon_icon_repo + f"pokemon_icon_{str(self.id).zfill(3)}_{str(self.form.id).zfill(2)}.png"
+        self.img = dp.config.mon_icon_repo + f"pokemon_icon_{str(self.id).zfill(3)}_{str(self.form.id).zfill(2)}{mega}.png"
 
     async def get_emote(self, emote_name=None):
         if emote_name is None:

@@ -12,7 +12,7 @@ class RaidEgg:
         self.emote = dp.files.custom_emotes.get(f"raid_egg_{level}", "")
 
 class Raid:
-    def __init__(self, level, start, end, gym, mon_id, move_1, move_2, form_id):
+    def __init__(self, level, start, end, gym, mon_id, move_1, move_2, form_id, evolution):
         self.level = level
         self.start = datetime.fromtimestamp(start)
         self.end = datetime.fromtimestamp(end)
@@ -20,7 +20,7 @@ class Raid:
 
         if mon_id:
             self.egg = False
-            self.boss = Mon(mon_id, move_1, move_2, form_id)
+            self.boss = Mon(mon_id, move_1, move_2, form_id, evolution=evolution)
         else:
             self.egg = True
             self.boss = RaidEgg(self.level)
@@ -50,22 +50,20 @@ class RaidBoard(Board):
     async def get_objs(self):
         self.raids = []
         raids = await dp.queries.execute("active_raids", sql_fence=self.area.sql_fence)
-        for gym_id, start, end, lat, lon, mon_id, move_1, move_2, name, ex, level, gym_img, form, team in raids:
+        for gym_id, start, end, lat, lon, mon_id, move_1, move_2, name, ex, level, gym_img, form, team, evolution in raids:
             if int(level) not in self.board["levels"]:
                 continue
             if self.board["ex"] and (not ex):
                 continue
             gym = Gym(gym_id, lat, lon, name, gym_img, ex, team)
-            raid = Raid(level, start, end, gym, mon_id, move_1, move_2, form)
+            raid = Raid(level, start, end, gym, mon_id, move_1, move_2, form, evolution)
             if self.egg_board and raid.egg:
                 self.raids.append(raid)
             elif (not self.egg_board) and (not raid.egg):
                 self.raids.append(raid)
                 await raid.create_emote()
         
-        new_ids = [raid.gym.id for raid in self.raids]
-        self.is_new = self.old_ids != new_ids
-        self.old_ids = new_ids
+        self.new_ids = [raid.gym.id for raid in self.raids]
 
     async def generate_embed(self):
         template = dp.templates.raid_board()
