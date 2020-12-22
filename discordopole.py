@@ -50,4 +50,8 @@ async def on_ready():
     log.success("Done loading. Ready for action.")
     dp.static_map.trash_channel = await dp.bot.fetch_channel(dp.config.host_channel)
 
+@dp.bot.command(pass_context=True)
+async def emptymessage(ctx):
+    await ctx.send(embed=discord.Embed(description="Empty Message"))
+
 dp.bot.run(dp.config.bot_token)

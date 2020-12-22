@@ -58,13 +58,14 @@ class StaticMap:
     async def quest(self, quests):
         objs = []
         for quest in quests:
-            objs.append(self.StaticMapObject(quest.stop.lat, quest.stop.lon, quest.reward.img))
+            bg = self.StaticMapObject(quest.stop.lat, quest.stop.lon, quest.stop.icon, y=-16)
+            objs.append(self.StaticMapObject(quest.stop.lat, quest.stop.lon, quest.reward.img, y=-28, x=-5, background=bg))
         return await self.multiples(objs)
 
     async def raid(self, raids):
         objs = []
         for raid in raids:
-            bg = self.StaticMapObject(raid.gym.lat, raid.gym.lon, raid.gym.img, size=45, y=-10)
+            bg = self.StaticMapObject(raid.gym.lat, raid.gym.lon, raid.gym.icon, size=45, y=-10)
             if raid.egg:
                 size, x = 25, -3
             else:

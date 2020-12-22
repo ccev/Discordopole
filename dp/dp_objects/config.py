@@ -23,9 +23,6 @@ class Config():
 
 
         # Maps #
-        self.use_static = config_raw.getboolean('Maps','use_static_maps')
-        self.static_provider = config_raw.get('Maps','provider')
-        self.static_key = config_raw.get('Maps','key')
         self.use_map = config_raw.getboolean('Maps','use_map_frontend')
         self.map = config_raw.get('Maps','frontend')
         self.map_url = config_raw.get('Maps','map_url')
@@ -39,7 +36,6 @@ class Config():
         self.pokemon_aliases = json.loads(config_raw.get('Commands','pokemon_aliases'))
         self.gyms_aliases = json.loads(config_raw.get('Commands','gyms_aliases'))
         self.quest_aliases = json.loads(config_raw.get('Commands','quest_aliases'))
-        self.timespan_in_footer = config_raw.getboolean('Commands','show_used_timespan_in_footer')
 
 
         # DB #

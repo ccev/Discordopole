@@ -17,12 +17,10 @@ class Quest():
 class QuestBoard(Board):
     def __init__(self, board):
         super().__init__(board)
-        self.quests = []
-
         self.standard_format = {
             "channel_id": "",
             "message_id": "",
-            "title": dp.files.locale["raids"],
+            "title": dp.files.locale["quests"],
             "area": "",
             "wait": 2,
             "mons": [],
@@ -34,6 +32,7 @@ class QuestBoard(Board):
         self.board["mons"] = {mid: Mon(mid) for mid in self.board["mons"]}
 
     async def get_objs(self):
+        self.quests = []
         quests = await dp.queries.execute("active_quests", sql_fence=self.area.sql_fence)
 
         for quest_json, quest_text, lat, lon, stop_name, stop_id in quests:
@@ -55,6 +54,8 @@ class QuestBoard(Board):
                 await quest.create_emote()
                 self.quests.append(quest)
 
+        self.new_ids = [quest.stop.id for quest in self.quests]
+
     async def generate_embed(self):
         template = dp.templates.quest()
         self.static_map = await dp.static_map.quest(self.quests)
@@ -69,7 +70,7 @@ class QuestBoard(Board):
 
     async def generate_empty_embed(self):
         self._get_embed_one_reward()
-        loading, load_gif = get_loading_footer(self.bot, self.bot.locale['loading_quests'], self.area.name)
+        loading, load_gif = get_loading_footer(dp.bot, dp.files.locale['loading_quests'], self.area.name)
         self.embed.description = ""
         self.embed.title = self.board["title"]
         self.embed.set_footer(text=loading, icon_url=load_gif)

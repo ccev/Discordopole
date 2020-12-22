@@ -17,6 +17,7 @@ class Board():
         self.static_map = ""
 
         self.old_ids = []
+        self.new_ids = []
         self.is_new = True
     
     def embed_details(self, text):
@@ -47,6 +48,8 @@ class Board():
     
     async def get(self):
         await self.get_objs()
+        self.is_new = self.old_ids != self.new_ids
+        self.old_ids = self.new_ids
         if self.is_new:
             await self.generate_embed()
 

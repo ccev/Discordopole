@@ -15,9 +15,11 @@ class Boards(commands.Cog):
         self.bot = bot
         self.raidboard_loop.start()
         self.eggboard_loop.start()
+        self.questboard_loop.start()
 
         self.raidboards = self.prepare_board(boards.RaidBoard, "raids", args={"is_egg_board": False})
         self.eggboards = self.prepare_board(boards.RaidBoard, "eggs", args={"is_egg_board": True})
+        self.questboards = self.prepare_board(boards.QuestBoard, "quests")
 
     def prepare_board(self, boardobj, boardtype, args={}):
         result = []
@@ -54,11 +56,11 @@ class Boards(commands.Cog):
     
     @tasks.loop(hours=1)   
     async def questboard_loop(self):
-        for board in self.bot.boards.get("quests", []):
+        for board in self.questboards:
             try:
-                await self.generic_board(board, boardobj.QuestBoard(self.bot, board))
+                await self.generic_board(board)
             except Exception as e:
-                log.critical(f"Error while updating Quest Board for message {board['message_id']}")
+                log.critical(f"Error while updating Quest Board for message {board.board['message_id']}")
                 log.exception(e)
     
     @tasks.loop(seconds=SECONDS)   
