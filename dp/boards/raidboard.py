@@ -31,7 +31,6 @@ class Raid:
 class RaidBoard(Board):
     def __init__(self, board, is_egg_board):
         super().__init__(board)
-        self.raids = []
         self.egg_board = is_egg_board
 
         self.standard_format = {
@@ -49,6 +48,7 @@ class RaidBoard(Board):
         self.standard_dict()
 
     async def get_objs(self):
+        self.raids = []
         raids = await dp.queries.execute("active_raids", sql_fence=self.area.sql_fence)
         for gym_id, start, end, lat, lon, mon_id, move_1, move_2, name, ex, level, gym_img, form in raids:
             if int(level) not in self.board["levels"]:
@@ -62,6 +62,10 @@ class RaidBoard(Board):
             elif (not self.egg_board) and (not raid.egg):
                 self.raids.append(raid)
                 await raid.create_emote()
+        
+        new_ids = [raid.gym.id for raid in self.raids]
+        self.is_new = self.old_ids != new_ids
+        self.old_ids = new_ids
 
     async def generate_embed(self):
         template = dp.templates.raid_board()

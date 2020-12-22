@@ -15,6 +15,9 @@ class Board():
         self.embed = discord.Embed()
         self.area = Area(board["area"])
         self.static_map = ""
+
+        self.old_ids = []
+        self.is_new = True
     
     def embed_details(self, text):
         self.embed.description = text
@@ -44,7 +47,8 @@ class Board():
     
     async def get(self):
         await self.get_objs()
-        await self.generate_embed()
+        if self.is_new:
+            await self.generate_embed()
 
         return self.embed
 

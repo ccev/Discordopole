@@ -16,7 +16,7 @@ class Boards(commands.Cog):
         self.raidboard_loop.start()
         #self.eggboard_loop.start()
 
-        self.raidboards = self.prepare_board(boards.RaidBoard, "raid", args={"is_egg_board": False})
+        self.raidboards = self.prepare_board(boards.RaidBoard, "raids", args={"is_egg_board": False})
 
     def prepare_board(self, boardobj, boardtype, args={}):
         result = []
@@ -27,6 +27,8 @@ class Boards(commands.Cog):
         
     async def generic_board(self, board):
         embed = await board.get()
+        if not board.is_new:
+            return
         message = await get_message(dp.bot, board.board["message_id"], board.board["channel_id"])
         await message.edit(embed=embed)
         await asyncio.sleep(board["wait"])
@@ -37,7 +39,7 @@ class Boards(commands.Cog):
             try:
                 await self.generic_board(board)
             except Exception as e:
-                log.critical(f"Error while updating Raid Board for message {board['message_id']}")
+                log.critical(f"Error while updating Raid Board for message {board.board['message_id']}")
                 log.exception(e)
     
     @tasks.loop(seconds=SECONDS)   
