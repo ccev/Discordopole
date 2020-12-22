@@ -3,7 +3,8 @@ import json
 
 from datetime import datetime
 
-from dp.utils.util import DPEmote, get_loading_footer
+from dp.utils.util import get_loading_footer
+from dp.utils.emotes import DPEmote
 from dp.utils.area import Area
 from dp.pogo import Stop, Gym, Mon, Item
 from dp.dp_objects import dp

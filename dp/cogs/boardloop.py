@@ -5,7 +5,7 @@ from discord.ext import tasks, commands
 
 from dp.utils.logging import log
 from dp.utils.util import get_message
-from dp.boards import RaidBoard
+import dp.boards as boards
 from dp.dp_objects import dp
 
 SECONDS = 2.0
@@ -15,18 +15,27 @@ class Boards(commands.Cog):
         self.bot = bot
         self.raidboard_loop.start()
         #self.eggboard_loop.start()
-    
-    async def generic_board(self, board, obj):
-        await obj.get()
-        message = await get_message(dp.bot, board["message_id"], board["channel_id"])
-        await message.edit(embed=obj.embed)
+
+        self.raidboards = self.prepare_board(boards.RaidBoard, "raid", args={"is_egg_board": False})
+
+    def prepare_board(self, boardobj, boardtype, args={}):
+        result = []
+        for board in dp.files.boards.get(boardtype, []):
+            obj = boardobj(board, **args)
+            result.append(obj)
+        return result
+        
+    async def generic_board(self, board):
+        embed = await board.get()
+        message = await get_message(dp.bot, board.board["message_id"], board.board["channel_id"])
+        await message.edit(embed=embed)
         await asyncio.sleep(board["wait"])
 
     @tasks.loop(seconds=SECONDS)   
     async def raidboard_loop(self):
-        for board in dp.files.boards.get("raids", []):
+        for board in self.raidboards:
             try:
-                await self.generic_board(board, RaidBoard(board, is_egg_board=False))
+                await self.generic_board(board)
             except Exception as e:
                 log.critical(f"Error while updating Raid Board for message {board['message_id']}")
                 log.exception(e)

@@ -47,7 +47,7 @@ class GameData:
         
         self.mon_locale = {}
         for _id in self.mon_ids.values():
-            self.mon_locale[_id] = locale.get("pokemon_name_" + str(_id).zfill(4), "?")
+            self.mon_locale[int(_id)] = locale.get("pokemon_name_" + str(_id).zfill(4), "?")
         
         self.move_locale = {}
         for _id in self.move_ids.values():
@@ -85,10 +85,11 @@ class GameData:
 
     def get_proto(self, enum):
         proto = re.findall(f"enum {enum} "+r"{[^}]*}", self.protos)[0]
+        proto = proto.replace("\t", "")
 
         final = {}
-        proto = proto.split("{\n\t")[1].split("\n}")[0].split("\n\t}")[0]
-        for entry in proto.split("\n\t"):
+        proto = proto.split("{\n")[1].split("\n}")[0]
+        for entry in proto.split("\n"):
             k = entry.split(" =")[0]
             v = entry.split("= ")[1].split(";")[0]
             final[k] = v

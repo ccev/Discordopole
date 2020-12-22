@@ -5,13 +5,13 @@ from io import BytesIO
 from tileserver import Tileserver
 
 class StaticMap:
-    def __init__(self, tileserver_url, trash_channel):
+    def __init__(self, tileserver_url):
         if not tileserver_url:
             self.use = False
         else:
             self.use = True
             self.tileserver = Tileserver(tileserver_url)
-        self.trash_channel = trash_channel
+        self.trash_channel = None
 
     async def multiples(self, objs):
         if len(objs) == 0:
@@ -29,7 +29,6 @@ class StaticMap:
             staticmap.add_marker(url=obj.img, lat=obj.lat, lon=obj.lon, width=32, height=32, x_offset=0, y_offset=0)
 
         staticmap.auto_position()
-
         result = requests.post(staticmap.tileserver.base_url+"staticmap", json=staticmap.get_dict())
         stream = BytesIO(result.content)
         image_msg = await self.trash_channel.send(file=discord.File(stream, filename="staticmap.png"))

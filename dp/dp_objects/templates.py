@@ -58,8 +58,8 @@ class RaidBoardEntry(Templates):
             boss_emote=raid.boss.emote,
 
             level=raid.level,
-            start=raid.start.strftime(self.files.locale['time_format_hm']),
-            end=raid.end.strftime(self.files.locale['time_format_hm']),
+            start=raid.start.strftime(self.dp.files.locale['time_format_hm']),
+            end=raid.end.strftime(self.dp.files.locale['time_format_hm']),
 
             gym_name=raid.gym.name,
             short_gym_name=raid.gym.short_name,

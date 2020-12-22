@@ -32,40 +32,6 @@ def get_loading_footer(bot, loading_text, area_name=None):
     
     return loading_text, "https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif"
 
-class DPEmote():
-    def __init__(self, bot, emote=None):
-        self.bot = bot
-        self.ref = ""
-        if emote is None:
-            self.emote = None
-        else:
-            self.emote = emote
-
-    def set_ref(self):
-        if self.emote is not None:
-            self.ref = f"<:{self.emote.name}:{self.emote.id}>"
-
-    async def create(self, url, emote_name):
-        async def download_url(url):
-            async with aiohttp.ClientSession() as session:
-                async with session.get(url) as response:
-                    return await response.read()
-        
-        guild = await self.bot.fetch_guild(self.bot.config.host_server)
-        image = await download_url(url)
-        self.emote = await guild.create_custom_emoji(name=emote_name, image=image)
-
-        self.set_ref()
-        self.bot.custom_emotes[emote_name] = self.ref
-        with open("config/emotes.json", "w") as emote_file:
-            emote_file.write(json.dumps(self.bot.custom_emotes, indent=4))
-
-    async def delete(self):
-        self.set_ref()
-        await self.emote.delete()
-        self.bot.custom_emotes.pop(self.emote.name)
-        with open("config/emotes.json", "w") as emote_file:
-            emote_file.write(json.dumps(self.bot.custom_emotes, indent=4))
 
 
 

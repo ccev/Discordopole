@@ -29,7 +29,7 @@ class Config():
         self.use_map = config_raw.getboolean('Maps','use_map_frontend')
         self.map = config_raw.get('Maps','frontend')
         self.map_url = config_raw.get('Maps','map_url')
-        self.tileserver_url = "tiles.com"
+        self.tileserver_url = config_raw.get('Maps','tileserver_url')
 
 
 

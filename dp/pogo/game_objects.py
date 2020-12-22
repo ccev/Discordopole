@@ -1,4 +1,5 @@
 from dp.dp_objects import dp
+from dp.utils.emotes import DPEmote
 
 class Stop():
     def __init__(self, sid, lat, lon, name, img):

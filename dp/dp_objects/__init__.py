@@ -28,7 +28,7 @@ class DPvars:
         self.queries = Queries(self.config)
         self.gamedata = None
         self.map_url = MapUrl(self.config.map, self.config.map_url)
-        self.static_map = None
+        self.static_map = StaticMap(self.config.tileserver_url)
 
         self.files = DPfiles(self.config)
 

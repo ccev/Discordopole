@@ -18,12 +18,12 @@ class Raid:
         self.end = datetime.fromtimestamp(end)
         self.gym = gym
 
-        if mon_id is None:
-            self.egg = True
-            self.boss = RaidEgg(self.level)
-        else:
+        if mon_id:
             self.egg = False
             self.boss = Mon(mon_id, move_1, move_2, form_id)
+        else:
+            self.egg = True
+            self.boss = RaidEgg(self.level)
     
     async def create_emote(self):
         await self.boss.get_emote()
