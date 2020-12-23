@@ -6,8 +6,8 @@ import requests
 
 from discord.ext import commands
 
-from dp.dp_objects import Config, Queries, Templates, MapUrl, StaticMap, GameData
 from dp.dp_objects import dp
+from dp.cogs import start_cogs
 
 
 """# File Loading
@@ -34,14 +34,7 @@ log.info("Loaded Language files")"""
 
 # Cog Loading
 
-cogs = [
-#    "dp.cogs.usercommands",
-#    "dp.cogs.admincommands",
-    "dp.cogs.boardloop",
-#    "dp.cogs.channelloop"
-]
-for extension in cogs:
-    dp.bot.load_extension(extension)
+
 log.info("Connecting to Discord")
 
 @dp.bot.event
@@ -49,6 +42,8 @@ async def on_ready():
     #await bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.watching, name="Discordopole"))
     log.success("Done loading. Ready for action.")
     dp.static_map.trash_channel = await dp.bot.fetch_channel(dp.config.host_channel)
+    await dp.emotes.initialize()
+    start_cogs(dp.bot)
 
 @dp.bot.command(pass_context=True)
 async def emptymessage(ctx):

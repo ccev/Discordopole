@@ -4,6 +4,7 @@ from .gamedata import GameData
 from .maps import MapUrl, StaticMap
 from .queries import Queries
 from .templates import Templates
+from .emotes import Emotes
 
 from dp.utils.util import get_json_file
 from discord.ext import commands
@@ -12,7 +13,7 @@ class DPfiles:
     def __init__(self, config):
         self.boards = get_json_file("config/boards.json")
         self.geofences = get_json_file("config/geofence.json")
-        self.custom_emotes = get_json_file("config/emotes.json")
+        #self.custom_emotes = get_json_file("config/emotes.json")
 
         if config.language not in ["de", "en", "es", "fr", "pl"]:
             config.language = "en"
@@ -25,6 +26,7 @@ class DPvars:
     def __init__(self):
         self.config = Config("config/config.ini")
         self.bot = commands.Bot(command_prefix=self.config.prefix, case_insensitive=1)
+        self.emotes = Emotes(self.bot)
         self.queries = Queries(self.config)
         self.gamedata = None
         self.map_url = MapUrl(self.config.map, self.config.map_url)

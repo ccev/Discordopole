@@ -10,16 +10,14 @@ from dp.dp_objects import dp
 
 SECONDS = 2.0
 
-class Boards(commands.Cog):
+class BoardLoop(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.raidboard_loop.start()
-        self.eggboard_loop.start()
-        self.questboard_loop.start()
-
-        self.raidboards = self.prepare_board(boards.RaidBoard, "raids", args={"is_egg_board": False})
-        self.eggboards = self.prepare_board(boards.RaidBoard, "eggs", args={"is_egg_board": True})
+        self.raidboards = self.prepare_board(boards.RaidBoard, "raids")
         self.questboards = self.prepare_board(boards.QuestBoard, "quests")
+
+        self.raidboard_loop.start()
+        self.questboard_loop.start()
 
     def prepare_board(self, boardobj, boardtype, args={}):
         result = []
@@ -94,4 +92,4 @@ class Boards(commands.Cog):
         await self.bot.wait_until_ready()
 
 def setup(bot):
-    bot.add_cog(Boards(bot))
+    bot.add_cog(BoardLoop(bot))

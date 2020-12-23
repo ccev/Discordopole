@@ -26,7 +26,7 @@ class Gym(Stop):
         self.team_id = team_id
 
         if self.ex:
-            self.ex_emote = dp.files.custom_emotes.get("ex_pass", "")
+            self.ex_emote = dp.emotes.get_standard("ex_pass")
         else:
             self.ex_emote = ""
 
@@ -44,7 +44,7 @@ class GameObject:
         self.dp_emote = ""
 
     async def standard_get_emote(self, emote_name):
-        self.emote = dp.files.custom_emotes.get(emote_name, "")
+        self.emote = await dp.get(emote_name)
 
         if self.emote == "":
             self.dp_emote = DPEmote()
@@ -74,7 +74,7 @@ class Mon(GameObject):
     async def get_emote(self, emote_name=None):
         if emote_name is None:
             emote_name = f"m{self.id}"
-        await self.standard_get_emote(emote_name)
+        self.emote = await dp.emotes.get(emote_name, self.img)
         
     class Move:
         def __init__(self, move_id):

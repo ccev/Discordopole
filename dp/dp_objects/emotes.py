@@ -5,15 +5,15 @@ import aiohttp
 from dp.utils.logging import log
 
 class Emotes:
-    def __init__(self, dp):
-        self.dp = dp
+    def __init__(self, bot):
+        self.bot = bot
         self.guild_name = "Discordopole Emotes"
         self.guilds = []
         self.exisiting_emotes = []
         self.standard_emote_names = [name["name"].replace(".png", "") for name in requests.get("https://api.github.com/repos/ccev/dp_emotes/contents").json() if name["name"].endswith(".png")]
 
     async def initialize(self):
-        for guild in self.dp.bot.guilds:
+        for guild in self.bot.guilds:
             if guild.name == self.guild_name:
                 self.guilds.append(guild)
                 for emote in guild.emojis:
@@ -21,12 +21,12 @@ class Emotes:
         
         if len(self.guilds) == 0:
             log.info("No Emote Server found, creating one")
-            guild = await self.dp.bot.create_guild(self.guild_name)
+            guild = await self.bot.create_guild(self.guild_name)
             self.guilds.append(guild)
         
         for standard_emote_name in self.standard_emote_names:
             if standard_emote_name not in [emote.name for emote in self.exisiting_emotes]:
-                self.create_emote(
+                await self.create_emote(
                     standard_emote_name,
                     f"https://raw.githubusercontent.com/ccev/dp_emotes/master/{standard_emote_name}.png"
                 )
@@ -55,10 +55,14 @@ class Emotes:
         self.exisiting_emotes.append(emote)
         return emote
 
-    async def get_emote(self, name, image, wanted_type="ref"):
+    def get_standard(self, name):
+        emote = [e for e in self.exisiting_emotes if e.name == name][0]
+        return f"<:{emote.name}:{emote.id}>"
+
+    async def get(self, name, image="", wanted_type="ref"):
         emote = [e for e in self.exisiting_emotes if e.name == name]
         if len(emote) == 0:
-            log.info(f"Creating emote :{emote.name}:")
+            log.info(f"Creating emote :{name}:")
             wanted_emote = await self.create_emote(name, image)
         else:
             wanted_emote = emote[0]
