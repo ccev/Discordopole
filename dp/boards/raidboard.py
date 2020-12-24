@@ -24,9 +24,6 @@ class Raid:
         else:
             self.egg = True
             self.boss = RaidEgg(self.level)
-    
-    async def create_emote(self):
-        await self.boss.get_emote()
 
 class RaidBoard(Board):
     def __init__(self, board):
@@ -51,24 +48,23 @@ class RaidBoard(Board):
         self.standard_dict()
 
     async def get_objs(self):
-        self.raids = []
-        raids = await dp.queries.execute("active_raids", sql_fence=self.area.sql_fence)
-        for gym_id, start, end, lat, lon, mon_id, move_1, move_2, name, ex, level, gym_img, form, team, evolution in raids:
+        raids = []
+        eggs = []
+        db_raids = await dp.queries.execute("active_raids", sql_fence=self.area.sql_fence)
+        for gym_id, start, end, lat, lon, mon_id, move_1, move_2, name, ex, level, gym_img, form, team, evolution in db_raids:
             if int(level) not in self.board["levels"]:
                 continue
             if self.board["ex"] and (not ex):
                 continue
             gym = Gym(gym_id, lat, lon, name, gym_img, ex, team)
             raid = Raid(level, start, end, gym, mon_id, move_1, move_2, form, evolution)
-            """if self.egg_board and raid.egg:
-                self.raids.append(raid)
-            elif (not self.egg_board) and (not raid.egg):
-                self.raids.append(raid)
-                await raid.create_emote()"""
-            self.raids.append(raid)
-            if not raid.egg:
-                await raid.create_emote()
+            if raid.egg:
+                eggs.append(raid)
+            else:
+                raids.append(raid)
+                await raid.boss.get_emote()
         
+        self.raids = raids + eggs
         self.new_ids = [raid.gym.id for raid in self.raids]
 
     async def generate_embed(self):

@@ -41,19 +41,16 @@ class Gym(Stop):
 class GameObject:
     def __init__(self):
         self.emote = ""
-        self.dp_emote = ""
 
-    async def standard_get_emote(self, emote_name):
-        self.emote = await dp.get(emote_name)
-
-        if self.emote == "":
-            self.dp_emote = DPEmote()
-            await self.dp_emote.create(self.img, emote_name)
-            self.emote = self.dp_emote.ref
+    async def get_emote(self, emote_name=None):
+        if emote_name is None:
+            emote_name = self.emote_identifier + str(self.id)
+        self.emote = await dp.emotes.get(emote_name, self.img)
 
 class Mon(GameObject):
     def __init__(self, mon_id=None, move_1=1, move_2=1, form=0, evolution=0):
         self.id = mon_id
+        self.emote_identifier = "m"
         self.name = dp.gamedata.mon_locale.get(self.id, "?")
 
         mega = ""
@@ -70,11 +67,6 @@ class Mon(GameObject):
         self.form = self.Form(self.id, form)
             
         self.img = dp.config.mon_icon_repo + f"pokemon_icon_{str(self.id).zfill(3)}_{str(self.form.id).zfill(2)}{mega}.png"
-
-    async def get_emote(self, emote_name=None):
-        if emote_name is None:
-            emote_name = f"m{self.id}"
-        self.emote = await dp.emotes.get(emote_name, self.img)
         
     class Move:
         def __init__(self, move_id):
@@ -95,6 +87,7 @@ class Mon(GameObject):
 class Item(GameObject):
     def __init__(self, item_id=None):
         self.id = item_id
+        self.emote_identifier = "i"
         self.name = dp.gamedata.item_locale.get(self.id, "?")
         self.img = dp.config.mon_icon_repo + f"rewards/reward_{self.id}_1.png"
     

@@ -21,8 +21,7 @@ class Emotes:
         
         if len(self.guilds) == 0:
             log.info("No Emote Server found, creating one")
-            guild = await self.bot.create_guild(self.guild_name)
-            self.guilds.append(guild)
+            await self.create_guild()
         
         for standard_emote_name in self.standard_emote_names:
             if standard_emote_name not in [emote.name for emote in self.exisiting_emotes]:
@@ -30,6 +29,10 @@ class Emotes:
                     standard_emote_name,
                     f"https://raw.githubusercontent.com/ccev/dp_emotes/master/{standard_emote_name}.png"
                 )
+
+    async def create_guild(self):
+        guild = await self.bot.create_guild(self.guild_name)
+        self.guilds.append(guild)
 
     async def cleanup(self, all_guilds=False):
         if all_guilds:
@@ -55,12 +58,17 @@ class Emotes:
         self.exisiting_emotes.append(emote)
         return emote
 
-    def get_standard(self, name):
-        emote = [e for e in self.exisiting_emotes if e.name == name][0]
+    def _get_existing_emote(self, name):
+        return [e for e in self.exisiting_emotes if e.name == name]
+
+    def _get_ref(self, emote):
         return f"<:{emote.name}:{emote.id}>"
 
+    def get_standard(self, name):
+        return self._get_ref(self._get_existing_emote(name)[0])
+
     async def get(self, name, image="", wanted_type="ref"):
-        emote = [e for e in self.exisiting_emotes if e.name == name]
+        emote = self._get_existing_emote(name)
         if len(emote) == 0:
             log.info(f"Creating emote :{name}:")
             wanted_emote = await self.create_emote(name, image)
@@ -68,7 +76,7 @@ class Emotes:
             wanted_emote = emote[0]
         
         if wanted_type == "ref":
-            return f"<:{wanted_emote.name}:{wanted_emote.id}>"
+            return self._get_ref(wanted_emote)
         else:
             return wanted_emote
 

@@ -10,9 +10,6 @@ class Quest():
         self.stop = stop
         self.amount = amount
         self.task = task
-    
-    async def create_emote(self):
-        await self.reward.get_emote()
 
 class QuestBoard(Board):
     def __init__(self, board):
@@ -24,7 +21,8 @@ class QuestBoard(Board):
             "area": "",
             "wait": 2,
             "mons": [],
-            "items": []
+            "items": [],
+            "energy": []
         }
         self.standard_dict()
 
@@ -51,7 +49,7 @@ class QuestBoard(Board):
 
             if reward:
                 quest = Quest(reward, Stop(stop_id, lat, lon, stop_name, img=None), 1, quest_text)
-                await quest.create_emote()
+                await quest.reward.get_emote()
                 self.quests.append(quest)
 
         self.new_ids = [quest.stop.id for quest in self.quests]

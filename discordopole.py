@@ -45,8 +45,4 @@ async def on_ready():
     await dp.emotes.initialize()
     start_cogs(dp.bot)
 
-@dp.bot.command(pass_context=True)
-async def emptymessage(ctx):
-    await ctx.send(embed=discord.Embed(description="Empty Message"))
-
 dp.bot.run(dp.config.bot_token)

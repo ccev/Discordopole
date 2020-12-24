@@ -8,7 +8,7 @@ class Queries():
         
     async def execute(self, query_string, sql_fence="", table="", extra=""):
         query = self.query_strings.get(query_string, query_string)
-        query = query.format(area=sql_fence, timezone="+02:00", table="pokemon", extra=extra) #TODO TIMEZONES, EXTRA TABLES
+        query = query.format(area=sql_fence, timezone="+01:00", table="pokemon", extra=extra) #TODO TIMEZONES, EXTRA TABLES
         pool = await aiomysql.create_pool(host=self.config.db_host, port=self.config.db_port, user=self.config.db_user, password=self.config.db_pass, db=self.config.db_dbname)
         async with pool.acquire() as conn:
             async with conn.cursor() as cursor:
