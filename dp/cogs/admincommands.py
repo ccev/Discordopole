@@ -13,8 +13,13 @@ class AdminCommands(commands.Cog):
         return ctx.author.id in dp.config.admins
 
     async def cog_command_error(self, ctx, error):
-        log.error(f"An error occured while trying to execute an Admin Command: {error} - User: {ctx.author.name}, Message: {ctx.message.content}")
+        log.error(f"An error occured while trying to execute an Admin Command: {error}")
         log.exception(error)
+
+    async def cog_before_invoke(self, ctx):
+        if ctx.invoked_subcommand:
+            return
+        log.info(f"User @{ctx.author.name}:{ctx.author.discriminator} executed command {ctx.command.name}: {ctx.message.content}")
 
     async def base_group(self, ctx):
         if ctx.invoked_subcommand is None:
@@ -64,6 +69,22 @@ class AdminCommands(commands.Cog):
         message = await ctx.send(embed=embed)
         embed.description = f"```Channel ID: {message.channel.id}\nMessage ID: {message.id}```\n"
         await message.edit(embed=embed)
+
+    @commands.group(pass_context=True)
+    async def reload(self, ctx):
+        await self.base_group(ctx)
+
+    @reload.command()
+    async def boards(self, ctx):
+        dp.files.load_boards()
+        dp.bot.unload_extension("dp.cogs.boardloop")
+        dp.bot.load_extension("dp.cogs.boardloop")
+        await ctx.message.add_reaction("✅")
+
+    @reload.command()
+    async def gamedata(self, ctx):
+        dp.load_gamedata()
+        await ctx.message.add_reaction("✅")
 
 def setup(bot):
     bot.add_cog(AdminCommands(bot))

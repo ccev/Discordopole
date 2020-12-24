@@ -11,7 +11,7 @@ from discord.ext import commands
 
 class DPfiles:
     def __init__(self, config):
-        self.boards = get_json_file("config/boards.json")
+        self.load_boards()
         self.geofences = get_json_file("config/geofence.json")
         #self.custom_emotes = get_json_file("config/emotes.json")
 
@@ -22,19 +22,24 @@ class DPfiles:
             config.language = "en"
         self.form_locale = get_json_file(f"dp/data/forms/{config.language}.json")
 
+    def load_boards(self):
+        self.boards = get_json_file("config/boards.json")
+
 class DPvars:
     def __init__(self):
         self.config = Config("config/config.ini")
         self.bot = commands.Bot(command_prefix=self.config.prefix, case_insensitive=1)
         self.emotes = Emotes(self.bot)
         self.queries = Queries(self.config)
-        self.gamedata = None
         self.map_url = MapUrl(self.config.map, self.config.map_url)
         self.static_map = StaticMap(self.config.tileserver_url)
+        self.load_gamedata()
 
         self.files = DPfiles(self.config)
 
         self.templates = Templates(self, get_json_file("config/templates.json"))
+    
+    def load_gamedata(self):
+        self.gamedata = GameData(self.config.language)
 
 dp = DPvars()
-dp.gamedata = GameData(dp.config.language)

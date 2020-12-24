@@ -22,7 +22,8 @@ class QuestBoard(Board):
             "wait": 2,
             "mons": [],
             "items": [],
-            "energy": []
+            "energy": [],
+            "static_map": True
         }
         self.standard_dict()
 

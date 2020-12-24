@@ -90,8 +90,3 @@ class Item(GameObject):
         self.emote_identifier = "i"
         self.name = dp.gamedata.item_locale.get(self.id, "?")
         self.img = dp.config.mon_icon_repo + f"rewards/reward_{self.id}_1.png"
-    
-    async def get_emote(self, emote_name=None):
-        if emote_name is None:
-            emote_name = f"i{self.id}"
-        await self.standard_get_emote(emote_name)
