@@ -13,16 +13,15 @@ SECONDS = 2.0
 class BoardLoop(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.raidboards = self.prepare_board(boards.RaidBoard, "raids")
-        self.questboards = self.prepare_board(boards.QuestBoard, "quests")
 
         self.raidboard_loop.start()
         self.questboard_loop.start()
 
-    def prepare_board(self, boardobj, boardtype, args={}):
+    async def prepare_board(self, boardobj, boardtype, args={}):
         result = []
         for board in dp.files.boards.get(boardtype, []):
             obj = boardobj(board, **args)
+            await obj.get_message()
             result.append(obj)
         return result
         
@@ -30,8 +29,7 @@ class BoardLoop(commands.Cog):
         embed = await board.get()
         if not board.is_new:
             return
-        message = await get_message(dp.bot, board.board["message_id"], board.board["channel_id"])
-        await message.edit(embed=embed)
+        await board.message.edit(embed=embed)
         await asyncio.sleep(board.board["wait"])
 
     @tasks.loop(seconds=SECONDS)   
@@ -41,15 +39,6 @@ class BoardLoop(commands.Cog):
                 await self.generic_board(board)
             except Exception as e:
                 log.critical(f"Error while updating Raid Board for message {board.board['message_id']}")
-                log.exception(e)
-    
-    @tasks.loop(seconds=SECONDS)   
-    async def eggboard_loop(self):
-        for board in self.eggboards:
-            try:
-                await self.generic_board(board)
-            except Exception as e:
-                log.critical(f"Error while updating Egg Board for message {board.board['message_id']}")
                 log.exception(e)
     
     @tasks.loop(hours=1)   
@@ -77,15 +66,11 @@ class BoardLoop(commands.Cog):
 
     @raidboard_loop.before_loop
     async def before_raid(self):
-        await self.bot.wait_until_ready()
-
-    @eggboard_loop.before_loop
-    async def before_egg(self):
-        await self.bot.wait_until_ready()
+        self.raidboards = await self.prepare_board(boards.RaidBoard, "raids")
     
     @questboard_loop.before_loop
     async def before_quest(self):
-        await self.bot.wait_until_ready()
+        self.questboards = await self.prepare_board(boards.QuestBoard, "quests")
 
     @statboard_loop.before_loop
     async def before_stats(self):

@@ -3,7 +3,7 @@ import json
 
 from datetime import datetime
 
-from dp.utils.util import get_loading_footer
+from dp.utils.util import get_loading_footer, get_message
 from dp.utils.emotes import DPEmote
 from dp.utils.area import Area
 from dp.pogo import Stop, Gym, Mon, Item
@@ -11,14 +11,19 @@ from dp.dp_objects import dp
 
 class Board():
     def __init__(self, board):
+        self.original_board = board
         self.board = board
         self.embed = discord.Embed()
         self.area = Area(board["area"])
         self.static_map = ""
 
-        self.old_ids = []
+        self.old_ids = ["also update empty boards on start :)"]
         self.new_ids = []
         self.is_new = True
+
+    async def get_message(self):
+        self.channel = await dp.bot.fetch_channel(self.board["channel_id"])
+        self.message = await self.channel.fetch_message(self.board["message_id"])
     
     def embed_details(self, text):
         self.embed.description = text
@@ -58,61 +63,6 @@ class Board():
 #######################################################################################
 # Grunt BOARD
 #######################################################################################
-
-class Grunt:
-    def __init__(self, bot, gid, start, end, stop):
-        self.id = gid
-        self.start = start
-        self.end = end
-        self.stop = stop
-
-        self.mons = []
-        for mid in bot.available_grunts[gid]:
-            mids = mid.split("_")
-            self.mons.append(Mon(bot, mon_id=mids[0], form=mids[1]))
-    
-    async def create_emotes(self):
-        for mon in self.mons:
-            await mon.get_emote()
-
-class GruntBoard(Board):
-    def __init__(self, bot, board):
-        super().__init__(bot, board)
-        self.grunts = []
-        self.available_grunts = bot.available_grunts
-
-        self.standard_format = {
-            "channel_id": "",
-            "message_id": "",
-            "title": self.bot.locale["grunts"],
-            "area": "",
-            "wait": 2,
-            "mons": [],
-            "static_map": False
-        }
-        self.standard_dict()
-
-    async def get_objs(self):
-        gids = {}
-        for mon in self.board["mons"]:
-            for gid, data in self.bot.available_grunts.items():
-                if mon in [int(m.split("_")[0]) for m in data]:
-                    gids[gid] = data
-        grunts = await self.bot.queries.execute("active_grunts", sql_fence=self.area.sql_fence, extra=",".join(gids.keys()))
-        for pid, name, image, lat, lon, start, end, gid in grunts:
-            stop = Stop(pid, lat, lon, name, image)
-            grunt = Grunt(self.bot, gid, start, end, stop)
-            await grunt.create_emotes()
-            self.grunts.append(grunt)
-
-    async def generate_embed(self):
-        self.bot.templates.grunt_board()
-        template =  self.bot.templates.template
-        if self.board["static_map"]:
-            self.static_map = await self.bot.static_map.grunt(self.grunts)
-        else:
-            self.static_map = ""
-        self.generate_text(self.grunts, template)
 
 
 #######################################################################################

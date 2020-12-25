@@ -81,7 +81,7 @@ class GameData:
             if data.get("second_reward", False):
                 encounters += data.get("encounters", {}).get("second", [])
             #encounters = [int(e.split("_")[0]) for e in encounters]
-            self.available_grunts[gid] = encounters
+            self.available_grunts[int(gid)] = encounters
 
     def get_proto(self, enum):
         proto = re.findall(f"enum {enum} "+r"{[^}]*}", self.protos)[0]

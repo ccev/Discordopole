@@ -27,6 +27,7 @@ class Config():
         self.map = config_raw.get('Maps','frontend')
         self.map_url = config_raw.get('Maps','map_url')
         self.tileserver_url = config_raw.get('Maps','tileserver_url')
+        self.map_style = config_raw.get('Maps', 'style')
 
 
 

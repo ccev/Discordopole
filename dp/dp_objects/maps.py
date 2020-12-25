@@ -6,13 +6,14 @@ from io import BytesIO
 from tileserver import Tileserver
 
 class StaticMap:
-    def __init__(self, tileserver_url):
+    def __init__(self, tileserver_url, style):
         if not tileserver_url:
             self.use = False
         else:
             self.use = True
             self.tileserver = Tileserver(tileserver_url)
         self.trash_channel = None
+        self.style = style
 
     async def multiples(self, objs):
         if len(objs) == 0:
@@ -21,7 +22,7 @@ class StaticMap:
             return ""
 
         staticmap = self.tileserver.staticmap(
-            style="osm-bright",
+            style=self.style,
             width=1000,
             height=500,
             scale=1

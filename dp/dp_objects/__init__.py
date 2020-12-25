@@ -32,7 +32,7 @@ class DPvars:
         self.emotes = Emotes(self.bot)
         self.queries = Queries(self.config)
         self.map_url = MapUrl(self.config.map, self.config.map_url)
-        self.static_map = StaticMap(self.config.tileserver_url)
+        self.static_map = StaticMap(self.config.tileserver_url, self.config.map_style)
         self.load_gamedata()
 
         self.files = DPfiles(self.config)

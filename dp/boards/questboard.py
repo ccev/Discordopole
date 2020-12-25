@@ -57,7 +57,8 @@ class QuestBoard(Board):
 
     async def generate_embed(self):
         template = dp.templates.quest()
-        self.static_map = await dp.static_map.quest(self.quests)
+        if self.board["static_map"]:
+            self.static_map = await dp.static_map.quest(self.quests)
         self.generate_text(self.quests, template)
     
     def _get_embed_one_reward(self):
