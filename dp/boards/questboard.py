@@ -4,6 +4,18 @@ from dp.dp_objects import dp
 from dp.boards.basicboard import Board
 from dp.pogo import Mon, Item, Stop
 
+quest_format = {
+    "channel_id": "",
+    "message_id": "",
+    "title": dp.files.locale["quests"],
+    "area": "",
+    "wait": 2,
+    "mons": [],
+    "items": [],
+    "energy": [],
+    "static_map": True
+}
+
 class Quest():
     def __init__(self, reward, stop, amount, task=""):    
         self.reward = reward
@@ -14,17 +26,7 @@ class Quest():
 class QuestBoard(Board):
     def __init__(self, board):
         super().__init__(board)
-        self.standard_format = {
-            "channel_id": "",
-            "message_id": "",
-            "title": dp.files.locale["quests"],
-            "area": "",
-            "wait": 2,
-            "mons": [],
-            "items": [],
-            "energy": [],
-            "static_map": True
-        }
+        self.standard_format = quest_format
         self.standard_dict()
 
         self.board["items"] = {iid: Item(iid) for iid in self.board["items"]}

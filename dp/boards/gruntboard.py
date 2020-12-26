@@ -2,6 +2,17 @@ from dp.dp_objects import dp
 from dp.boards.basicboard import Board
 from dp.pogo import Mon, Stop
 
+grunt_format = {
+    "channel_id": "",
+    "message_id": "",
+    "title": dp.files.locale["grunts"],
+    "area": "",
+    "wait": 2,
+    "mons": [],
+    "grunts": [],
+    "static_map": False
+}
+
 class Grunt:
     def __init__(self, gid, start, end, stop):
         self.id = gid
@@ -29,16 +40,7 @@ class GruntBoard(Board):
     def __init__(self, board):
         super().__init__(board)
 
-        self.standard_format = {
-            "channel_id": "",
-            "message_id": "",
-            "title": dp.files.locale["grunts"],
-            "area": "",
-            "wait": 2,
-            "mons": [],
-            "grunts": [],
-            "static_map": False
-        }
+        self.standard_format = grunt_format
         self.standard_dict()
 
         for mon in self.board["mons"]:

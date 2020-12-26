@@ -4,6 +4,23 @@ from dp.dp_objects import dp
 from dp.boards.basicboard import Board
 from dp.pogo import Mon, Gym
 
+raid_format = {
+    "channel_id": "",
+    "message_id": "",
+    "title": dp.files.locale["raids"],
+    "area": "",
+    "wait": 2,
+    "levels": [
+        5
+    ],
+    "state": [
+        "hatched",
+        "unhatched"
+    ],
+    "ex": False,
+    "static_map": False
+}
+
 class RaidEgg:
     def __init__(self, level):
         self.id = level
@@ -29,22 +46,7 @@ class RaidBoard(Board):
     def __init__(self, board):
         super().__init__(board)
 
-        self.standard_format = {
-            "channel_id": "",
-            "message_id": "",
-            "title": dp.files.locale["raids"],
-            "area": "",
-            "wait": 2,
-            "levels": [
-                5
-            ],
-            "state": [
-                "hatched",
-                "unhatched"
-            ],
-            "ex": False,
-            "static_map": False
-        }
+        self.standard_format = raid_format
         self.standard_dict()
 
     async def get_objs(self):

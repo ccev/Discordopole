@@ -5,6 +5,7 @@ from discord.ext import commands
 
 from dp.dp_objects import dp
 from dp.utils.logging import log
+import dp.boards as boards
 
 def list_to_string(conv_list):
     if len(conv_list) == 0:
@@ -187,6 +188,24 @@ class AdminCommands(commands.Cog):
         reset_boards()
         embed = discord.Embed(title="Board edited", description=f"```json\n{json.dumps(board_dict, indent=4)}```")
         await ctx.send(embed=embed)
+
+    @board.command()
+    async def create(self, ctx, *args):
+        pass
+
+    @board.command()
+    async def format(self, ctx, btype):
+        btype = btype.lower()
+        type_to_format = {
+            "raid": boards.raid_format,
+            "quest": boards.quest_format,
+            "grunt": boards.grunt_format
+        }
+        for keyword, default_format in type_to_format.items():
+            if keyword in btype:
+                await ctx.send(embed=discord.Embed(title=f"Default format for {keyword.capitalize()} Boards", description=f"```json\n{json.dumps(default_format, indent=4)}```"))
+                return
+        await ctx.send(embed=discord.Embed(description=f"Board Type not found. Must be one of thse: `{list_to_string(type_to_format.keys())}`"))
 
     @board.command()
     async def show(self, ctx, message_id):
