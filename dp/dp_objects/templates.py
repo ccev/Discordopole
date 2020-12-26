@@ -108,7 +108,20 @@ class HundoBoardEntry(Templates):
 class GruntBoardEntry(Templates):
     def get(self, grunt):
         entry = self.grunt_board_entry.format(
-            
+            id=grunt.id,
+            start=grunt.start.strftime(self.dp.files.locale['time_format_hm']),
+            end=grunt.end.strftime(self.dp.files.locale['time_format_hm']),
+
+            emote=grunt.emote,
+            mon_emotes="".join([m.emote for m in grunt.mons]),
+
+            stop_name=grunt.stop.name,
+            short_stop_name=grunt.stop.short_name,
+            stop_id=grunt.stop.id,
+
+            lat=grunt.stop.lat,
+            lon=grunt.stop.lon,
+            map_link=self.map_url.stop(grunt.stop)
         )
         entry += "\n"
         return entry

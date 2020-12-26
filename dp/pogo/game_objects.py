@@ -8,7 +8,7 @@ class Stop():
         self.lon = lon
         self.name = name
         self.img = img
-        self.icon = dp.config.emote_repo + "pokestop.png"
+        self.icon = dp.config.asset_repo + "icons/pokestop.png"
 
         if len(name) >= 30:
             name = name[0:27]
@@ -30,13 +30,7 @@ class Gym(Stop):
         else:
             self.ex_emote = ""
 
-        team_ids = {
-            0: "white",
-            1: "blue",
-            2: "red",
-            3: "yellow"
-        }
-        self.icon = dp.config.emote_repo + f"gym_{team_ids[self.team_id]}.png"
+        self.icon = dp.config.asset_repo + f"icons/gym{self.team_id}.png"
 
 class GameObject:
     def __init__(self):

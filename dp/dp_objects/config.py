@@ -16,7 +16,7 @@ class Config():
         self.admins = config_raw.get('Config','admins')
         self.admins = list(map(int, list(self.admins.split(','))))
         self.mon_icon_repo = config_raw.get('Config','pokemon_icon_repo')
-        self.emote_repo = config_raw.get('Config','emote_repo')
+        self.asset_repo = config_raw.get('Config', 'asset_repo')
         self.host_channel = config_raw.get('Config','trash_channel')
         self.host_server = config_raw.get('Config','trash_server')
 

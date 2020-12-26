@@ -5,12 +5,13 @@ import aiohttp
 from dp.utils.logging import log
 
 class Emotes:
-    def __init__(self, bot):
+    def __init__(self, bot, config):
         self.bot = bot
+        self.config = config
         self.guild_name = "Discordopole Emotes"
         self.guilds = []
         self.exisiting_emotes = []
-        self.standard_emote_names = [name["name"].replace(".png", "") for name in requests.get("https://api.github.com/repos/ccev/dp_emotes/contents").json() if name["name"].endswith(".png")]
+        self.standard_emote_names = [name["name"].replace(".png", "") for name in requests.get("https://api.github.com/repos/ccev/dp-assets/contents/emotes").json() if name["name"].endswith(".png")]
 
     async def initialize(self):
         for guild in self.bot.guilds:
@@ -27,7 +28,7 @@ class Emotes:
             if standard_emote_name not in [emote.name for emote in self.exisiting_emotes]:
                 await self.create_emote(
                     standard_emote_name,
-                    f"https://raw.githubusercontent.com/ccev/dp_emotes/master/{standard_emote_name}.png"
+                    self.config.asset_repo + "emotes/" + standard_emote_name + ".png"
                 )
 
     async def create_guild(self):

@@ -16,6 +16,7 @@ class BoardLoop(commands.Cog):
 
         self.raidboard_loop.start()
         self.questboard_loop.start()
+        self.gruntboard_loop.start()
 
     async def prepare_board(self, boardobj, boardtype, args={}):
         result = []
@@ -49,6 +50,15 @@ class BoardLoop(commands.Cog):
             except Exception as e:
                 log.critical(f"Error while updating Quest Board for message {board.board['message_id']}")
                 log.exception(e)
+
+    @tasks.loop(seconds=SECONDS)   
+    async def gruntboard_loop(self):
+        for board in self.gruntboards:
+            try:
+                await self.generic_board(board)
+            except Exception as e:
+                log.critical(f"Error while updating Grunt Board for message {board.board['message_id']}")
+                log.exception(e)
     
     @tasks.loop(seconds=SECONDS)   
     async def statboard_loop(self):
@@ -71,6 +81,10 @@ class BoardLoop(commands.Cog):
     @questboard_loop.before_loop
     async def before_quest(self):
         self.questboards = await self.prepare_board(boards.QuestBoard, "quests")
+
+    @gruntboard_loop.before_loop
+    async def before_grunt(self):
+        self.gruntboards = await self.prepare_board(boards.GruntBoard, "grunts")
 
     @statboard_loop.before_loop
     async def before_stats(self):

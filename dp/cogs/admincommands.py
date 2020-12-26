@@ -7,6 +7,8 @@ from dp.dp_objects import dp
 from dp.utils.logging import log
 
 def list_to_string(conv_list):
+    if len(conv_list) == 0:
+        return "[]"
     return ",".join(map(str, conv_list))
 
 def get_boards():
@@ -22,7 +24,7 @@ def reset_boards():
 
 def match_board(message_id):
     boards = get_boards()
-    boards = boards.raidboards + boards.questboards
+    boards = boards.raidboards + boards.questboards + boards.gruntboards
     return [b for b in boards if b.board["message_id"] == message_id][0]
 
 class AdminCommands(commands.Cog):
@@ -111,31 +113,41 @@ class AdminCommands(commands.Cog):
     @board.command()
     async def list(self, ctx):
         def standard_string(board):
-            return f"[Message({board.message.jump_url})] in {board.channel.mention}"
+            return f"[{board.board['title']}]({board.message.jump_url}) in {board.channel.mention}\n```Message ID: {board.message.id}\n<rest>```\n"
         
         boards = get_boards()
 
         raidboards = ""
         for raid in boards.raidboards:
             levels = list_to_string(raid.board["levels"])
-            raidboards += f"{standard_string(raid)}\nLevels: `{levels}`\n\n"
+            raidboards += standard_string(raid).replace("<rest>", f"Levels: {levels}")
 
         questboards = ""
         for quest in boards.questboards:
             items = list_to_string(quest.board["items"])
             mons = list_to_string(quest.board["mons"])
             energies = list_to_string(quest.board["energy"])
-            questboards += f"{standard_string(quest)}\nMons: `{mons}`\nItems: `{items}`\nEnergy: `{energies}`\n\n"
+            questboards += standard_string(quest).replace("<rest>", f"Mons: {mons}\nItems: {items}\nEnergy: {energies}")
+
+        gruntboards = ""
+        for grunt in boards.gruntboards:
+            grunts = list_to_string(grunt.board["grunts"])
+            mons = list_to_string(grunt.board["mons"])
+            gruntboards += standard_string(grunt).replace("<rest>", f"Mons: {mons}\nGrunts: {grunts}")
         
         embed = discord.Embed(title="Active Boards")
-        embed.add_field(name="Raid Boards", value=raidboards)
-        embed.add_field(name="Quest Boards", value=questboards)
+        if raidboards:
+            embed.add_field(name="Raid Boards", value=raidboards, inline=False)
+        if questboards:
+            embed.add_field(name="Quest Boards", value=questboards, inline=False)
+        if gruntboards:
+            embed.add_field(name="Grunt Boards", value=gruntboards, inline=False)
         await ctx.send(embed=embed)
 
     @board.command()
     async def edit(self, ctx, message_id, *args):
         board = match_board(message_id)
-        board_dict = board.original_board
+        board_dict = board.original_board.copy()
 
         for arg in list(args):
             key, value = arg.split(":")
@@ -181,6 +193,11 @@ class AdminCommands(commands.Cog):
         board = match_board(message_id)
         embed = discord.Embed(title="Board Settings", description=f"```json\n{json.dumps(board.original_board, indent=4)}```")
         await ctx.send(embed=embed)
+
+    @board.command()
+    async def reset(self, ctx):
+        reset_boards()
+        await ctx.message.add_reaction("✅")
 
 def setup(bot):
     bot.add_cog(AdminCommands(bot))

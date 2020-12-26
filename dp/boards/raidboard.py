@@ -8,8 +8,8 @@ class RaidEgg:
     def __init__(self, level):
         self.id = level
         self.name = dp.files.locale["level_egg"].format(level=level)
-        self.img = f"{dp.config.emote_repo}raid_egg_{level}.png"
-        self.emote = dp.emotes.get_standard(f"raid_egg_{level}")
+        self.img = dp.config.asset_repo + f"emotes/egg{level}.png"
+        self.emote = dp.emotes.get_standard(f"egg{level}")
 
 class Raid:
     def __init__(self, level, start, end, gym, mon_id, move_1, move_2, form_id, evolution):
@@ -65,7 +65,7 @@ class RaidBoard(Board):
                 await raid.boss.get_emote()
         
         self.raids = raids + eggs
-        self.new_ids = [raid.gym.id for raid in self.raids]
+        self.new_ids = ["e" + raid.gym.id for raid in eggs] + ["r" + raid.gym.id for raid in raids]
 
     async def generate_embed(self):
         template = dp.templates.raid_board()

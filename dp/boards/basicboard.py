@@ -11,8 +11,8 @@ from dp.dp_objects import dp
 
 class Board():
     def __init__(self, board):
-        self.original_board = board
-        self.board = board
+        self.original_board = board.copy()
+        self.board = board.copy()
         self.embed = discord.Embed()
         self.area = Area(board["area"])
         self.static_map = ""

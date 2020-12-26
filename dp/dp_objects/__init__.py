@@ -29,7 +29,7 @@ class DPvars:
     def __init__(self):
         self.config = Config("config/config.ini")
         self.bot = commands.Bot(command_prefix=self.config.prefix, case_insensitive=1)
-        self.emotes = Emotes(self.bot)
+        self.emotes = Emotes(self.bot, self.config)
         self.queries = Queries(self.config)
         self.map_url = MapUrl(self.config.map, self.config.map_url)
         self.static_map = StaticMap(self.config.tileserver_url, self.config.map_style)

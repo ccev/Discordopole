@@ -74,13 +74,12 @@ class StaticMap:
             objs.append(self.StaticMapObject(raid.gym.lat, raid.gym.lon, raid.boss.img, size=size, y=-15, x=x, background=bg))
         return await self.multiples(objs)
 
-    """async def grunt(self, raids):
-        if len(raids) == 0:
-            return ""
+    async def grunt(self, grunts):
         objs = []
         for grunt in grunts:
-            objs.append(self.StaticMapObject(grunt.stop.lat, grunt.stop.lon, grunt.emote, raid.boss.img))
-        return await self.multiples(objs)"""
+            bg = self.StaticMapObject(grunt.stop.lat, grunt.stop.lon, grunt.stop.icon, y=-16)
+            objs.append(self.StaticMapObject(grunt.stop.lat, grunt.stop.lon, grunt.img, size=25, y=-18, x=-8, background=bg))
+        return await self.multiples(objs)
 
 class MapUrl:
     def __init__(self, frontend, url):

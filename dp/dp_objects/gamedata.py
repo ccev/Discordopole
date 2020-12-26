@@ -83,6 +83,31 @@ class GameData:
             #encounters = [int(e.split("_")[0]) for e in encounters]
             self.available_grunts[int(gid)] = encounters
 
+        type_to_gid = {
+            1: [30, 31],
+            2: [16, 17],
+            3: [20, 21],
+            4: [32, 33],
+            5: [24, 25],
+            6: [36, 37],
+            7: [6, 7],
+            8: [47, 48],
+            9: [28, 29],
+            10: [18, 19],
+            11: [38, 39],
+            12: [22, 23],
+            13: [49, 50],
+            14: [34, 35],
+            15: [26, 27],
+            16: [12, 13],
+            17: [30, 31],
+            18: [14, 15]
+        }
+        self.grunt_to_type = {}
+        for tid, gids in type_to_gid.items():
+            for gid in gids:
+                self.grunt_to_type[gid] = tid
+
     def get_proto(self, enum):
         proto = re.findall(f"enum {enum} "+r"{[^}]*}", self.protos)[0]
         proto = proto.replace("\t", "")

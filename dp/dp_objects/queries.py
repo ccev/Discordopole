@@ -27,9 +27,10 @@ class Queries():
             self.query_strings = {
                 "active_raids": "SELECT gym.gym_id, Unix_timestamp(CONVERT_TZ(start,'+00:00','{timezone}')) AS starts, Unix_timestamp(CONVERT_TZ(end,'+00:00','{timezone}')) AS ends, latitude, longitude, ifnull(pokemon_id, 0), move_1, move_2, name, is_ex_raid_eligible, level, url, raid.form, team_id, evolution FROM gym LEFT JOIN gymdetails ON gym.gym_id = gymdetails.gym_id LEFT JOIN raid ON gym.gym_id = raid.gym_id WHERE name IS NOT NULL AND end > UTC_TIMESTAMP() AND " + generics["area"] + " ORDER BY end;",
                 "active_quests": "select quest_reward, quest_task, latitude, longitude, name, pokestop_id from trs_quest left join pokestop on trs_quest.GUID = pokestop.pokestop_id WHERE quest_timestamp > UNIX_TIMESTAMP(CURDATE()) AND " + generics["area"] + " ORDER BY quest_item_id ASC, quest_pokemon_id ASC, name;",
-                "active_grunts": "SELECT pokestop_id, name, image, latitude, longitude, CONVERT_TZ(incident_start,'+00:00','{timezone}'), CONVERT_TZ(incident_expiration,'+00:00','{timezone}') as end, incident_grunt_type where incident_grunt_type in ({extra}) and end > UTC_TIMESTAMP AND " + generics["area"] + " ORDER BY end;"
+                "active_grunts": "SELECT pokestop_id, name, image, latitude, longitude, CONVERT_TZ(incident_start,'+00:00','{timezone}'), CONVERT_TZ(incident_expiration,'+00:00','{timezone}') as end, incident_grunt_type from pokestop where incident_grunt_type in ({extra}) and incident_expiration > UTC_TIMESTAMP AND " + generics["area"] + " ORDER BY end;"
+            }
+            """
 
-                """
                 #Stat Board
                 "mon_active": "select count(pokemon_id) from {table} where disappear_time > utc_timestamp() and " + generics["area"],
                 "mon_today": "select count(pokemon_id) from {table} where " + generics["timezone"].format(column="disappear_time") + " > curdate() and " + generics["area"],
@@ -52,8 +53,8 @@ class Queries():
                 "grunt_active": "select count(pokestop_id) from pokestop where incident_expiration > UTC_TIMESTAMP() AND incident_grunt_type NOT IN (41,42,43,44) and " + generics["area"],
                 "leader_active": "select count(pokestop_id) from pokestop where incident_expiration > UTC_TIMESTAMP() AND incident_grunt_type >= 41 AND incident_grunt_type <= 44 and " + generics["area"],
                 "quest_active": "select count(GUID) from pokestop left join trs_quest on pokestop.pokestop_id = trs_quest.GUID where quest_timestamp > UNIX_TIMESTAMP(CURDATE()) and " + generics["area"]
-            """
             }
+            """
         elif self.config.db_scan_schema == "rdm":
             generics = {
                 "area": "ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon))"
