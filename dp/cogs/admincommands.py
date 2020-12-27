@@ -28,6 +28,63 @@ def match_board(message_id):
     boards = boards.raidboards + boards.questboards + boards.gruntboards
     return [b for b in boards if b.board["message_id"] == message_id][0]
 
+type_to_format = {
+    "raid": boards.raid_format,
+    "quest": boards.quest_format,
+    "grunt": boards.grunt_format
+}
+
+def boardtype_to_format(btype):
+    btype = btype.lower()
+
+    for keyword, default_format in type_to_format.items():
+        if keyword in btype:
+            return type_to_format[keyword], keyword.capitalize()
+    return None, None
+
+def parse_board_creation(args, standard_format, board_dict, create=False, btype=None):
+    for arg in list(args):
+        key, value = arg.split(":")
+
+        if key in standard_format.keys():
+            standard_type = type(standard_format[key])
+            if standard_type == bool:
+                if value.lower() == "true":
+                    value = True
+                else:
+                    value = False
+
+            if standard_type == list:
+                value = value.split(",")
+                try:
+                    value = list(map(int, value))
+                except:
+                    pass
+
+            if standard_type == int:
+                value = int(value)
+
+            board_dict[key.lower()] = value
+    with open("config/boards.json", "r") as board_file:
+        old_json = json.load(board_file)
+
+    with open("config/boards.json.save", "w+") as save_file:
+        save_file.write(json.dumps(old_json, indent=4))
+    
+    if create:
+        old_json[btype.lower()+"s"].append(board_dict)
+    else:
+        for board_key, board_jsons in old_json.items():
+            for i, board_json in enumerate(board_jsons):
+                if board_json["message_id"] == board_dict["message_id"]:
+                    old_json[board_key][i] = board_dict
+                    break
+
+    with open("config/boards.json", "w") as board_file:
+        board_file.write(json.dumps(old_json, indent=4))
+
+    reset_boards()
+
 class AdminCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -146,63 +203,29 @@ class AdminCommands(commands.Cog):
     async def edit(self, ctx, message_id, *args):
         board = match_board(message_id)
         board_dict = board.original_board.copy()
+        parse_board_creation(args, board.standard_format, board_dict)
 
-        for arg in list(args):
-            key, value = arg.split(":")
-
-            if key in board.standard_format.keys():
-                standard_type = type(board.standard_format[key])
-                if standard_type == bool:
-                    if value.lower() == "true":
-                        value = True
-                    else:
-                        value = False
-
-                if standard_type == list:
-                    value = value.split(",")
-                    try:
-                        value = list(map(int, value))
-                    except:
-                        pass
-
-                if standard_type == int:
-                    value = int(value)
-
-                board_dict[key.lower()] = value
-
-        with open("config/boards.json", "r") as board_file:
-            old_json = json.load(board_file)
-        
-        for board_key, board_jsons in old_json.items():
-            for i, board_json in enumerate(board_jsons):
-                if board_json["message_id"] == message_id:
-                    old_json[board_key][i] = board_dict
-                    break
-
-        with open("config/boards.json", "w") as board_file:
-            board_file.write(json.dumps(old_json, indent=4))
-
-        reset_boards()
         embed = discord.Embed(title="Board edited", description=f"```json\n{json.dumps(board_dict, indent=4)}```")
         await ctx.send(embed=embed)
 
     @board.command()
-    async def create(self, ctx, *args):
-        pass
+    async def create(self, ctx, btype, *args):
+        await ctx.message.delete()
+        message = await ctx.send(embed=discord.Embed(title="Empty Board", description="You will see this message fill in soon."))
+        board_dict = {
+            "channel_id": str(message.channel.id),
+            "message_id": str(message.id)
+        }
+        default_format, btype = boardtype_to_format(btype)
+        parse_board_creation(args, default_format, board_dict, True, btype)
 
     @board.command()
     async def format(self, ctx, btype):
-        btype = btype.lower()
-        type_to_format = {
-            "raid": boards.raid_format,
-            "quest": boards.quest_format,
-            "grunt": boards.grunt_format
-        }
-        for keyword, default_format in type_to_format.items():
-            if keyword in btype:
-                await ctx.send(embed=discord.Embed(title=f"Default format for {keyword.capitalize()} Boards", description=f"```json\n{json.dumps(default_format, indent=4)}```"))
-                return
-        await ctx.send(embed=discord.Embed(description=f"Board Type not found. Must be one of thse: `{list_to_string(type_to_format.keys())}`"))
+        default_format, btype = boardtype_to_format(btype)
+        if default_format:
+            await ctx.send(embed=discord.Embed(title=f"Default format for {btype.capitalize()} Boards", description=f"```json\n{json.dumps(default_format, indent=4)}```"))
+            return
+        await ctx.send(embed=discord.Embed(description=f"Board Type not found. Must be one of these: `{list_to_string(type_to_format.keys())}`"))
 
     @board.command()
     async def show(self, ctx, message_id):
