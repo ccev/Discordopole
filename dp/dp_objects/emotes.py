@@ -35,6 +35,14 @@ class Emotes:
         guild = await self.bot.create_guild(self.guild_name)
         self.guilds.append(guild)
 
+    async def get_channel(self, index=0):
+        guild = self.guilds[index]
+        if len(guild.text_channels) == 0:
+            channel = await guild.create_text_channel("general")
+        else:
+            channel = guild.text_channels[0]
+        return channel
+
     async def cleanup(self, all_guilds=False):
         if all_guilds:
             guilds = self.guilds

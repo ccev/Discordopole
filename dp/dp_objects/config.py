@@ -5,28 +5,25 @@ import os
 class Config():
     def __init__(self, config_path):
         config_raw = ConfigParser(interpolation=None)
-        config_raw.read("default.ini")
         config_raw.read(config_path)
 
         # Config #
-        self.bot_token = config_raw.get('Config','bot_token')
-        self.language = config_raw.get('Config','language')
-        self.timezone = config_raw.get('Config','timezone_offset')
-        self.prefix = config_raw.get('Config','prefix')
-        self.admins = config_raw.get('Config','admins')
+        self.bot_token = config_raw.get('Config', 'bot_token')
+        self.language = config_raw.get('Config', 'language')
+        self.timezone = config_raw.get('Config', 'timezone_offset')
+        self.prefix = config_raw.get('Config', 'prefix')
+        self.admins = config_raw.get('Config', 'admins')
         self.admins = list(map(int, list(self.admins.split(','))))
-        self.mon_icon_repo = config_raw.get('Config','pokemon_icon_repo')
+        self.mon_icon_repo = config_raw.get('Config', 'pokemon_icon_repo')
         self.asset_repo = config_raw.get('Config', 'asset_repo')
-        self.host_channel = config_raw.get('Config','trash_channel')
-        self.host_server = config_raw.get('Config','trash_server')
 
 
 
         # Maps #
-        self.use_map = config_raw.getboolean('Maps','use_map_frontend')
-        self.map = config_raw.get('Maps','frontend')
-        self.map_url = config_raw.get('Maps','map_url')
-        self.tileserver_url = config_raw.get('Maps','tileserver_url')
+        self.use_map = config_raw.getboolean('Maps', 'use_map_frontend')
+        self.map = config_raw.get('Maps', 'frontend')
+        self.map_url = config_raw.get('Maps', 'map_url')
+        self.tileserver_url = config_raw.get('Maps', 'tileserver_url')
         self.map_style = config_raw.get('Maps', 'style')
 
 

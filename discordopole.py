@@ -41,8 +41,8 @@ log.info("Connecting to Discord")
 async def on_ready():
     #await bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.watching, name="Discordopole"))
     log.success("Done loading. Ready for action.")
-    dp.static_map.trash_channel = await dp.bot.fetch_channel(dp.config.host_channel)
     await dp.emotes.initialize()
+    dp.static_map.trash_channel = await dp.emotes.get_channel()
     start_cogs(dp.bot)
 
 dp.bot.run(dp.config.bot_token)

@@ -56,13 +56,10 @@ class AdminCommands(commands.Cog):
     @emotes.command()
     async def invites(self, ctx):
         text = ""
-        for guild in dp.emotes.guilds:
+        for i, guild in enumerate(dp.emotes.guilds):
             invites = await guild.invites()
             if len(invites) == 0:
-                if len(guild.text_channels) == 0:
-                    channel = await guild.create_text_channel("general")
-                else:
-                    channel = guild.text_channels[0]
+                channel = await dp.emotes.get_channel(i)
                 invite = await channel.create_invite()
             else:
                 invite = invites[0]
