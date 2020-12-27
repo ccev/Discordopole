@@ -12,6 +12,7 @@ class Templates():
         self.egg_board_entry = self.get_entry("egg")
         self.hundo_board_entry = self.get_entry("hundo")
         self.grunt_board_entry = self.get_entry("grunt")
+        self.leader_board_entry = self.get_entry("grunt_leader")
     
     def get_entry(self, name):
         return self.templates.get("board_entries", {}).get(name, "")
@@ -107,7 +108,12 @@ class HundoBoardEntry(Templates):
 
 class GruntBoardEntry(Templates):
     def get(self, grunt):
-        entry = self.grunt_board_entry.format(
+        if grunt.id in [41, 42, 43, 44]:
+            wanted_entry = self.leader_board_entry
+        else:
+            wanted_entry = self.grunt_board_entry
+
+        entry = wanted_entry.format(
             id=grunt.id,
             start=grunt.start.strftime(self.dp.files.locale['time_format_hm']),
             end=grunt.end.strftime(self.dp.files.locale['time_format_hm']),

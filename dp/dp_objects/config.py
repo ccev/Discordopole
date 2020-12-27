@@ -10,7 +10,7 @@ class Config():
         # Config #
         self.bot_token = config_raw.get('Config', 'bot_token')
         self.language = config_raw.get('Config', 'language')
-        self.timezone = config_raw.get('Config', 'timezone_offset')
+        self.timezone_offset = config_raw.get('Config', 'timezone_offset')
         self.prefix = config_raw.get('Config', 'prefix')
         self.admins = config_raw.get('Config', 'admins')
         self.admins = list(map(int, list(self.admins.split(','))))

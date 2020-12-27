@@ -1,8 +1,9 @@
 {
     "board_entries": {
         "quest": "{emote} [{short_stop_name}]({map_link})",
-        "raid": "{ex_emote} **{short_gym_name}**: Until {end}\n{boss_emote} **{boss_name}** - *{move_1} / {move_2}*\n",
+        "raid": "{ex_emote} **{short_gym_name}**: until {end}\n{boss_emote} **{boss_name}** - *{move_1} / {move_2}*\n",
         "egg": "{boss_emote} {ex_emote} **{short_gym_name}**: {start} – {end}",
-        "grunt": "{emote} {short_stop_name}: {mon_emotes}"
+        "grunt": "{emote} **{short_stop_name}**: until {end} \nPossible rewards: {mon_emotes}\n",
+        "grunt_leader": "{emote} [{short_stop_name}]({map_link})"
     }
 }
