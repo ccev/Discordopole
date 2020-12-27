@@ -59,3 +59,8 @@ class Queries():
             generics = {
                 "area": "ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon))"
             }
+            self.query_strings = {
+                "active_raids": "SELECT id, (UNIX_TIMESTAMP(CONVERT_TZ((FROM_UNIXTIME(raid_battle_timestamp)), '+00:00', '{timezone}'))), (UNIX_TIMESTAMP(CONVERT_TZ((FROM_UNIXTIME(raid_end_timestamp)), '+00:00', '{tz_offset}'))), lat, lon, ifnull(raid_pokemon_id, 0), raid_pokemon_move_1, raid_pokemon_move_2, name, ex_raid_eligible, raid_level, url, raid_pokemon_form, team_id, raid_pokemon_evolution FROM gym WHERE name IS NOT NULL AND raid_end_timestamp > UNIX_TIMESTAMP() AND " + generics["area"] + " ORDER BY raid_end_timestamp;",
+                "active_quests": "select quest_rewards, quest_template, lat, lon, name, id from pokestop WHERE quest_type IS NOT NULL AND " + generics["area"] + " ORDER BY quest_item_id ASC, quest_pokemon_id ASC, name;",
+                "active_grunts": "SELECT id, name, url, lat, lon, (CONVERT_TZ((FROM_UNIXTIME(incident_expire_timestamp)), '+00:00', '{timezone}')), (CONVERT_TZ((FROM_UNIXTIME(incident_expire_timestamp)), '+00:00', '{timezone}')) as end, grunt_type from pokestop where grunt_type in ({extra}) and incident_expire_timestamp > UNIX_TIMESTAMP AND() " + generics["area"] + " ORDER BY end;"
+            }
