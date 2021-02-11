@@ -15,23 +15,23 @@ grunt_format = {
 
 class Grunt:
     def __init__(self, gid, start, end, stop):
-        self.id = gid
         self.start = start
         self.end = end
         self.stop = stop
-        self.img = dp.config.asset_repo + f"grunts/g{self.id}.png"
+
+        self.data = dp.pogodata.get_grunt(id=gid)
+        self.img = dp.config.asset_repo + f"grunts/g{self.data.id}.png"
 
         self.mons = []
-        for mid in dp.gamedata.available_grunts.get(gid, []):
-            mids = mid.split("_")
-            self.mons.append(Mon(mon_id=mids[0], form=mids[1]))
+        for reward in self.data.rewards:
+            self.mons.append(Mon(pd_mon=reward))
 
     async def get_emote(self):
-        if self.id in dp.gamedata.grunt_to_type.keys():
-            emote_name = "t" + str(dp.gamedata.grunt_to_type[self.id])
+        if self.data.type:
+            emote_name = "t" + str(self.data.type.id)
             emote_path = "types/" + emote_name
         else:
-            emote_name = "g" + str(self.id)
+            emote_name = "g" + str(self.data.id)
             emote_path = "grunts/" + emote_name
 
         self.emote = await dp.emotes.get(emote_name, dp.config.asset_repo + emote_path + ".png")
@@ -43,11 +43,10 @@ class GruntBoard(Board):
         self.standard_format = grunt_format
         self.standard_dict()
 
-        for mon in self.board["mons"]:
-            for gid, data in dp.gamedata.available_grunts.items():
-                if mon in [int(m.split("_")[0]) for m in data]:
-                    if gid not in self.board["grunts"]:
-                        self.board["grunts"].append(gid)
+        for mon_id in self.board["mons"]:
+            for grunt in dp.pogodata.grunts:
+                if int(mon_id) in [m.id for m in grunt.rewards]:
+                    self.board["grunts"].append(grunt.id)
 
         self.board["grunts"] = list(map(str, self.board["grunts"]))
         #print("GRUNT INIT")
@@ -65,6 +64,7 @@ class GruntBoard(Board):
                 await mon.get_emote()
             await grunt.get_emote()
             self.grunts.append(grunt)
+        self.new_ids = [grunt.stop.id for grunt in self.grunts]
 
     async def generate_embed(self):
         template = dp.templates.grunt_board()

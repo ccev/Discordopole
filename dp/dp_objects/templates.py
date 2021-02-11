@@ -42,8 +42,8 @@ class QuestBoardEntry(Templates):
             lon=quest.stop.lon,
             map_link=self.map_url.stop(quest.stop),
 
-            reward_name=quest.reward.name,
-            reward_id=quest.reward.id
+            reward_name=quest.reward.data.name,
+            reward_id=quest.reward.data.id
         )
         entry += "\n"
         return entry
@@ -91,10 +91,10 @@ class RaidBoardEntry(Templates):
                 lon=raid.gym.lon,
                 map_link=self.map_url.gym(raid.gym),
 
-                boss_name=raid.boss.name,
+                boss_name=raid.boss.data.name,
                 move_1=raid.boss.move_1.name,
                 move_2=raid.boss.move_2.name,
-                boss_id=raid.boss.id
+                boss_id=raid.boss.data.id
             )
         entry += "\n"
         return entry
@@ -102,19 +102,19 @@ class RaidBoardEntry(Templates):
 class HundoBoardEntry(Templates):
     def get(self, mon):
         entry = self.hundo_board_entry.format(
-            mon_name=mon.name
+            mon_name=mon.data.name
         )
         return entry
 
 class GruntBoardEntry(Templates):
     def get(self, grunt):
-        if grunt.id in [41, 42, 43, 44]:
+        if grunt.data.boss:
             wanted_entry = self.leader_board_entry
         else:
             wanted_entry = self.grunt_board_entry
 
         entry = wanted_entry.format(
-            id=grunt.id,
+            id=grunt.data.id,
             start=grunt.start.strftime(self.dp.files.locale['time_format_hm']),
             end=grunt.end.strftime(self.dp.files.locale['time_format_hm']),
 

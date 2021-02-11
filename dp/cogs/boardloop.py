@@ -33,7 +33,7 @@ class BoardLoop(commands.Cog):
         await board.message.edit(embed=embed)
         await asyncio.sleep(board.board["wait"])
 
-    @tasks.loop(seconds=SECONDS)   
+    @tasks.loop(seconds=SECONDS)
     async def raidboard_loop(self):
         for board in self.raidboards:
             try:
@@ -42,7 +42,7 @@ class BoardLoop(commands.Cog):
                 log.critical(f"Error while updating Raid Board for message {board.board['message_id']}")
                 log.exception(e)
     
-    @tasks.loop(hours=1)   
+    @tasks.loop(hours=1)
     async def questboard_loop(self):
         for board in self.questboards:
             try:
@@ -51,7 +51,7 @@ class BoardLoop(commands.Cog):
                 log.critical(f"Error while updating Quest Board for message {board.board['message_id']}")
                 log.exception(e)
 
-    @tasks.loop(seconds=SECONDS)   
+    @tasks.loop(seconds=SECONDS)
     async def gruntboard_loop(self):
         for board in self.gruntboards:
             try:
@@ -60,7 +60,7 @@ class BoardLoop(commands.Cog):
                 log.critical(f"Error while updating Grunt Board for message {board.board['message_id']}")
                 log.exception(e)
     
-    @tasks.loop(seconds=SECONDS)   
+    @tasks.loop(seconds=SECONDS)
     async def statboard_loop(self):
         for board in self.bot.boards.get("stats", []):
             try:

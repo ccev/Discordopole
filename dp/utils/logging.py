@@ -20,5 +20,5 @@ def success(self, message, *args, **kws):
 logging.Logger.success = success
 
 coloredlogs.DEFAULT_LEVEL_STYLES["debug"] = {"color": "blue"}
-coloredlogs.DEFAULT_FIELD_STYLES = {}
+#coloredlogs.DEFAULT_FIELD_STYLES = {}
 coloredlogs.install(level=log_level, logger=log, fmt="[%(asctime)s] [%(module)s] [%(levelname)-1.1s]  %(message)s", datefmt="%H:%M:%S")

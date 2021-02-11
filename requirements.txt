@@ -1,3 +1,4 @@
 requests
 stscpy
 aiohttp
+pogodata

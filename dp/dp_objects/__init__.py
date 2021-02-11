@@ -1,6 +1,7 @@
+from pogodata import PogoData
+
 #from .boards import 
 from .config import Config
-from .gamedata import GameData
 from .maps import MapUrl, StaticMap
 from .queries import Queries
 from .templates import Templates
@@ -40,6 +41,12 @@ class DPvars:
         self.templates = Templates(self, get_json_file("config/templates.json"))
     
     def load_gamedata(self):
-        self.gamedata = GameData(self.config.language)
+        pogodata_locale = {
+            "en": "english",
+            "de": "german",
+            "fr": "french",
+            "es": "spanish"
+        }
+        self.pogodata = PogoData(pogodata_locale.get(self.config.language, "english"))
 
 dp = DPvars()

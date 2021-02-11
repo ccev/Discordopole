@@ -49,10 +49,13 @@ class Emotes:
         else:
             guilds = self.guilds[-1:]
 
+        emotes = []
         for guild in guilds:
-            for emote in guild.emojis:
-                if emote.name not in self.standard_emote_names:
-                    await emote.delete()
+            emotes += guild.emojis
+
+        for emote in emotes:
+            if emote.name not in self.standard_emote_names:
+                await emote.delete()
 
     async def create_emote(self, name, image_url):
         guild = [guild for guild in self.guilds if len(guild.emojis) < guild.emoji_limit]
@@ -77,17 +80,22 @@ class Emotes:
         return self._get_ref(self._get_existing_emote(name)[0])
 
     async def get(self, name, image="", wanted_type="ref"):
-        emote = self._get_existing_emote(name)
-        if len(emote) == 0:
-            log.info(f"Creating emote :{name}:")
-            wanted_emote = await self.create_emote(name, image)
-        else:
-            wanted_emote = emote[0]
-        
-        if wanted_type == "ref":
-            return self._get_ref(wanted_emote)
-        else:
-            return wanted_emote
+        try:
+            emote = self._get_existing_emote(name)
+            if len(emote) == 0:
+                log.info(f"Creating emote :{name}:")
+                wanted_emote = await self.create_emote(name, image)
+            else:
+                wanted_emote = emote[0]
+            
+            if wanted_type == "ref":
+                return self._get_ref(wanted_emote)
+            else:
+                return wanted_emote
+        except Exception as e:
+            log.error("Unexpected Error while getting emote")
+            log.exception(e)
+            return ""
 
     async def download_url(self, url):
         async with aiohttp.ClientSession() as session:

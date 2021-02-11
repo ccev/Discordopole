@@ -106,6 +106,13 @@ class AdminCommands(commands.Cog):
             missing = [c.name for c in ctx.command.walk_commands()]
             await ctx.send(embed=discord.Embed(description=f"Missing/wrong subcommand. Must be one of these: `{', '.join(missing)}`"))
 
+    @commands.command()
+    async def test(self, ctx):
+        from dp.pogo import Mon
+        mon = Mon(3, form=169)
+        await mon.get_emote()
+        await ctx.send(mon.emote)
+
     @commands.group(pass_context=True)
     async def emotes(self, ctx):
         await self.base_group(ctx)
