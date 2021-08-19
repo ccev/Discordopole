@@ -17,7 +17,7 @@ There are two types of frontend features:
 Screenshots and more information: [Board Wiki Page](https://github.com/ccev/Discordopole/wiki/Boards) and [Command Wiki Page](https://github.com/ccev/Discordopole/wiki/Commands)
 
 ### Added Features in this branch
-you will need to change emote repo in config/config.ini to `emote_repo = https://raw.githubusercontent.com/idna-ved/dp_emotes/master/` and use `!get emote` again in your trash server to get those new emotes
+you will need to change emote repo in config/config.ini to `emote_repo = https://raw.githubusercontent.com/alexmartz710/dp_emotes/master/` and use `!get emote` again in your trash server to get those new emotes
 
 Stat Boards:
 - lure_amount: total amount of active lures

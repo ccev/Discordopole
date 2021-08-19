@@ -83,7 +83,7 @@ def get_area(areaname):
     namefence = bot.locale['all']
     for area in bot.geofences:
         if area['name'].lower() == areaname.lower():
-            namefence = area['name'].capitalize()
+            namefence = area['name'].title()
             stringfence = ""
             for coordinates in area['path']:
                 stringfence = f"{stringfence}{coordinates[0]} {coordinates[1]},"
