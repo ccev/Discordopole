@@ -23,25 +23,27 @@ Stat Boards:
 - lure_amount: total amount of active lures
 - lure_types: amount of different lure types
 
-![](http://puu.sh/FKtb3/a2c953f2a8.png)
+![](https://i.imgur.com/sJESVBr.png)
 
 - raid_lvl_1_active: amount of active lvl 1 raids
 - raid_lvl_2_active: amount of active lvl 2 raids
 - raid_lvl_3_active: amount of active lvl 3 raids
 - raid_lvl_4_active: amount of active lvl 4 raids
 - raid_lvl_5_active: amount of active lvl 5 raids
+- raid_lvl_6_active: amount of active lvl 6 raids
 
-you can use `!board create stats area raid lvl all` instead of `!board create stats area raid lvl 1, raid lvl 2, raid lvl 3, raid lvl 4, raid lvl 5` to show lvl 1-5 raids
+you can use `!board create stats area raid lvl all` instead of `!board create stats area raid lvl 1, raid lvl 2, raid lvl 3, raid lvl 4, raid lvl 5, raid lvl 6` to show lvl 1-6 raids
 
 - egg_lvl_1_active: amount of active lvl 1 eggs
 - egg_lvl_2_active: amount of active lvl 2 eggs
 - egg_lvl_3_active: amount of active lvl 3 eggs
 - egg_lvl_4_active: amount of active lvl 4 eggs
 - egg_lvl_5_active: amount of active lvl 5 eggs
+- egg_lvl_6_active: amount of active lvl 6 eggs
 
-you can use `!board create stats area egg lvl all` instead of `!board create stats area egg lvl 1, egg lvl 2, egg lvl 3, egg lvl 4, egg lvl 5` to show lvl 1-5 eggs
+you can use `!board create stats area egg lvl all` instead of `!board create stats area egg lvl 1, egg lvl 2, egg lvl 3, egg lvl 4, egg lvl 5, egg lvl 6` to show lvl 1-6 eggs
 
-![](http://puu.sh/FKteB/14f6d3ffdd.png)
+![](https://i.imgur.com/KN0bpiB.png)
 
 - scanned_active: amount of active scanned mons
 - scanned_today: total amount of scanned mons today
@@ -52,7 +54,7 @@ you can use `!board create stats area egg lvl all` instead of `!board create sta
 - iv0_active: amount of active mon with 0% iv
 - iv0_today: total amount of mon with 0% iv
 
-![](http://puu.sh/FPbMn/37c6c137a2.png)
+![](https://i.imgur.com/TiplrNK.png)
 
 other:
 - neutral gyms for gym_teams ![](http://puu.sh/FKtrr/d7ff1ccf4c.png)
