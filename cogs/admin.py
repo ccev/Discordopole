@@ -75,7 +75,7 @@ class Admin(commands.Cog):
         level_list = list(levels.split(','))
         level_list = list(map(int, level_list))
 
-        if all(i > 5 or i < 1 for i in level_list):
+        if all(i > 6 or i < 1 for i in level_list):
             embed.description = "Couldn't create Raid Board. Try chosing other levels."
             await message.edit(embed=embed)
             return
