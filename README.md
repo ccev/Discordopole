@@ -30,16 +30,16 @@ Stat Boards:
 - raid_lvl_5_active: amount of active lvl 5 raids
 - raid_lvl_6_active: amount of active lvl 6 raids
 
-you can use `!board create stats area raid lvl all` instead of `!board create stats area raid lvl 1, raid lvl 2, raid lvl 3, raid lvl 4, raid lvl 5, raid lvl 6` to show lvl 1-6 raids
+you can use `!board create stats area raid lvl all` instead of `!board create stats area raid lvl 1, raid lvl 3, raid lvl 5, raid lvl 6` to show lvl 1-6 raids
 
 - egg_lvl_1_active: amount of active lvl 1 eggs
 - egg_lvl_3_active: amount of active lvl 3 eggs
 - egg_lvl_5_active: amount of active lvl 5 eggs
 - egg_lvl_6_active: amount of active lvl 6 eggs
 
-you can use `!board create stats area egg lvl all` instead of `!board create stats area egg lvl 1, egg lvl 2, egg lvl 3, egg lvl 4, egg lvl 5, egg lvl 6` to show lvl 1-6 eggs
+you can use `!board create stats area egg lvl all` instead of `!board create stats area egg lvl 1, egg lvl 3, egg lvl 5, egg lvl 6` to show lvl 1-6 eggs
 
-![](https://i.imgur.com/KN0bpiB.png)
+![](https://i.imgur.com/IWy0nzN.png)
 
 - scanned_active: amount of active scanned mons
 - scanned_today: total amount of scanned mons today
