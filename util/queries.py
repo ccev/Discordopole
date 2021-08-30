@@ -357,9 +357,9 @@ async def statboard_gym_teams(config, area):
 async def statboard_raid_active(config, area):
     cursor_statboard_raid_active = await connect_db(config)
     if config['db_scan_schema'] == "mad":
-        await cursor_statboard_raid_active.execute(f"select count(raid.gym_id), ifnull(sum(level = 1), 0), ifnull(sum(level = 2),0), ifnull(sum(level = 3),0), ifnull(sum(level = 4),0), ifnull(sum(level = 5),0), ifnull(sum(level = 6),0) from gym left join raid on gym.gym_id = raid.gym_id where end >= utc_timestamp() and start <= utc_timestamp() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
+        await cursor_statboard_raid_active.execute(f"select count(raid.gym_id), ifnull(sum(level = 1), 0), ifnull(sum(level = 3),0), ifnull(sum(level = 5),0), ifnull(sum(level = 6),0) from gym left join raid on gym.gym_id = raid.gym_id where end >= utc_timestamp() and start <= utc_timestamp() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
     elif config['db_scan_schema'] == "rdm":
-        await cursor_statboard_raid_active.execute(f"select count(id), ifnull(sum(raid_level = 1), 0), ifnull(sum(raid_level = 2),0), ifnull(sum(raid_level = 3),0), ifnull(sum(raid_level = 4),0), ifnull(sum(raid_level = 5),0), ifnull(sum(raid_level = 6),0) from gym where raid_battle_timestamp < UNIX_TIMESTAMP() AND raid_end_timestamp >= UNIX_TIMESTAMP() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon))")
+        await cursor_statboard_raid_active.execute(f"select count(id), ifnull(sum(raid_level = 1), 0), ifnull(sum(raid_level = 3),0), ifnull(sum(raid_level = 5),0), ifnull(sum(raid_level = 6),0) from gym where raid_battle_timestamp < UNIX_TIMESTAMP() AND raid_end_timestamp >= UNIX_TIMESTAMP() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon))")
     statboard_raid_active = await cursor_statboard_raid_active.fetchall()
 
     await cursor_statboard_raid_active.close()
@@ -368,9 +368,9 @@ async def statboard_raid_active(config, area):
 async def statboard_egg_active(config, area):
     cursor_statboard_egg_active = await connect_db(config)
     if config['db_scan_schema'] == "mad":
-        await cursor_statboard_egg_active.execute(f"select count(raid.gym_id), ifnull(sum(level = 1), 0), ifnull(sum(level = 2),0), ifnull(sum(level = 3),0), ifnull(sum(level = 4),0), ifnull(sum(level = 5),0), ifnull(sum(level = 6),0) from gym left join raid on gym.gym_id = raid.gym_id where start > utc_timestamp() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
+        await cursor_statboard_egg_active.execute(f"select count(raid.gym_id), ifnull(sum(level = 1), 0), ifnull(sum(level = 3),0), ifnull(sum(level = 5),0), ifnull(sum(level = 6),0) from gym left join raid on gym.gym_id = raid.gym_id where start > utc_timestamp() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
     elif config['db_scan_schema'] == "rdm":
-        await cursor_statboard_egg_active.execute(f"select count(id), ifnull(sum(raid_level = 1), 0), ifnull(sum(raid_level = 2),0), ifnull(sum(raid_level = 3),0), ifnull(sum(raid_level = 4),0), ifnull(sum(raid_level = 5),0), ifnull(sum(raid_level = 6),0) from gym WHERE raid_battle_timestamp >= UNIX_TIMESTAMP() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon))")
+        await cursor_statboard_egg_active.execute(f"select count(id), ifnull(sum(raid_level = 1), 0), ifnull(sum(raid_level = 3),0), ifnull(sum(raid_level = 5),0), ifnull(sum(raid_level = 6),0) from gym WHERE raid_battle_timestamp >= UNIX_TIMESTAMP() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon))")
     statboard_egg_active = await cursor_statboard_egg_active.fetchall()
 
     await cursor_statboard_egg_active.close()
