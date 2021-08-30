@@ -26,18 +26,14 @@ Stat Boards:
 ![](https://i.imgur.com/sJESVBr.png)
 
 - raid_lvl_1_active: amount of active lvl 1 raids
-- raid_lvl_2_active: amount of active lvl 2 raids
 - raid_lvl_3_active: amount of active lvl 3 raids
-- raid_lvl_4_active: amount of active lvl 4 raids
 - raid_lvl_5_active: amount of active lvl 5 raids
 - raid_lvl_6_active: amount of active lvl 6 raids
 
 you can use `!board create stats area raid lvl all` instead of `!board create stats area raid lvl 1, raid lvl 2, raid lvl 3, raid lvl 4, raid lvl 5, raid lvl 6` to show lvl 1-6 raids
 
 - egg_lvl_1_active: amount of active lvl 1 eggs
-- egg_lvl_2_active: amount of active lvl 2 eggs
 - egg_lvl_3_active: amount of active lvl 3 eggs
-- egg_lvl_4_active: amount of active lvl 4 eggs
 - egg_lvl_5_active: amount of active lvl 5 eggs
 - egg_lvl_6_active: amount of active lvl 6 eggs
 
