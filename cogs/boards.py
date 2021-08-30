@@ -263,7 +263,7 @@ class Boards(commands.Cog):
                     gym_teams = await queries.statboard_gym_teams(self.bot.config, area[0])
                     text = f"{text}{self.bot.custom_emotes['gym_blue']}**{gym_teams[0][1]}**{self.bot.custom_emotes['blank']}{self.bot.custom_emotes['gym_red']}**{gym_teams[0][2]}**{self.bot.custom_emotes['blank']}{self.bot.custom_emotes['gym_yellow']}**{gym_teams[0][3]}**{self.bot.custom_emotes['blank']}{self.bot.custom_emotes['gym_white']}**{gym_teams[0][0]}**\n\n"
 
-                if ("raid_active" or "raid_lvl_1_active" or "raid_lvl_2_active" or "raid_lvl_3_active" or "raid_lvl_4_active" or "raid_lvl_5_active" or "raid_lvl_6_active") in board['type']:
+                if ("raid_active" or "raid_lvl_1_active" or "raid_lvl_3_active" or "raid_lvl_5_active" or "raid_lvl_6_active") in board['type']:
                     raid_active = await queries.statboard_raid_active(self.bot.config, area[0])
                     if "raid_active" in board['type'] and not "egg_active" in board['type']:
                         text = f"{text}{self.bot.custom_emotes['raid']} **{raid_active[0][0]:,}** {self.bot.locale['active_raids']}\n"
@@ -271,16 +271,12 @@ class Boards(commands.Cog):
                         text = f"{text}6⭐ **{raid_active[0][6]:,}** {self.bot.locale['raids']}\n"
                     if "raid_lvl_5_active" in board['type'] and not "egg_lvl_5_active" in board['type']:
                         text = f"{text}5⭐ **{raid_active[0][5]:,}** {self.bot.locale['raids']}\n"
-                    if "raid_lvl_4_active" in board['type'] and not "egg_lvl_4_active" in board['type']:
-                        text = f"{text}4⭐ **{raid_active[0][4]:,}** {self.bot.locale['raids']}\n"
                     if "raid_lvl_3_active" in board['type'] and not "egg_lvl_3_active" in board['type']:
                         text = f"{text}3⭐ **{raid_active[0][3]:,}** {self.bot.locale['raids']}\n"
-                    if "raid_lvl_2_active" in board['type'] and not "egg_lvl_2_active" in board['type']:
-                        text = f"{text}2⭐ **{raid_active[0][2]:,}** {self.bot.locale['raids']}\n"
                     if "raid_lvl_1_active" in board['type'] and not "egg_lvl_1_active" in board['type']:
                         text = f"{text}1⭐ **{raid_active[0][1]:,}** {self.bot.locale['raids']}\n"
 
-                if ("egg_active" or "egg_lvl_1_active" or "egg_lvl_2_active" or "egg_lvl_3_active" or "egg_lvl_4_active" or "egg_lvl_5_active" or "egg_lvl_6_active") in board['type']:
+                if ("egg_active" or "egg_lvl_1_active" or "egg_lvl_3_active" or "egg_lvl_5_active" or "egg_lvl_6_active") in board['type']:
                     egg_active = await queries.statboard_egg_active(self.bot.config, area[0])
                     if "raid_active" in board['type']:
                         text = f"{text}{self.bot.custom_emotes['raid']} **{raid_active[0][0]:,}** {self.bot.locale['active_raids']} | **{egg_active[0][0]:,}** {self.bot.locale['eggs']}\n"
@@ -294,21 +290,13 @@ class Boards(commands.Cog):
                         text = f"{text}5⭐: **{raid_active[0][5]:,}** {self.bot.locale['raids']} | **{egg_active[0][5]:,}** {self.bot.locale['eggs']}\n"
                     elif "egg_lvl_5_active" in board['type']:
                         text = f"{text}{self.bot.custom_emotes['raid_egg_5']} **{egg_active[0][5]:,}** {self.bot.locale['active_eggs']}\n"
-                    if "raid_lvl_4_active" in board['type']:
-                        text = f"{text}4⭐: **{raid_active[0][4]:,}** {self.bot.locale['raids']} | **{egg_active[0][4]:,}** {self.bot.locale['eggs']}\n"
-                    elif "egg_lvl_4_active" in board['type']:
-                        text = f"{text}{self.bot.custom_emotes['raid_egg_4']} **{egg_active[0][4]:,}** {self.bot.locale['active_eggs']}\n"
                     if "raid_lvl_3_active" in board['type']:
                         text = f"{text}3⭐: **{raid_active[0][3]:,}** {self.bot.locale['raids']} | **{egg_active[0][3]:,}** {self.bot.locale['eggs']}\n"
                     elif "egg_lvl_3_active" in board['type']:
                         text = f"{text}{self.bot.custom_emotes['raid_egg_3']} **{egg_active[0][3]:,}** {self.bot.locale['active_eggs']}\n"
-                    if "raid_lvl_2_active" in board['type']:
-                        text = f"{text}2⭐: **{raid_active[0][2]:,}** {self.bot.locale['raids']} | **{egg_active[0][2]:,}** {self.bot.locale['eggs']}\n"
-                    elif "egg_lvl_2_active" in board['type']:
-                        text = f"{text}{self.bot.custom_emotes['raid_egg_2']} **{egg_active[0][2]:,}** {self.bot.locale['active_eggs']}\n"
                     if "raid_lvl_1_active" in board['type']:
                         text = f"{text}1⭐: **{raid_active[0][1]:,}** {self.bot.locale['raids']} | **{egg_active[0][1]:,}** {self.bot.locale['eggs']}\n"
-                    elif "egg_lvl_2_active" in board['type']:
+                    elif "egg_lvl_1_active" in board['type']:
                         text = f"{text}{self.bot.custom_emotes['raid_egg_1']} **{egg_active[0][1]:,}** {self.bot.locale['active_eggs']}\n"
                 
                 if "stop_amount" in board['type']:
