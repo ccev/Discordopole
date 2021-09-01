@@ -97,7 +97,7 @@ class map_url:
         if self.frontend == "pmsf":
             quest_url = f"{self.url}?lat={lat}&lon={lon}&zoom=18&stopId={stop_id}"
         elif self.frontend == "rdm":
-            quest_url = f"{self.url}@pokestop/:{stop_id}"
+            quest_url = f"{self.url}@pokestop/{stop_id}"
         else:
             quest_url = f"{self.url}?lat={lat}&lon={lon}&zoom=18"
 
