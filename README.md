@@ -1,3 +1,22 @@
+## This repo is no longer maintained
+
+Due to a lack of motivation and time, I've decided to archive most of my repos. At the time of writing this, it's still fully functional.
+
+I hate what Discordopole has become. I love the idea but the work has been super messy. Here's a short hisotry:
+- I liked Worldopole but it was super outdated and no one would've used it anyway since all my users prefer using Discord over dedicated websites
+- So I started to convert some of Worldopole features to Discord (master branch)
+- At the time I sucked at coding (still do, but it's even worse back then) so the project quickly became hard to mainatin and I lost motivation on it
+- Andy picked it up, hacked in a lot of features than I didn't really like (develop branch)
+- I started rewriting it on develop-develop. That rewrite provides a great base imo and I actually have it running. But it's mainly missing Stats stuff (that I don't care about) and documenation. Else it's pretty good
+- I stopped working on develop-develop because I first wanted to finish pogodata (now called pogodatapy), so I have a proper base to work with. When that project was nearly finished, I prioritized other stuff. Then pogodatapy got super messy and I started redo-ing that. Quickly lost mootivation on that and now I'm just quitting everything.
+- yeah.
+
+- develop-develop has Quest Boards, Raid Boards and Grunt Boards. + Template support, ok-ish commands to manage everything and an Emoji manager that likes to break
+- Maybe Discordopole could benefit from a system like I have in my conceptional discordmap repo.
+- Stat stuff should be implemented
+- Whatever else you can think of. Maybe a Hundo Board. Maybe an Event Boards based on pogoinfo.
+- If you like to continue work on this, please DM me on Discord. Would like to talk about it more.
+
 ![](https://media.discordapp.net/attachments/523253670700122144/694301358018396202/dp_maybee.png)
 
 Discordopole takes what [Worldopole](https://github.com/brusselopole/Worldopole) left behind and puts it into Discord. The goal is to allow your users to get easy access to useful data.
