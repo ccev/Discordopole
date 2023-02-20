@@ -1,6 +1,4 @@
-- develop-develop has Quest Boards, Raid Boards and Grunt Boards. + Template support, ok-ish commands to manage everything and an Emoji manager that likes to break
-- Stat stuff should be implemented
-- Whatever else you can think of. Maybe a Hundo Board. Maybe an Event Boards based on pogoinfo.
+![](https://media.discordapp.net/attachments/523253670700122144/694301358018396202/dp_maybee.png)
 
 Discordopole takes what [Worldopole](https://github.com/brusselopole/Worldopole) left behind and puts it into Discord. The goal is to allow your users to get easy access to useful data.
 
@@ -63,3 +61,9 @@ other:
 - select timeframe without area for command !pokemon
 - you can use an alternative pokemon table for pokemon command. you will have to expand your `config.ini`. see `config_example/config.ini`. pokemon command will use alternative table, if timespan start is older than oldest pokemon in main table. 
 - new config option `show_used_timespan_in_footer`. if True, footer will show everytime used timespan and area for pokemon command
+
+Suggestions from Malte:
+- develop-develop has Quest Boards, Raid Boards and Grunt Boards. + Template support, ok-ish commands to manage everything and an Emoji manager that likes to break
+- Stat stuff should be implemented
+- Whatever else you can think of. Maybe a Hundo Board. Maybe an Event Boards based on pogoinfo.
+
