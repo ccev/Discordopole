@@ -20,8 +20,11 @@ import util.maps
 #extensions = ["cogs.admin", "cogs.boards", "cogs.channels", "cogs.misc", "cogs.stats"]
 extensions = ["cogs.admin", "cogs.boards", "cogs.channels"]
 
+activity = discord.Activity(type=discord.ActivityType.watching, name="Test Bot: Online")
+intents = discord.Intents.default()
+intents.message_content = True
 config = util.config.create_config("config/config.ini")
-bot = commands.Bot(command_prefix=config['prefix'], case_insensitive=1)
+bot = commands.Bot(command_prefix=config['prefix'], case_insensitive=1, intents=intents, activity=activity, status=discord.Status.online)
 bot.max_moves_in_list = 340
 bot.config = config
 short = pyshorteners.Shortener().tinyurl.short
@@ -494,13 +497,12 @@ async def quest(ctx, areaname = "", *, reward):
 @bot.event
 async def on_ready():
     #await bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.watching, name="Discordopole"))
+    for extension in extensions:
+        await bot.load_extension(extension)
     print("Connected to Discord. Ready to take commands.")
-
     if bot.config['use_static']:
         trash_channel = await bot.fetch_channel(bot.config['host_channel'])
         bot.static_map = util.maps.static_map(config['static_provider'], config['static_key'], trash_channel, bot.config['mon_icon_repo'])
 
-if __name__ == "__main__":
-    for extension in extensions:
-        bot.load_extension(extension)
+if __name__ == '__main__':
     bot.run(bot.config['bot_token'])

@@ -11,6 +11,7 @@ async def connect_alt_db(config):
 
     alt_cursor = await alt_mydb.cursor()
     return alt_cursor
+    asyncio.ensure_future(close_conn(alt_mydb))
 
 async def connect_db(config):
     mydb = await aiomysql.connect(
@@ -23,7 +24,8 @@ async def connect_db(config):
 
     cursor = await mydb.cursor()
     return cursor
-
+    asyncio.ensure_future(close_conn(mydb))
+    
 async def get_oldest_mon_date(config, use_alt_table=False):
     if use_alt_table:
         cursor_oldest_mon_date = await connect_alt_db(config)
@@ -403,7 +405,7 @@ async def statboard_grunt_active(config, area):
     if config['db_scan_schema'] == "mad":
         await cursor_statboard_grunt_active.execute(f"select count(pokestop_id) from pokestop where incident_expiration > UTC_TIMESTAMP() AND incident_grunt_type NOT IN (41,42,43,44) and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
     elif config['db_scan_schema'] == "rdm":
-        await cursor_statboard_grunt_active.execute(f"select count(id) from pokestop where grunt_type not in (41,42,43,44) and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon))")
+        await cursor_statboard_grunt_active.execute(f"select count(incident.pokestop_id) from incident, pokestop where pokestop.id = incident.pokestop_id AND display_type not in (41,42,43,44) and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(pokestop.lat, pokestop.lon))")
     statboard_grunt_active = await cursor_statboard_grunt_active.fetchall()
 
     await cursor_statboard_grunt_active.close()
@@ -414,7 +416,7 @@ async def statboard_leader_active(config, area):
     if config['db_scan_schema'] == "mad":
         await cursor_statboard_leader_active.execute(f"select count(pokestop_id) from pokestop where incident_expiration > UTC_TIMESTAMP() AND incident_grunt_type >= 41 AND incident_grunt_type <= 44 and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))")
     elif config['db_scan_schema'] == "rdm":
-        await cursor_statboard_leader_active.execute(f"select count(id) from pokestop where grunt_type in (41,42,43,44) and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon))")
+        await cursor_statboard_leader_active.execute(f"select count(incident.pokestop_id) from incident, pokestop where pokestop.id = incident.pokestop_id AND display_type in (41,42,43,44) and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(pokestop.lat, pokestop.lon))")
     statboard_leader_active = await cursor_statboard_leader_active.fetchall()
 
     await cursor_statboard_leader_active.close()

@@ -447,5 +447,5 @@ class Boards(commands.Cog):
     async def before_quests(self):
         await self.bot.wait_until_ready()
 
-def setup(bot):
-    bot.add_cog(Boards(bot))
+async def setup(bot):
+    await bot.add_cog(Boards(bot))
