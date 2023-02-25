@@ -36,7 +36,7 @@ class details(object):
 
         self.name = result_name
         self.id = int(result_id)
-        self.icon = f"{repo}pokemon_icon_{str(result_id).zfill(3)}_00.png"
+        self.icon = f"{repo}pokemon/{str(result_id)}.png"
 
     def id(mon_id, lang):
         if not lang == "de" and not lang == "fr":

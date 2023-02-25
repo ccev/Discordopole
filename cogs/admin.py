@@ -351,7 +351,7 @@ class Admin(commands.Cog):
                     emote_exist = True
             if not emote_exist:
                 try:
-                    image = await self.download_url(f"{self.bot.config['mon_icon_repo']}pokemon_icon_{str(mon_id).zfill(3)}_00.png")
+                    image = await self.download_url(f"{self.bot.config['mon_icon_repo']}pokemon/{str(mon_id)}.png")
                     emote = await guild.create_custom_emoji(name=f"m{mon_id}", image=image)
                     emote_ref = f"<:{emote.name}:{emote.id}>"
                     embed_emotes = f"{embed_emotes}\n{emote_ref} `{emote_ref}`"
@@ -376,7 +376,7 @@ class Admin(commands.Cog):
                     emote_exist = True
             if not emote_exist:
                 try:
-                    image = await self.download_url(f"{self.bot.config['mon_icon_repo']}rewards/reward_{item}_1.png")
+                    image = await self.download_url(f"{self.bot.config['mon_icon_repo']}reward/item/{item}.png")
                     emote = await guild.create_custom_emoji(name=f"i{item}", image=image)
                     emote_ref = f"<:{emote.name}:{emote.id}>"
                     embed_emotes = f"{embed_emotes}\n{emote_ref} `{emote_ref}`"

@@ -428,9 +428,9 @@ class Boards(commands.Cog):
 
                 if (len(board["items"]) + len(board["mons"])) == 1:
                     if len(board["items"]) == 1:
-                        embed.set_thumbnail(url=f"{self.bot.config['mon_icon_repo']}rewards/reward_{board['items'][0]}_1.png")
+                        embed.set_thumbnail(url=f"{self.bot.config['mon_icon_repo']}reward/item/{board['items'][0]}.png")
                     elif len(board["mons"]) == 1:
-                        embed.set_thumbnail(url=f"{self.bot.config['mon_icon_repo']}pokemon_icon_{str(board['mons'][0]).zfill(3)}_00.png")
+                        embed.set_thumbnail(url=f"{self.bot.config['mon_icon_repo']}pokemon/{str(board['mons'][0])}.png")
 
                 await message.edit(embed=embed)
                 await asyncio.sleep(2)
