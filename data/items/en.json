@@ -123,6 +123,10 @@
       "protoname": "ITEM_GOLDEN_PINAP_BERRY",
       "name": "Silver Pinap"
     },
+    "709": {
+      "protoname": "ITEM_POFFIN",
+      "name": "Poffin"
+    },
     "801": {
       "protoname": "ITEM_SPECIAL_CAMERA",
       "name": "Camera"
@@ -206,5 +210,9 @@
     "1405": {
       "protoname": "ITEM_FRIEND_GIFT_BOX",
       "name": "Gift"
+    },
+    "1501": {
+      "protoname": "MYSTERIOUS_COMPONENT",
+      "name": "Mysterious Component"
     }
   }

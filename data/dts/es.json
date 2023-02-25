@@ -38,6 +38,9 @@
     "today": "hoy",
     "pokemon_seen_today": "Pokémon vistos hoy",
     "quests": "Misiones",
+	"eventstop": "Pokéstops",
+	"mega": "Mega Energy",
+	"stardust": "Quests",
     "grunts": "Reclutas",
     "leaders": "Líderes",
     "moves": "Movimientos",
@@ -47,6 +50,8 @@
     "egg": "Huevo",
     "loading_quests": "Cargando misiones",
     "no_quests_found": "❌ No se encontraron misiones",
+    "no_area_found": "❌ No Areas were found that match your request. \n Please type !q AREA (pokemon/item) using an area from the list of searchable areas.",
+	"unknown": "Unknown Area",
 	"average_iv": "📊 Average IV",
 	"average_iv_of_active_mons": "📊 Average IV of active Pokémon"
 }
