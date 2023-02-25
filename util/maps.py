@@ -75,10 +75,17 @@ class static_map:
             zoom = self.get_zoom(ne, sw, width, height, 256)
 
             data = {"style": "osm-bright","latitude": center_lat,"longitude": center_lon,"zoom": zoom,"width": width,"height": height,"scale": 1,"markers": []}
-            for mon_id, mon_lat, mon_lon in mons:
-                data["markers"].append({"url": f"{self.icons}pokemon_icon_{str(mon_id).zfill(3)}_00.png","height": 32,"width": 32,"x_offset": 0,"y_offset": 0,"latitude": mon_lat,"longitude": mon_lon})
-            for item_id, item_lat, item_lon in items:
-                data["markers"].append({"url": f"{self.icons}rewards/reward_{item_id}_1.png","height": 32,"width": 32,"x_offset": 0,"y_offset": 0,"latitude": item_lat,"longitude": item_lon})
+            if items ==99997:
+                for mon_id, mon_lat, mon_lon in mons:
+                     data["markers"].append({"url": f"{self.icons}reward/mega_resource/{str(mon_id)}.png","height": 32,"width": 32,"x_offset": 0,"y_offset": 0,"latitude": mon_lat,"longitude": mon_lon})
+            else:
+                for mon_id, mon_lat, mon_lon in mons:
+                    if mon_id ==99998:
+                        data["markers"].append({"url": f"{self.icons}reward/stardust/0.png","height": 32,"width": 32,"x_offset": 0,"y_offset": 0,"latitude": mon_lat,"longitude": mon_lon})
+                    else:
+                        data["markers"].append({"url": f"{self.icons}pokemon/{str(mon_id)}.png","height": 32,"width": 32,"x_offset": 0,"y_offset": 0,"latitude": mon_lat,"longitude": mon_lon})
+                for item_id, item_lat, item_lon in items:
+                    data["markers"].append({"url": f"{self.icons}reward/item/{item_id}.png","height": 32,"width": 32,"x_offset": 0,"y_offset": 0,"latitude": item_lat,"longitude": item_lon})
 
             result = requests.post(f"{self.key}staticmap", json=data, headers={"content-type": "application/json;charset=utf-8"})
             stream = BytesIO(result.content)
