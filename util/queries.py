@@ -365,7 +365,7 @@ async def statboard_lure_active(config, area):
 
 async def statboard_grunt_active(config, area):
     if config['db_scan_schema'] == "mad":
-        query = f"select count(pokestop_id) from pokestop where incident_expiration > UTC_TIMESTAMP() AND incident_grunt_type NOT IN (41,42,43,44) and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude));"
+        query = f"select count(pokestop_id) from pokestop, pokestop_incident where pokestop.pokestop_id = pokestop_incident.pokestop_id AND pokestop_incident.incident_expiration > UTC_TIMESTAMP() AND pokestop_incident.character_display NOT IN (41,42,43,44) and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude));"
     elif config['db_scan_schema'] == "rdm":
         query = f"select count(incident.pokestop_id) from incident, pokestop where pokestop.id = incident.pokestop_id AND incident.character not in (41,42,43,44) and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(pokestop.lat, pokestop.lon));"
     statboard_grunt_active = await execute(config, query)
@@ -374,7 +374,7 @@ async def statboard_grunt_active(config, area):
 
 async def statboard_leader_active(config, area):
     if config['db_scan_schema'] == "mad":
-        query = f"select count(pokestop_id) from pokestop where incident_expiration > UTC_TIMESTAMP() AND incident_grunt_type >= 41 AND incident_grunt_type <= 44 and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude));"
+        query = f"select count(pokestop_id) from pokestop, pokestop_incident where pokestop.pokestop_id = pokestop_incident.pokestop_id AND pokestop_incident.incident_expiration > UTC_TIMESTAMP() AND pokestop_incident.character_display >= 41 AND incident_grunt_type <= 44 and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude));"
     elif config['db_scan_schema'] == "rdm":
         query = f"select count(incident.pokestop_id) from incident, pokestop where pokestop.id = incident.pokestop_id AND incident.character in (41,42,43,44) and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(pokestop.lat, pokestop.lon));"
     statboard_leader_active = await execute(config, query)
