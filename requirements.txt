@@ -4,7 +4,7 @@ async-timeout==3.0.1
 attrs==19.3.0
 cffi==1.14.0
 chardet==3.0.4
-cryptography==3.2
+cryptography==39.0.1
 cycler==0.10.0
 dateparser==0.7.2
 discord==1.0.1
