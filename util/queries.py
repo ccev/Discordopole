@@ -1,25 +1,20 @@
 import aiomysql
 import asyncio
 
-        
 async def execute(config, query):
-    conn = await aiomysql.connect(host=config['alt_db_host'],user=config['alt_db_user'],password=config['alt_db_pass'],db=config['alt_db_dbname'],port=config['alt_db_port'],autocommit=True)
-    cur = await conn.cursor()
-    async with conn.cursor() as cur:
-        await cur.execute(query)
-        r = await cur.fetchall()
-
-    await conn.ensure_closed()
+    pool = await aiomysql.create_pool(host=config['db_host'],user=config['db_user'],password=config['db_pass'],db=config['db_dbname'],port=config['db_port'])
+    async with pool.acquire() as conn:
+        async with conn.cursor() as cur:
+            await cur.execute(query)
+            r = await cur.fetchall()
     return r
 
 async def alt_execute(config, query):
-    conn2 = await aiomysql.connect(host=config['alt_db_host'],user=config['alt_db_user'],password=config['alt_db_pass'],db=config['alt_db_dbname'],port=config['alt_db_port'],autocommit=True)
-    cur2 = await conn2.cursor()
-    async with conn2.cursor() as cur2:
-        await cur2.execute(query)
-        r2 = await cur2.fetchall()
-
-    await conn2.ensure_closed()
+    alt_pool = await aiomysql.create_pool(host=config['alt_db_host'],user=config['alt_db_user'],password=config['alt_db_pass'],db=config['alt_db_dbname'],port=config['alt_db_port'])
+    async with alt_pool.acquire() as conn2:
+        async with conn2.cursor() as cur2:
+            await cur2.execute(query)
+            r2 = await cur2.fetchall()
     return r2
 
 async def get_oldest_mon_date(config, use_alt_table=False):
