@@ -17,11 +17,12 @@ import util.queries as queries
 import util.config
 import util.maps
 
-#extensions = ["cogs.admin", "cogs.boards", "cogs.channels", "cogs.misc", "cogs.stats"]
 extensions = ["cogs.admin", "cogs.boards", "cogs.channels"]
-
+activity = discord.Activity(type=discord.ActivityType.watching, name="Discordopole: Online")
+intents = discord.Intents.default()
+intents.message_content = True
 config = util.config.create_config("config/config.ini")
-bot = commands.Bot(command_prefix=config['prefix'], case_insensitive=1)
+bot = commands.Bot(command_prefix=config['prefix'], case_insensitive=1, intents=intents, activity=activity, status=discord.Status.online)
 bot.max_moves_in_list = 340
 bot.config = config
 short = pyshorteners.Shortener().tinyurl.short
@@ -79,8 +80,8 @@ with open(f"data/raidcp.json", encoding="utf-8") as f:
     bot.raidcp = json.load(f)
 
 def get_area(areaname):
-    stringfence = "-100 -100, -100 100, 100 100, 100 -100, -100 -100"
-    namefence = bot.locale['all']
+    stringfence = "-1 -1, -1 1, 1 1, 1 -1, -1 -1"
+    namefence = bot.locale['unknown']
     for area in bot.geofences:
         if area['name'].lower() == areaname.lower():
             namefence = area['name'].title()
@@ -373,84 +374,346 @@ async def quest(ctx, areaname = "", *, reward):
         footer_text = area[1]
         loading = f"{loading} • {footer_text}"
 
-    print(f"@{ctx.author.name} requested quests for area {area[1]}")
+    print(f"@{ctx.author.name} requested {reward} quests for area {area[1]}")
 
-    embed = discord.Embed(title=bot.locale['quests'], description=text)
-    embed.set_footer(text=loading, icon_url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
+    if area[1] == "Unknown Area":
+        embed = discord.Embed(title=bot.locale['no_area_found'], description=text)
+    elif reward.startswith("Mega") or reward.startswith("mega"):
+        embed = discord.Embed(title=bot.locale['mega'], description=text)
+        embed.set_image(url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
+        embed.set_footer(text=loading, icon_url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
+    elif reward == "Stardust":
+        embed = discord.Embed(title=bot.locale['quests'], description=text)
+        embed.set_image(url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
+        embed.set_footer(text=loading, icon_url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
+    elif reward == "stardust":
+        embed = discord.Embed(title=bot.locale['quests'], description=text)
+        embed.set_image(url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
+        embed.set_footer(text=loading, icon_url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
+    elif reward == "Kecleon":
+        embed = discord.Embed(title=bot.locale['eventstop'], description=text)
+        embed.set_image(url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
+        embed.set_footer(text=loading, icon_url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
+    elif reward == "kecleon":
+        embed = discord.Embed(title=bot.locale['eventstop'], description=text)
+        embed.set_image(url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
+        embed.set_footer(text=loading, icon_url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
+    elif reward == "keckleon":
+        embed = discord.Embed(title=bot.locale['eventstop'], description=text)
+        embed.set_image(url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
+        embed.set_footer(text=loading, icon_url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
+    elif reward == "Keckleon":
+        embed = discord.Embed(title=bot.locale['eventstop'], description=text)
+        embed.set_image(url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
+        embed.set_footer(text=loading, icon_url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
+    elif reward == "Coins":
+        embed = discord.Embed(title=bot.locale['eventstop'], description=text)
+        embed.set_image(url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
+        embed.set_footer(text=loading, icon_url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
+    elif reward == "coins":
+        embed = discord.Embed(title=bot.locale['eventstop'], description=text)
+        embed.set_image(url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
+        embed.set_footer(text=loading, icon_url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
+    else:
+        embed = discord.Embed(title=bot.locale['quests'], description=text)
+        embed.set_image(url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
+        embed.set_footer(text=loading, icon_url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
     message = await ctx.send(embed=embed)
 
     items = list()
     mons = list()
     item_found = False
     for item_id in bot.items:
-        if bot.items[item_id]["name"].lower() == reward.lower():
-            embed.set_thumbnail(url=f"{bot.config['mon_icon_repo']}rewards/reward_{item_id}_1.png")
-            embed.title = f"{bot.items[item_id]['name']} {bot.locale['quests']}"
+        if area[1] == "Unknown Area":
+            footer_text = area[1]
+            loading = f"{footer_text}"
+            embed.description = bot.locale["no_area_found"]
+            item_found = True
+        elif bot.items[item_id]["name"].lower() == reward.lower():
+            embed.set_thumbnail(url=f"{bot.config['mon_icon_repo']}reward/item/{item_id}.png")
+            embed.title = f"{bot.items[item_id]['name']} {bot.locale['quests']} - {area[1]}"
             items.append(int(item_id))
             item_found = True
+            quests = await queries.get_dataitem(bot.config, area[0], item_id)
+            quests2 = await queries.get_alt_dataitem(bot.config, area[0], item_id)
     if not item_found:
         mon = details(reward, bot.config['mon_icon_repo'], bot.config['language'])
-        embed.set_thumbnail(url=f"{bot.config['mon_icon_repo']}pokemon_icon_{str(mon.id).zfill(3)}_00.png")
-        embed.title = f"{mon.name} {bot.locale['quests']}"
+        if reward.startswith("Mega") or reward.startswith("mega"):
+            embed.title = f"{mon.name} {bot.locale['mega']} - {area[1]}"
+            embed.set_thumbnail(url=f"{bot.config['mon_icon_repo']}reward/mega_resource/{str(mon.id)}.png")
+            quests = await queries.get_datamega(bot.config, area[0])
+            quests2 = await queries.get_alt_datamega(bot.config, area[0])
+        elif mon.name == "Kecleon":
+            embed.title = f"{mon.name} {bot.locale['eventstop']} - {area[1]}"
+            embed.set_thumbnail(url=f"{bot.config['mon_icon_repo']}pokemon/{str(mon.id)}.png")
+            quests = await queries.get_datak(bot.config, area[0])
+        elif mon.name == "Coins":
+            embed.title = f"{mon.name} {bot.locale['eventstop']} - {area[1]}"
+            embed.set_thumbnail(url=f"{bot.config['mon_icon_repo']}misc/event_coin.png")
+            quests = await queries.get_datacoin(bot.config, area[0])
+        elif mon.name == "Stardust":
+            embed.title = f"{mon.name} {bot.locale['quests']} - {area[1]}"
+            embed.set_thumbnail(url=f"{bot.config['mon_icon_repo']}reward/stardust/0.png")
+            quests = await queries.get_datastar(bot.config, area[0])
+            quests2 = await queries.get_alt_datastar(bot.config, area[0])
+        else:
+            embed.title = f"{mon.name} {bot.locale['quests']} - {area[1]}"
+            embed.set_thumbnail(url=f"{bot.config['mon_icon_repo']}pokemon/{str(mon.id)}.png")
+            quests = await queries.get_data(bot.config, area[0], mon.id)
+            quests2 = await queries.get_alt_data(bot.config, area[0], mon.id)
         mons.append(mon.id)
     
-    await message.edit(embed=embed)
-
-    quests = await queries.get_active_quests(bot.config, area[0])
-
     length = 0
     reward_mons = list()
     reward_items = list()
     lat_list = list()
     lon_list = list()
 
-    for quest_json, quest_text, lat, lon, stop_name, stop_id in quests:
-        quest_json = json.loads(quest_json)
-
-        found_rewards = True
-        mon_id = 0
-        item_id = 0
-
-        if bot.config['db_scan_schema'] == "rdm":
-            if 'pokemon_id' in quest_json[0]["info"]:
-                mon_id = quest_json[0]["info"]["pokemon_id"]
-            if 'item_id' in quest_json[0]["info"]:
-                item_id = quest_json[0]["info"]["item_id"]
-        elif bot.config['db_scan_schema'] == "mad":
-            item_id = quest_json[0]["item"]["item"]
-            mon_id = quest_json[0]["pokemon_encounter"]["pokemon_id"]
-        if item_id in items:
-            reward_items.append([item_id, lat, lon])
-            emote_name = f"i{item_id}"
-            emote_img = f"{bot.config['mon_icon_repo']}rewards/reward_{item_id}_1.png"
-        elif mon_id in mons:
+    embed.description = text
+    if not item_found and mon.name == "Kecleon":
+        for lat, lon, stop_name, stop_id, expiration in quests:
+            end = datetime.fromtimestamp(expiration).strftime(bot.locale['time_format_hm'])
+            found_rewards = True
+            mon_id = 352
             reward_mons.append([mon_id, lat, lon])
             emote_name = f"m{mon_id}"
-            emote_img = f"{bot.config['mon_icon_repo']}pokemon_icon_{str(mon_id).zfill(3)}_00.png"
-        else:
-            found_rewards = False
+            emote_img = f"{bot.config['mon_icon_repo']}pokemon/{str(mon.id)}.png"
+    
+            if found_rewards:
+                if len(stop_name)+len(end) >= 26:
+                    stop_name = stop_name[0:25]
+                lat_list.append(lat)
+                lon_list.append(lon)
 
-        if found_rewards:
-            if len(stop_name) >= 30:
-                stop_name = stop_name[0:27] + "..."
-            lat_list.append(lat)
-            lon_list.append(lon)
+                if bot.config['use_map']:
+                    map_url = bot.map_url.quest(lat, lon, stop_id)
+                else:
+                    map_url = f"https://www.google.com/maps/search/?api=1&query={lat},{lon}"
 
-            if bot.config['use_map']:
-                map_url = bot.map_url.quest(lat, lon, stop_id)
+                entry = f"[{stop_name} **{end}**]({map_url})\n"
+                if length + len(entry) >= 2400:
+                    theend = f"and more..."
+                    text = text + theend
+                    break
+                else:
+                    text = text + entry
+                    length = length + len(entry)
+    elif not item_found and mon.name == "Coins":
+        for lat, lon, stop_name, stop_id, expiration in quests:
+            end = datetime.fromtimestamp(expiration).strftime(bot.locale['time_format_hm'])
+            found_rewards = True
+            mon_id = 99999
+            reward_mons.append([mon_id, lat, lon])
+            emote_name = f"m{mon_id}"
+            emote_img = f"{bot.config['mon_icon_repo']}misc/event_coin.png"
+    
+            if found_rewards:
+                if len(stop_name)+len(end) >= 26:
+                    stop_name = stop_name[0:25]
+                lat_list.append(lat)
+                lon_list.append(lon)
+
+                if bot.config['use_map']:
+                    map_url = bot.map_url.quest(lat, lon, stop_id)
+                else:
+                    map_url = f"https://www.google.com/maps/search/?api=1&query={lat},{lon}"
+
+                entry = f"[{stop_name} **{end}**]({map_url})\n"
+                if length + len(entry) >= 2400:
+                    theend = f"and more..."
+                    text = text + theend
+                    break
+                else:
+                    text = text + entry
+                    length = length + len(entry)
+    elif not item_found and mon.name == "Stardust":
+        for quest_reward_amount, quest_text, lat, lon, stop_name, stop_id in quests:
+            found_rewards = True
+            amount = quest_reward_amount
+            mon_id = 99998
+            reward_mons.append([mon_id, lat, lon])
+            emote_name = f"s{amount}"
+            emote_img = f"{bot.config['mon_icon_repo']}reward/stardust/0.png"
+            if found_rewards:
+                if len(stop_name) >= 31:
+                    stop_name = stop_name[0:30]
+                lat_list.append(lat)
+                lon_list.append(lon)
+
+                if bot.config['use_map']:
+                    map_url = bot.map_url.quest(lat, lon, stop_id)
+                else:
+                    map_url = f"https://www.google.com/maps/search/?api=1&query={lat},{lon}"
+
+                entry = f"[{stop_name} **{amount}**]({map_url})\n"
+                if length + len(entry) >= 2400:
+                    theend = f"and more..."
+                    text = text + theend
+                    break
+                else:
+                    text = text + entry
+                    length = length + len(entry)
+        for alternative_quest_reward_amount, alternative_quest_text, lat, lon, stop_name, stop_id in quests2:
+            found_rewards = True
+            amount = alternative_quest_reward_amount
+            mon_id = 99998
+            reward_mons.append([mon_id, lat, lon])
+            emote_name = f"s{amount}"
+            emote_img = f"{bot.config['mon_icon_repo']}reward/stardust/0.png"
+            if found_rewards:
+                if len(stop_name) >= 22:
+                    stop_name = stop_name[0:21]
+                lat_list.append(lat)
+                lon_list.append(lon)
+
+                if bot.config['use_map']:
+                    map_url = bot.map_url.quest(lat, lon, stop_id)
+                else:
+                    map_url = f"https://www.google.com/maps/search/?api=1&query={lat},{lon}"
+
+                entry = f"[{stop_name} **{amount}-NO AR**]({map_url})\n"
+                if length + len(entry) >= 2400:
+                    theend = f"lots more..."
+                    text = text + theend
+                    break
+                else:
+                    text = text + entry
+                    length = length + len(entry)
+    else:
+        for quest_json, quest_text, lat, lon, stop_name, stop_id in quests:
+            quest_json = json.loads(quest_json)
+            found_rewards = True
+            shiny = False
+            mon_id = 0
+            item_id = 0
+            if 'pokemon_id' in quest_json[0]["info"]:
+                    mon_id = quest_json[0]["info"]["pokemon_id"]
+            if 'item_id' in quest_json[0]["info"]:
+                    item_id = quest_json[0]["info"]["item_id"]
+                    amount = quest_json[0]["info"]["amount"]
+            if 'shiny' in quest_json[0]["info"]:
+                    shiny = quest_json[0]["info"]["shiny"]
+            if item_id in items:
+                reward_items.append([item_id, lat, lon])
+                emote_name = f"i{item_id}"
+                emote_img = f"{bot.config['mon_icon_repo']}reward/item/{item_id}.png"
+            elif mon_id in mons and reward.startswith("Mega") or mon_id in mons and reward.startswith("mega"):
+                reward_items = 99997
+                reward_mons.append([mon_id, lat, lon])
+                emote_name = f"e{mon_id}"
+                emote_img = f"{bot.config['mon_icon_repo']}reward/mega_resource/{str(mon.id)}.png"
+            elif mon_id in mons and shiny:
+                reward_mons.append([mon_id, lat, lon])
+                emote_name = f"m{mon_id}"
+                emote_img = f"{bot.config['mon_icon_repo']}pokemon/{str(mon.id)}_s.png"
+            elif mon_id in mons:
+                reward_mons.append([mon_id, lat, lon])
+                emote_name = f"m{mon_id}"
+                emote_img = f"{bot.config['mon_icon_repo']}pokemon/{str(mon.id)}.png"
             else:
-                map_url = f"https://www.google.com/maps/search/?api=1&query={lat},{lon}"
-            map_url = short(map_url)
+                found_rewards = False
+            if found_rewards:
+                if len(stop_name) >= 31:
+                    stop_name = stop_name[0:30]
+                lat_list.append(lat)
+                lon_list.append(lon)
 
-            entry = f"[{stop_name}]({map_url})\n"
-            if length + len(entry) >= 2048:
-                break
+                if bot.config['use_map']:
+                    map_url = bot.map_url.quest(lat, lon, stop_id)
+                else:
+                    map_url = f"https://www.google.com/maps/search/?api=1&query={lat},{lon}"
+
+                if item_id in items:
+                    entry = f"[{stop_name} **{amount}**]({map_url})\n"
+                elif shiny:
+                    entry = f"[{stop_name} **SHINY**]({map_url})\n"
+                    embed.set_thumbnail(url=f"{bot.config['mon_icon_repo']}pokemon/{str(mon.id)}_s.png")
+                    embed.title = f"{mon.name} Quests SHINY DETECTED!! - {area[1]}"
+                else:
+                    entry = f"[{stop_name}]({map_url})\n"
+                if length + len(entry) >= 2400:
+                    if shiny:
+                        text = entry + text
+                        length = length + len(entry)
+                    else:
+                        theend = f" lots more ..."
+                        text = text + theend
+                        break
+                else:
+                    if shiny:
+                        text = entry + text
+                        length = length + len(entry)
+                    else:
+                        text = text + entry
+                        length = length + len(entry)
+        for alternative_quest_json, alternative_quest_text, lat, lon, stop_name, stop_id in quests2:
+            quest_json = json.loads(alternative_quest_json)
+            found_alt_rewards = True
+            shiny = False
+            mon_id = 0
+            item_id = 0
+            if 'pokemon_id' in quest_json[0]["info"]:
+                    mon_id = quest_json[0]["info"]["pokemon_id"]
+            if 'item_id' in quest_json[0]["info"]:
+                    item_id = quest_json[0]["info"]["item_id"]
+                    amount = quest_json[0]["info"]["amount"]
+            if 'shiny' in quest_json[0]["info"]:
+                    shiny = quest_json[0]["info"]["shiny"]
+            if item_id in items:
+                reward_items.append([item_id, lat, lon])
+                emote_name = f"i{item_id}"
+                emote_img = f"{bot.config['mon_icon_repo']}reward/item/{item_id}.png"
+            elif mon_id in mons and reward.startswith("Mega") or mon_id in mons and reward.startswith("mega"):
+                reward_items = 99997
+                reward_mons.append([mon_id, lat, lon])
+                emote_name = f"e{mon_id}"
+                emote_img = f"{bot.config['mon_icon_repo']}reward/mega_resource/{str(mon.id)}.png"
+            elif mon_id in mons and shiny:
+                reward_mons.append([mon_id, lat, lon])
+                emote_name = f"m{mon_id}"
+                emote_img = f"{bot.config['mon_icon_repo']}pokemon/{str(mon.id)}_s.png"
+            elif mon_id in mons:
+                reward_mons.append([mon_id, lat, lon])
+                emote_name = f"m{mon_id}"
+                emote_img = f"{bot.config['mon_icon_repo']}pokemon/{str(mon.id)}.png"
             else:
-                text = text + entry
-                length = length + len(entry)
+                found_alt_rewards = False
+            if found_alt_rewards:
+                if len(stop_name) >= 26:
+                    stop_name = stop_name[0:25]
+                lat_list.append(lat)
+                lon_list.append(lon)
 
+                if bot.config['use_map']:
+                    map_url = bot.map_url.quest(lat, lon, stop_id)
+                else:
+                    map_url = f"https://www.google.com/maps/search/?api=1&query={lat},{lon}"
+
+                if item_id in items:
+                    entry = f"[{stop_name} **{amount}-NO AR**]({map_url})\n"
+                elif shiny:
+                    entry = f"[{stop_name} **SHINY-NO AR**]({map_url})\n"
+                    embed.set_thumbnail(url=f"{bot.config['mon_icon_repo']}pokemon/{str(mon.id)}_s.png")
+                    embed.title = f"{mon.name} Quests SHINY DETECTED!! - {area[1]}"
+                else:
+                    entry = f"[{stop_name} **NO AR**]({map_url})\n"
+                if length + len(entry) >= 2400:
+                    if shiny:
+                        text = entry + text
+                        length = length + len(entry)
+                    else:
+                        theend = f" lots more ..."
+                        text = text + theend
+                        break
+                else:
+                    if shiny:
+                        text = entry + text
+                        length = length + len(entry)
+                    else:
+                        text = text + entry
+                        length = length + len(entry)
     embed.description = text
-    image = ""
+    image = "https://raw.githubusercontent.com/ccev/dp_emotes/master/blank.png"
     if length > 0:
         if bot.config['use_static']:
             if bot.config['static_provider'] == "mapbox":
@@ -493,14 +756,12 @@ async def quest(ctx, areaname = "", *, reward):
 
 @bot.event
 async def on_ready():
-    #await bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.watching, name="Discordopole"))
-    print("Connected to Discord. Ready to take commands.")
-
+    for extension in extensions:
+        await bot.load_extension(extension)
     if bot.config['use_static']:
         trash_channel = await bot.fetch_channel(bot.config['host_channel'])
         bot.static_map = util.maps.static_map(config['static_provider'], config['static_key'], trash_channel, bot.config['mon_icon_repo'])
+    print("Connected to Discord. Ready to take commands.")
 
-if __name__ == "__main__":
-    for extension in extensions:
-        bot.load_extension(extension)
+if __name__ == '__main__':
     bot.run(bot.config['bot_token'])

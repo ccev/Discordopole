@@ -38,6 +38,9 @@
     "today": "dzisiaj",
     "pokemon_seen_today": "Pokemony widziane dzisiaj",
     "quests": "Questy",
+	"eventstop": "Pokéstops",
+	"mega": "Mega Energy",
+	"stardust": "Quests",
     "grunts": "Inwazje",
     "leaders": "Liderzy",
     "moves": "Ataki",
@@ -47,6 +50,8 @@
     "egg": "Egg",
     "loading_quests": "Ładowanie Questów",
     "no_quests_found": "❌ Brak Questów",
+    "no_area_found": "❌ No Areas were found that match your request. \n Please type !q AREA (pokemon/item) using an area from the list of searchable areas.",
+	"unknown": "Unknown Area",
     "average_iv": "📊 Średnie IV",
     "average_iv_of_active_mons": "📊 Średnie IV Pokemonów na mapie"
 }

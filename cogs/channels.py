@@ -23,7 +23,7 @@ class Channels(commands.Cog):
 
         if not mon_id is None and mon_id > 0:
             mon_name = details.id(mon_id, self.bot.config['language'])
-            mon_img = f"{self.bot.config['mon_icon_repo']}pokemon_icon_{str(mon_id).zfill(3)}_{str(form).zfill(2)}.png"
+            mon_img = f"{self.bot.config['mon_icon_repo']}pokemon/{str(mon_id)}_{str(form)}.png"
 
             if move_1 > self.bot.max_moves_in_list:
                 move_1 = "?"
@@ -116,5 +116,5 @@ class Channels(commands.Cog):
     async def before_channels(self):
         await self.bot.wait_until_ready()
 
-def setup(bot):
-    bot.add_cog(Channels(bot))
+async def setup(bot):
+    await bot.add_cog(Channels(bot))
