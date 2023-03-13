@@ -60,7 +60,7 @@ class Boards(commands.Cog):
                                 text = text + entry
                                 length = length + len(entry)
                         
-                embed = discord.Embed(title=board['title'], description=text, timestamp=datetime.utcnow())
+                embed = discord.Embed(title=board['title'], description=text, timestamp=datetime.now())
                 embed.set_footer(text=area[1])
 
                 await message.edit(embed=embed)
@@ -98,7 +98,7 @@ class Boards(commands.Cog):
                                 text = text + entry
                                 length = length + len(entry)
                     
-                embed = discord.Embed(title=board['title'], description=text, timestamp=datetime.utcnow())
+                embed = discord.Embed(title=board['title'], description=text, timestamp=datetime.now())
                 embed.set_footer(text=area[1])
 
                 await message.edit(embed=embed)
@@ -363,7 +363,7 @@ class Boards(commands.Cog):
                         text = f"{text}{self.bot.custom_emotes['cliff']} **{leader_active[0][0]:,}** {self.bot.locale['leaders']}"
 
                     
-                embed = discord.Embed(title=board['title'], description=text.replace(",", self.bot.locale['decimal_comma']), timestamp=datetime.utcnow())
+                embed = discord.Embed(title=board['title'], description=text.replace(",", self.bot.locale['decimal_comma']), timestamp=datetime.now())
                 embed.set_footer(text=area[1])
 
                 await message.edit(embed=embed)
@@ -440,7 +440,7 @@ class Boards(commands.Cog):
                 else:
                     text = self.bot.locale["empty_board"]  
 
-                embed = discord.Embed(title=board['title'], description=text, timestamp=datetime.utcnow())
+                embed = discord.Embed(title=board['title'], description=text, timestamp=datetime.now())
                 embed.set_footer(text=area[1])
                 embed.set_image(url=static_map_img)
 
