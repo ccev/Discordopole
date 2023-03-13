@@ -2230,5 +2230,69 @@
     "duration": 0,
     "energy": 0,
     "dps": 0
-	}
+	},
+  "340": {
+    "name": "Techno Blast Shock",
+    "type": "Electric",
+    "damage": 0,
+    "duration": 0,
+    "energy": 0,
+    "dps": 0
+  },
+  "341": {
+    "name": "Fly",
+    "type": "Flying",
+    "damage": 80,
+    "duration": 1800,
+    "energy": 50,
+    "dps": 44.4
+  },
+  "342": {
+    "name": "V-create",
+    "type": "Fire",
+    "damage": 95,
+    "duration": 2800,
+    "energy": 33,
+    "dps": 33.9
+  },
+  "343": {
+    "name": "Leaf Storm",
+    "type": "Grass",
+    "damage": 130,
+    "duration": 2500,
+    "energy": 100,
+    "dps": 52
+  },
+  "344": {
+    "name": "Tri Attack",
+    "type": "Normal",
+    "damage": 75,
+    "duration": 2500,
+    "energy": 50,
+    "dps": 30
+  },
+  "345": {
+    "name": "Gust",
+    "type": "Flying",
+    "damage": 25,
+    "duration": 2000,
+    "energy": 20,
+    "dps": 12.5
+  },
+  "346": {
+    "name": "Incinerate",
+    "type": "Fire",
+    "damage": 29,
+    "duration": 2300,
+    "energy": 20,
+    "dps": 12.6
+  },
+  "348": {
+    "name": "Feather Dance",
+    "type": "Flying",
+    "damage": 35,
+    "duration": 2800,
+    "energy": 50,
+    "dps": 12.5
+  }
 }

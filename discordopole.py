@@ -23,7 +23,7 @@ intents = discord.Intents.default()
 intents.message_content = True
 config = util.config.create_config("config/config.ini")
 bot = commands.Bot(command_prefix=config['prefix'], case_insensitive=1, intents=intents, activity=activity, status=discord.Status.online)
-bot.max_moves_in_list = 340
+bot.max_moves_in_list = 348
 bot.config = config
 short = pyshorteners.Shortener().tinyurl.short
 
