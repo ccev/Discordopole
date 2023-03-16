@@ -271,7 +271,7 @@ async def statboard_raid_active(config, pool, area):
     if config['db_scan_schema'] == "mad":
         query = f"select count(raid.gym_id), ifnull(sum(level = 1), 0), ifnull(sum(level = 2),0), ifnull(sum(level = 3),0), ifnull(sum(level = 4),0), ifnull(sum(level = 5),0), ifnull(sum(level = 6),0) from gym left join raid on gym.gym_id = raid.gym_id where end >= utc_timestamp() and start <= utc_timestamp() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude));"
     elif config['db_scan_schema'] == "rdm":
-        query = f"select count(id), ifnull(sum(raid_level = 1), 0), ifnull(sum(raid_level = 2),0), ifnull(sum(raid_level = 3),0), ifnull(sum(raid_level = 4),0), ifnull(sum(raid_level = 5),0), ifnull(sum(raid_level = 6),0) from gym where raid_battle_timestamp < UNIX_TIMESTAMP() AND raid_end_timestamp >= UNIX_TIMESTAMP() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon));"
+        query = f"select count(id), ifnull(sum(raid_level = 1), 0), ifnull(sum(raid_level = 2),0), ifnull(sum(raid_level = 3),0), ifnull(sum(raid_level = 4),0), ifnull(sum(raid_level = 5),0), ifnull(sum(raid_level = 6),0), ifnull(sum(raid_level = 7),0), ifnull(sum(raid_level = 8),0), ifnull(sum(raid_level = 9),0), ifnull(sum(raid_level = 10),0) from gym where raid_battle_timestamp < UNIX_TIMESTAMP() AND raid_end_timestamp >= UNIX_TIMESTAMP() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon));"
     statboard_raid_active = await execute(config, pool, query)
 
     return statboard_raid_active
@@ -280,7 +280,7 @@ async def statboard_egg_active(config, pool, area):
     if config['db_scan_schema'] == "mad":
         query = f"select count(raid.gym_id), ifnull(sum(level = 1), 0), ifnull(sum(level = 2),0), ifnull(sum(level = 3),0), ifnull(sum(level = 4),0), ifnull(sum(level = 5),0), ifnull(sum(level = 6),0) from gym left join raid on gym.gym_id = raid.gym_id where start > utc_timestamp() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude));"
     elif config['db_scan_schema'] == "rdm":
-        query = f"select count(id), ifnull(sum(raid_level = 1), 0), ifnull(sum(raid_level = 2),0), ifnull(sum(raid_level = 3),0), ifnull(sum(raid_level = 4),0), ifnull(sum(raid_level = 5),0), ifnull(sum(raid_level = 6),0) from gym WHERE raid_battle_timestamp >= UNIX_TIMESTAMP() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon));"
+        query = f"select count(id), ifnull(sum(raid_level = 1), 0), ifnull(sum(raid_level = 2),0), ifnull(sum(raid_level = 3),0), ifnull(sum(raid_level = 4),0), ifnull(sum(raid_level = 5),0), ifnull(sum(raid_level = 6),0), ifnull(sum(raid_level = 7),0), ifnull(sum(raid_level = 8),0), ifnull(sum(raid_level = 9),0), ifnull(sum(raid_level = 10),0) from gym WHERE raid_battle_timestamp >= UNIX_TIMESTAMP() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon));"
     statboard_egg_active = await execute(config, pool, query)
 
     return statboard_egg_active
@@ -298,7 +298,7 @@ async def statboard_lure_active(config, pool, area):
     if config['db_scan_schema'] == "mad":
         query = f"select count(pokestop_id), ifnull(sum(active_fort_modifier = 501), 0), ifnull(sum(active_fort_modifier = 502), 0), ifnull(sum(active_fort_modifier = 503), 0), ifnull(sum(active_fort_modifier = 504), 0), ifnull(sum(active_fort_modifier = 505), 0) from pokestop where lure_expiration > UTC_TIMESTAMP() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude));"
     elif config['db_scan_schema'] == "rdm":
-        query = f"select count(id), ifnull(sum(lure_id = 501), 0), ifnull(sum(lure_id = 502), 0), ifnull(sum(lure_id = 503), 0), ifnull(sum(lure_id = 504), 0), ifnull(sum(lure_id = 505), 0) from pokestop where lure_expire_timestamp is not NULL and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon));"
+        query = f"select count(id), ifnull(sum(lure_id = 501), 0), ifnull(sum(lure_id = 502), 0), ifnull(sum(lure_id = 503), 0), ifnull(sum(lure_id = 504), 0), ifnull(sum(lure_id = 505), 0) from pokestop where lure_expire_timestamp is not NULL and lure_expire_timestamp >= UNIX_TIMESTAMP() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon));"
     statboard_lure_active = await execute(config, pool, query)
 
     return statboard_lure_active
@@ -307,7 +307,7 @@ async def statboard_grunt_active(config, pool, area):
     if config['db_scan_schema'] == "mad":
         query = f"select count(pokestop_id) from pokestop, pokestop_incident where pokestop.pokestop_id = pokestop_incident.pokestop_id AND pokestop_incident.incident_expiration > UTC_TIMESTAMP() AND pokestop_incident.character_display NOT IN (41,42,43,44) and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude));"
     elif config['db_scan_schema'] == "rdm":
-        query = f"select count(incident.pokestop_id) from incident, pokestop where pokestop.id = incident.pokestop_id AND incident.character not in (41,42,43,44) and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(pokestop.lat, pokestop.lon));"
+        query = f"select count(incident.pokestop_id) from incident, pokestop where pokestop.id = incident.pokestop_id AND incident.character not in (41,42,43,44) and incident.expiration >= UNIX_TIMESTAMP() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(pokestop.lat, pokestop.lon));"
     statboard_grunt_active = await execute(config, pool, query)
 
     return statboard_grunt_active
@@ -316,7 +316,7 @@ async def statboard_leader_active(config, pool, area):
     if config['db_scan_schema'] == "mad":
         query = f"select count(pokestop_id) from pokestop, pokestop_incident where pokestop.pokestop_id = pokestop_incident.pokestop_id AND pokestop_incident.incident_expiration > UTC_TIMESTAMP() AND pokestop_incident.character_display >= 41 AND incident_grunt_type <= 44 and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude));"
     elif config['db_scan_schema'] == "rdm":
-        query = f"select count(incident.pokestop_id) from incident, pokestop where pokestop.id = incident.pokestop_id AND incident.character in (41,42,43,44) and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(pokestop.lat, pokestop.lon));"
+        query = f"select count(incident.pokestop_id) from incident, pokestop where pokestop.id = incident.pokestop_id AND incident.character in (41,42,43,44) and incident.expiration >= UNIX_TIMESTAMP() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(pokestop.lat, pokestop.lon));"
     statboard_leader_active = await execute(config, pool, query)
 
     return statboard_leader_active
