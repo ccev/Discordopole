@@ -9,14 +9,6 @@ async def execute(config, query):
             r = await cur.fetchall()
     return r
 
-async def alt_execute(config, query):
-    alt_pool = await aiomysql.create_pool(host=config['alt_db_host'],user=config['alt_db_user'],password=config['alt_db_pass'],db=config['alt_db_dbname'],port=config['alt_db_port'])
-    async with alt_pool.acquire() as conn2:
-        async with conn2.cursor() as cur2:
-            await cur2.execute(query)
-            r2 = await cur2.fetchall()
-    return r2
-
 async def get_oldest_mon_date(config, use_alt_table=False):
     if use_alt_table:
         table = config['alt_pokemon_table']
@@ -26,10 +18,7 @@ async def get_oldest_mon_date(config, use_alt_table=False):
         query = f"select min(last_modified) from {table};"
     elif config['db_scan_schema'] == "rdm":
         query = f"select from_unixtime(min(first_seen_timestamp)) from {table};"   
-    if use_alt_table:
-        oldest_mon_date = await alt_execute(config, query)
-    else:
-        oldest_mon_date = await execute(config, query)
+    oldest_mon_date = await execute(config, query)
     for var in oldest_mon_date:
         oldest_mon_date = var[0]
 
@@ -46,10 +35,7 @@ async def get_shiny_count(mon_id, area, starttime, endtime, config, use_alt_tabl
         query = f"select count({table}.pokemon_id) from {table} join {shiny_table} stats on stats.encounter_id = {table}.encounter_id where stats.is_shiny=1 and {table}.pokemon_id={mon_id} AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude)) AND disappear_time > convert_tz('{starttime}', '{config['timezone']}', '+00:00') AND disappear_time < convert_tz('{endtime}', '{config['timezone']}', '+00:00')"
     elif config['db_scan_schema'] == "rdm":
         query = f"select count(pokemon_id) from {table} where shiny = 1 AND pokemon_id = {mon_id} AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon)) AND first_seen_timestamp > UNIX_TIMESTAMP(convert_tz('{starttime}', '{config['timezone']}', '+00:00')) AND first_seen_timestamp < UNIX_TIMESTAMP(convert_tz('{endtime}', '{config['timezone']}', '+00:00'))"
-    if use_alt_table:
-        shiny_count = await alt_execute(config, query)
-    else:
-        shiny_count = await execute(config, query)
+    shiny_count = await execute(config, query)
     for var in shiny_count:
         shiny_count = var[0]
 
@@ -64,10 +50,7 @@ async def get_shiny_total(mon_id, area, starttime, endtime, config, use_alt_tabl
         query = f"select count(pokemon_id) from {table} where pokemon_id={mon_id} and disappear_time > utc_timestamp() - INTERVAL 8 WEEK and individual_attack is not null AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude)) AND disappear_time > convert_tz('{starttime}', '{config['timezone']}', '+00:00') AND disappear_time < convert_tz('{endtime}', '{config['timezone']}', '+00:00')"
     elif config['db_scan_schema'] == "rdm":
         query = f"SELECT count(pokemon_id) from {table} WHERE pokemon_id = {mon_id} and atk_iv is not null AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon)) and first_seen_timestamp > UNIX_TIMESTAMP(convert_tz('{starttime}', '{config['timezone']}', '+00:00')) AND first_seen_timestamp < UNIX_TIMESTAMP(convert_tz('{endtime}', '{config['timezone']}', '+00:00'))"
-    if use_alt_table:
-        shiny_total = await alt_execute(config, query)
-    else:
-        shiny_total = await execute(config, query)
+    shiny_total = await execute(config, query)
     for var in shiny_total:
         shiny_total = var[0]
 
@@ -82,10 +65,7 @@ async def get_scan_numbers(mon_id, area, starttime, endtime, config, use_alt_tab
         query = f"select count(pokemon_id) as scanned, ifnull(SUM(individual_attack = 15 AND individual_defense = 15 AND individual_stamina = 15), 0) AS iv100, ifnull(SUM(individual_attack = 0 AND individual_defense = 0 AND individual_stamina = 0), 0) AS iv0, ifnull(SUM(individual_attack + individual_defense + individual_stamina >= 41), 0) AS iv90 from {table} where pokemon_id = {mon_id} and individual_attack IS NOT NULL AND disappear_time > convert_tz('{starttime}', '{config['timezone']}', '+00:00') AND disappear_time < convert_tz('{endtime}', '{config['timezone']}', '+00:00') AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))"
     elif config['db_scan_schema'] == "rdm":
         query = f"select count(id) as scanned, ifnull(SUM(iv = 100), 0) AS iv100, ifnull(SUM(iv = 0), 0) AS iv0, ifnull(SUM(iv > 90), 0) AS iv90 from {table} where pokemon_id = {mon_id} and iv IS NOT NULL AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon)) AND first_seen_timestamp > UNIX_TIMESTAMP(convert_tz('{starttime}', '{config['timezone']}', '+00:00')) AND first_seen_timestamp < UNIX_TIMESTAMP(convert_tz('{endtime}', '{config['timezone']}', '+00:00'))"
-    if use_alt_table:
-        hundo_count = await alt_execute(config, query)
-    else:
-        hundo_count = await execute(config, query)
+    hundo_count = await execute(config, query)
 
     return hundo_count
 
@@ -98,10 +78,7 @@ async def get_big_numbers(mon_id, area, starttime, endtime, config, use_alt_tabl
         query = f"select count(pokemon_id), ifnull(sum(pokemon_id = {mon_id}), 0), ifnull(sum(weather_boosted_condition > 0 and pokemon_id = {mon_id}), 0), min(disappear_time) from {table} WHERE disappear_time > convert_tz('{starttime}', '{config['timezone']}', '+00:00') AND disappear_time < convert_tz('{endtime}', '{config['timezone']}', '+00:00') AND ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude))"
     elif config['db_scan_schema'] == "rdm":
         query = f"select count(id), ifnull(sum(pokemon_id = {mon_id}), 0), ifnull(sum(weather > 0 and pokemon_id = {mon_id}), 0), FROM_UNIXTIME(min(first_seen_timestamp)) from {table} WHERE ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon)) AND first_seen_timestamp > UNIX_TIMESTAMP(convert_tz('{starttime}', '{config['timezone']}', '+00:00')) AND first_seen_timestamp < UNIX_TIMESTAMP(convert_tz('{endtime}', '{config['timezone']}', '+00:00'))"
-    if use_alt_table:
-        big_numbers = await alt_execute(config, query)
-    else:
-        big_numbers = await execute(config, query)
+    big_numbers = await execute(config, query)
 
     return big_numbers
 
@@ -151,10 +128,7 @@ async def statboard_mon_active(config, area, use_alt_table=False):
         query = f"select count(pokemon_id) from {table} where disappear_time > utc_timestamp() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude));"
     elif config['db_scan_schema'] == "rdm":
         query = f"select count(id) from {table} WHERE expire_timestamp > UNIX_TIMESTAMP() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon));"
-    if use_alt_table:
-        statboard_mon_active = await alt_execute(config, query)
-    else:
-        statboard_mon_active = await execute(config, query)
+    statboard_mon_active = await execute(config, query)
 
     return statboard_mon_active
 
@@ -167,10 +141,7 @@ async def statboard_mon_today(config, area, use_alt_table=False):
         query = f"select count(pokemon_id) from {table} where CONVERT_TZ({table}.disappear_time,'+00:00','{config['timezone']}') > curdate() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude));"
     elif config['db_scan_schema'] == "rdm":
         query = f"select count(id) from {table} WHERE CONVERT_TZ(from_unixtime(first_seen_timestamp),'+00:00','{config['timezone']}') > CURDATE() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon));"
-    if use_alt_table:
-        statboard_mon_today = await alt_execute(config, query)
-    else:
-        statboard_mon_today = await execute(config, query)
+    statboard_mon_today = await execute(config, query)
 
     return statboard_mon_today
 
@@ -183,10 +154,7 @@ async def statboard_hundos_active(config, area, use_alt_table=False):
         query = f"select count(pokemon_id) from {table} where individual_attack = 15 AND individual_defense = 15 AND individual_stamina = 15 AND disappear_time > utc_timestamp() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude));"
     elif config['db_scan_schema'] == "rdm":
         query = f"select count(id) from {table} WHERE iv = 100 AND expire_timestamp > UNIX_TIMESTAMP() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon));"
-    if use_alt_table:
-        statboard_hundos_active = await alt_execute(config, query)
-    else:
-        statboard_hundos_active = await execute(config, query)
+    statboard_hundos_active = await execute(config, query)
 
     return statboard_hundos_active
 
@@ -200,10 +168,7 @@ async def statboard_hundos_today(config, area, use_alt_table=False):
         query = f"select count(pokemon_id) from {table} where individual_attack = 15 AND individual_defense = 15 AND individual_stamina = 15 AND CONVERT_TZ({table}.disappear_time,'+00:00','{config['timezone']}') > curdate() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude));"
     elif config['db_scan_schema'] == "rdm":
         query = f"select count(id) from {table} where iv = 100 AND CONVERT_TZ(from_unixtime(first_seen_timestamp),'+00:00','{config['timezone']}') > CURDATE() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon));"
-    if use_alt_table:
-        statboard_hundos_today = await alt_execute(config, query)
-    else:
-        statboard_hundos_today = await execute(config, query)
+    statboard_hundos_today = await execute(config, query)
 
     return statboard_hundos_today
 
@@ -217,10 +182,7 @@ async def statboard_iv0_active(config, area, use_alt_table=False):
         query = f"select count(pokemon_id) from {table} where individual_attack = 0 AND individual_defense = 0 AND individual_stamina = 0 AND disappear_time > utc_timestamp() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude));"
     elif config['db_scan_schema'] == "rdm":
         query = f"select count(id) from {table} WHERE iv = 0 AND expire_timestamp > UNIX_TIMESTAMP() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon));"
-    if use_alt_table:
-        statboard_iv0_active = await alt_execute(config, query)
-    else:
-        statboard_iv0_active = await execute(config, query)
+    statboard_iv0_active = await execute(config, query)
 
     return statboard_iv0_active
 
@@ -233,10 +195,7 @@ async def statboard_iv0_today(config, area, use_alt_table=False):
         query = f"select count(pokemon_id) from {table} where individual_attack = 0 AND individual_defense = 0 AND individual_stamina = 0 AND CONVERT_TZ({table}.disappear_time,'+00:00','{config['timezone']}') > curdate() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude));"
     elif config['db_scan_schema'] == "rdm":
         query = f"select count(id) from {table} where iv = 0 AND CONVERT_TZ(from_unixtime(first_seen_timestamp),'+00:00','{config['timezone']}') > CURDATE() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon));"
-    if use_alt_table:
-        statboard_iv0_today = await alt_execute(config, query)
-    else:
-        statboard_iv0_today = await execute(config, query)
+    statboard_iv0_today = await execute(config, query)
 
     return statboard_iv0_today
 
@@ -249,10 +208,7 @@ async def statboard_scanned_active(config, area, use_alt_table=False):
         query = f"select count(pokemon_id) from {table} where individual_attack is not NULL and disappear_time > utc_timestamp() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude));"
     elif config['db_scan_schema'] == "rdm":
         query = f"select count(id) from {table} WHERE iv is not NULL AND expire_timestamp > UNIX_TIMESTAMP() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon));"
-    if use_alt_table:
-        statboard_scanned_active = await alt_execute(config, query)
-    else:
-        statboard_scanned_active = await execute(config, query)
+    statboard_scanned_active = await execute(config, query)
 
     return statboard_scanned_active
 
@@ -265,10 +221,7 @@ async def statboard_scanned_today(config, area, use_alt_table=False):
         query = f"select count(pokemon_id) from {table} where individual_attack is not NULL AND CONVERT_TZ({table}.disappear_time,'+00:00','{config['timezone']}') > curdate() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude));"
     elif config['db_scan_schema'] == "rdm":
         query = f"select count(id) from {table} where iv is not NULL AND CONVERT_TZ(from_unixtime(first_seen_timestamp),'+00:00','{config['timezone']}') > CURDATE() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon));"
-    if use_alt_table:
-        statboard_scanned_today = await alt_execute(config, query)
-    else:
-        statboard_scanned_today = await execute(config, query)
+    statboard_scanned_today = await execute(config, query)
 
     return statboard_scanned_today
 
@@ -281,10 +234,7 @@ async def statboard_total_iv_active(config, area, use_alt_table=False):
         query = f"select ifnull(sum((individual_attack + individual_defense + individual_stamina)/45*100),0) from {table} where individual_attack is not NULL and disappear_time > utc_timestamp() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude));"
     elif config['db_scan_schema'] == "rdm":
         query = f"select ifnull(sum(iv),0) from {table} WHERE iv is not NULL AND expire_timestamp > UNIX_TIMESTAMP() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon));"
-    if use_alt_table:
-        statboard_total_iv_active = await alt_execute(config, query)
-    else:
-        statboard_total_iv_active = await execute(config, query)
+    statboard_total_iv_active = await execute(config, query)
 
     return statboard_total_iv_active
 
@@ -297,10 +247,7 @@ async def statboard_total_iv_today(config, area, use_alt_table=False):
         query = f"select ifnull(sum((individual_attack + individual_defense + individual_stamina)/45*100),0) from {table} where individual_attack is not NULL AND CONVERT_TZ({table}.disappear_time,'+00:00','{config['timezone']}') > curdate() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(latitude, longitude));"
     elif config['db_scan_schema'] == "rdm":
         query = f"select ifnull(sum(iv),0) from {table} where iv is not NULL AND CONVERT_TZ(from_unixtime(first_seen_timestamp),'+00:00','{config['timezone']}') > CURDATE() and ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON(({area}))'), point(lat, lon));"
-    if use_alt_table:
-        statboard_total_iv_today = await alt_execute(config, query)
-    else:
-        statboard_total_iv_today = await execute(config, query)
+    statboard_total_iv_today = await execute(config, query)
 
     return statboard_total_iv_today
 
