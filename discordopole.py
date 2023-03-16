@@ -1,6 +1,7 @@
 import discord
 import json
 import asyncio
+import aiomysql
 import os
 import dateparser
 from dateparser.search import search_dates
@@ -23,7 +24,7 @@ intents = discord.Intents.default()
 intents.message_content = True
 config = util.config.create_config("config/config.ini")
 bot = commands.Bot(command_prefix=config['prefix'], case_insensitive=1, intents=intents, activity=activity, status=discord.Status.online)
-bot.max_moves_in_list = 348
+bot.max_moves_in_list = 340
 bot.config = config
 short = pyshorteners.Shortener().tinyurl.short
 
@@ -133,11 +134,11 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None, alt_timespa
     print(f"timespan found in command: {timespan}")
     if config['timespan_in_footer']:
         if config['use_alt_table_for_pokemon']:
-            oldest_mon_date = await queries.get_oldest_mon_date(bot.config, use_alt_table=True)
+            oldest_mon_date = await queries.get_oldest_mon_date(bot.config, bot.pool, use_alt_table=True)
             if oldest_mon_date is None:
-                oldest_mon_date = await queries.get_oldest_mon_date(bot.config, use_alt_table=False)
+                oldest_mon_date = await queries.get_oldest_mon_date(bot.config, bot.pool, use_alt_table=False)
         else:
-            oldest_mon_date = await queries.get_oldest_mon_date(bot.config, use_alt_table=False)
+            oldest_mon_date = await queries.get_oldest_mon_date(bot.config, bot.pool, use_alt_table=False)
 
         if timespan is None:
             timespan = list([oldest_mon_date, datetime.now()])
@@ -188,7 +189,7 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None, alt_timespa
     alt_scan_numbers = ((0, 0, 0, 0),)
     alt_big_numbers = ((0, 0, 0, datetime.now()),)
     if bot.config['use_alt_table_for_pokemon']:
-        oldest_mon_date = await queries.get_oldest_mon_date(bot.config)
+        oldest_mon_date = await queries.get_oldest_mon_date(bot.config, bot.pool)
         if oldest_mon_date > timespan[0]:
             print(f"using alt table, because starttime older than oldest mon. starttime: {timespan[0]}, oldest mon: {oldest_mon_date}\n")
             if oldest_mon_date > timespan[1]:
@@ -196,18 +197,18 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None, alt_timespa
             else:
                 alt_timespan = list([timespan[0], oldest_mon_date])
                 timespan = list([oldest_mon_date, timespan[1]])
-            alt_shiny_count = await queries.get_shiny_count(mon.id, area[0], alt_timespan[0], alt_timespan[1], bot.config, use_alt_table=True)
-            alt_shiny_total = await queries.get_shiny_total(mon.id, area[0], alt_timespan[0], alt_timespan[1], bot.config, use_alt_table=True)
-            alt_scan_numbers = await queries.get_scan_numbers(mon.id, area[0], alt_timespan[0], alt_timespan[1], bot.config, use_alt_table=True)
-            alt_big_numbers = await queries.get_big_numbers(mon.id, area[0], alt_timespan[0], alt_timespan[1], bot.config, use_alt_table=True)
+            alt_shiny_count = await queries.get_shiny_count(mon.id, area[0], alt_timespan[0], alt_timespan[1], bot.config, bot.pool, use_alt_table=True)
+            alt_shiny_total = await queries.get_shiny_total(mon.id, area[0], alt_timespan[0], alt_timespan[1], bot.config, bot.pool, use_alt_table=True)
+            alt_scan_numbers = await queries.get_scan_numbers(mon.id, area[0], alt_timespan[0], alt_timespan[1], bot.config, bot.pool, use_alt_table=True)
+            alt_big_numbers = await queries.get_big_numbers(mon.id, area[0], alt_timespan[0], alt_timespan[1], bot.config, bot.pool, use_alt_table=True)
             if alt_big_numbers[0][3] is None:
                 alt_big_numbers = ((alt_big_numbers[0][0], alt_big_numbers[0][1], alt_big_numbers[0][2], oldest_mon_date),)
 
-    shiny_count = await queries.get_shiny_count(mon.id, area[0], timespan[0], timespan[1], bot.config)
+    shiny_count = await queries.get_shiny_count(mon.id, area[0], timespan[0], timespan[1], bot.config, bot.pool)
     shiny_count = shiny_count + alt_shiny_count
 
     if shiny_count > 0:
-        shiny_total = await queries.get_shiny_total(mon.id, area[0], timespan[0], timespan[1], bot.config)
+        shiny_total = await queries.get_shiny_total(mon.id, area[0], timespan[0], timespan[1], bot.config, bot.pool)
         shiny_total = shiny_total + alt_shiny_total
         shiny_odds = int(round((shiny_total / shiny_count), 0))
         text = text + f"{bot.locale['shinies']}: **1:{shiny_odds}** ({shiny_count:_}/{shiny_total:_})\n"
@@ -219,7 +220,7 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None, alt_timespa
 
     print(f"     [1/3] Shiny Data for {mon.name} Stats")
 
-    scan_numbers = await queries.get_scan_numbers(mon.id, area[0], timespan[0], timespan[1], bot.config)
+    scan_numbers = await queries.get_scan_numbers(mon.id, area[0], timespan[0], timespan[1], bot.config, bot.pool)
     for scanned, hundos, zeros, nineties in scan_numbers:
         scanned_total = int(scanned) + int(alt_scan_numbers[0][0])
         if scanned_total > 0:
@@ -255,7 +256,7 @@ async def pokemon(ctx, stat_name, areaname = "", *, timespan = None, alt_timespa
 
     print(f"     [2/3] Scan Data for {mon.name} Stats")
 
-    big_numbers = await queries.get_big_numbers(mon.id, area[0], timespan[0], timespan[1], bot.config)
+    big_numbers = await queries.get_big_numbers(mon.id, area[0], timespan[0], timespan[1], bot.config, bot.pool)
     for mons, found, boosted, time in big_numbers:
         mon_total = int(mons) + int(alt_big_numbers[0][0])
         found_count = int(found) + int(alt_big_numbers[0][1])
@@ -315,7 +316,7 @@ async def gyms(ctx, areaname = ""):
     embed.set_footer(text=loading, icon_url="https://mir-s3-cdn-cf.behance.net/project_modules/disp/c3c4d331234507.564a1d23db8f9.gif")
     message = await ctx.send(embed=embed)
 
-    gym_stats = await queries.get_gym_stats(bot.config, area[0])
+    gym_stats = await queries.get_gym_stats(bot.config, bot.pool, area[0])
 
     for total, neutral, mystic, valor, instinct, ex, raids in gym_stats:
         total_count = int(total)
@@ -434,33 +435,33 @@ async def quest(ctx, areaname = "", *, reward):
             embed.title = f"{bot.items[item_id]['name']} {bot.locale['quests']} - {area[1]}"
             items.append(int(item_id))
             item_found = True
-            quests = await queries.get_dataitem(bot.config, area[0], item_id)
-            quests2 = await queries.get_alt_dataitem(bot.config, area[0], item_id)
+            quests = await queries.get_dataitem(bot.config, bot.pool, area[0], item_id)
+            quests2 = await queries.get_alt_dataitem(bot.config, bot.pool, area[0], item_id)
     if not item_found:
         mon = details(reward, bot.config['mon_icon_repo'], bot.config['language'])
         if reward.startswith("Mega") or reward.startswith("mega"):
             embed.title = f"{mon.name} {bot.locale['mega']} - {area[1]}"
             embed.set_thumbnail(url=f"{bot.config['mon_icon_repo']}reward/mega_resource/{str(mon.id)}.png")
-            quests = await queries.get_datamega(bot.config, area[0])
-            quests2 = await queries.get_alt_datamega(bot.config, area[0])
+            quests = await queries.get_datamega(bot.config, bot.pool, area[0])
+            quests2 = await queries.get_alt_datamega(bot.config, bot.pool, area[0])
         elif mon.name == "Kecleon":
             embed.title = f"{mon.name} {bot.locale['eventstop']} - {area[1]}"
             embed.set_thumbnail(url=f"{bot.config['mon_icon_repo']}pokemon/{str(mon.id)}.png")
-            quests = await queries.get_datak(bot.config, area[0])
+            quests = await queries.get_datak(bot.config, bot.pool, area[0])
         elif mon.name == "Coins":
             embed.title = f"{mon.name} {bot.locale['eventstop']} - {area[1]}"
             embed.set_thumbnail(url=f"{bot.config['mon_icon_repo']}misc/event_coin.png")
-            quests = await queries.get_datacoin(bot.config, area[0])
+            quests = await queries.get_datacoin(bot.config, bot.pool, area[0])
         elif mon.name == "Stardust":
             embed.title = f"{mon.name} {bot.locale['quests']} - {area[1]}"
             embed.set_thumbnail(url=f"{bot.config['mon_icon_repo']}reward/stardust/0.png")
-            quests = await queries.get_datastar(bot.config, area[0])
-            quests2 = await queries.get_alt_datastar(bot.config, area[0])
+            quests = await queries.get_datastar(bot.config, bot.pool, area[0])
+            quests2 = await queries.get_alt_datastar(bot.config, bot.pool, area[0])
         else:
             embed.title = f"{mon.name} {bot.locale['quests']} - {area[1]}"
             embed.set_thumbnail(url=f"{bot.config['mon_icon_repo']}pokemon/{str(mon.id)}.png")
-            quests = await queries.get_data(bot.config, area[0], mon.id)
-            quests2 = await queries.get_alt_data(bot.config, area[0], mon.id)
+            quests = await queries.get_data(bot.config, bot.pool, area[0], mon.id)
+            quests2 = await queries.get_alt_data(bot.config, bot.pool, area[0], mon.id)
         mons.append(mon.id)
     
     length = 0
@@ -756,6 +757,9 @@ async def quest(ctx, areaname = "", *, reward):
 
 @bot.event
 async def on_ready():
+    pool = await aiomysql.create_pool(host=config['db_host'],user=config['db_user'],password=config['db_pass'],db=config['db_dbname'],port=config['db_port'])
+    bot.pool = pool
+    print("DB Pool Done")
     for extension in extensions:
         await bot.load_extension(extension)
     if bot.config['use_static']:
