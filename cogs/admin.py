@@ -88,7 +88,7 @@ class Admin(commands.Cog):
             await message.edit(embed=embed)
             return
         await ctx.message.delete()
-        self.bot.boards['raids'].append({"channel_id": message.channel.id, "message_id": message.id, "title": self.bot.locale['raids'], "area": area, "timezone": self.bot.config['timezone'], "wait": 15, "levels": level_list, "ex": False})
+        self.bot.boards['raids'].append({"channel_id": message.channel.id, "message_id": message.id, "title": self.bot.locale['raids'], "area": area, "timezone": self.bot.config['timezone'], "wait": 65, "levels": level_list, "ex": False})
 
         with open("config/boards.json", "w") as f:
             f.write(json.dumps(self.bot.boards, indent=4))
@@ -124,7 +124,7 @@ class Admin(commands.Cog):
             await message.edit(embed=embed)
             return
         await ctx.message.delete()
-        self.bot.boards['eggs'].append({"channel_id": message.channel.id, "message_id": message.id, "title": self.bot.locale['eggs'], "area": area, "timezone": self.bot.config['timezone'], "wait": 15, "levels": level_list, "ex": False})
+        self.bot.boards['eggs'].append({"channel_id": message.channel.id, "message_id": message.id, "title": self.bot.locale['eggs'], "area": area, "timezone": self.bot.config['timezone'], "wait": 65, "levels": level_list, "ex": False})
 
         with open("config/boards.json", "w") as f:
             f.write(json.dumps(self.bot.boards, indent=4))
@@ -266,7 +266,7 @@ class Admin(commands.Cog):
             await message.edit(embed=embed)
             return
         await ctx.message.delete()
-        self.bot.boards['stats'].append({"channel_id": message.channel.id, "message_id": message.id, "title": self.bot.locale['stats'], "area": area, "timezone": self.bot.config['timezone'], "wait": 15, "type": stats})
+        self.bot.boards['stats'].append({"channel_id": message.channel.id, "message_id": message.id, "title": self.bot.locale['stats'], "area": area, "timezone": self.bot.config['timezone'], "wait": 65, "type": stats})
 
         with open("config/boards.json", "w") as f:
             f.write(json.dumps(self.bot.boards, indent=4))
@@ -306,7 +306,7 @@ class Admin(commands.Cog):
             return
 
         await ctx.message.delete()
-        self.bot.boards['raid_channels'].append({"channel_id": channel.id, "area": area, "timezone": self.bot.config['timezone'], "wait": 15, "levels": level_list})
+        self.bot.boards['raid_channels'].append({"channel_id": channel.id, "area": area, "timezone": self.bot.config['timezone'], "wait": 65, "levels": level_list})
 
         with open("config/boards.json", "w") as f:
             f.write(json.dumps(self.bot.boards, indent=4))
