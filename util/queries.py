@@ -1,11 +1,15 @@
 import aiomysql
 import asyncio
 
+from datetime import datetime, date, timedelta
+
 async def execute(config, pool, query):
     async with pool.acquire() as conn:
         async with conn.cursor() as cur:
             await cur.execute(query)
     return await cur.fetchall()
+    await close.cur()
+    await pool.release(conn)
 
 async def get_oldest_mon_date(config, pool, use_alt_table=False):
     if use_alt_table:
@@ -341,81 +345,81 @@ async def get_data(config, pool, area, mon_id):
 
 async def get_alt_data(config, pool, area, mon_id):
     if config['db_scan_schema'] == "mad":
-        query = f"SELECT quest_reward, quest_template, latitude, longitude, pokestop.name, pokestop.pokestop_id FROM trs_quest, pokestop WHERE layer = 2 AND trs_quest.GUID = pokestop.pokestop_id AND quest_pokemon_id = {mon_id} AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(latitude,longitude)) AND quest_timestamp >= UNIX_TIMESTAMP()-86400 ORDER BY quest_item_amount DESC, name;"
+        query = f"SELECT quest_reward, quest_template, latitude, longitude, pokestop.name, pokestop.pokestop_id FROM trs_quest, pokestop WHERE layer = 2 AND trs_quest.GUID = pokestop.pokestop_id AND quest_pokemon_id = {mon_id} AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(latitude,longitude)) AND quest_timestamp >= UNIX_TIMESTAMP()-86400 ORDER BY quest_item_amount DESC, name"
     elif config['db_scan_schema'] == "rdm":
-        query = f"SELECT alternative_quest_rewards, alternative_quest_template, lat, lon, name, id FROM pokestop WHERE alternative_quest_pokemon_id = {mon_id} AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(lat,lon)) AND updated >= UNIX_TIMESTAMP()-86400 ORDER BY alternative_quest_pokemon_id ASC, name;"
+        query = f"SELECT alternative_quest_rewards, alternative_quest_template, lat, lon, name, id FROM pokestop WHERE alternative_quest_pokemon_id = {mon_id} AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(lat,lon)) AND updated >= UNIX_TIMESTAMP()-86400 ORDER BY alternative_quest_pokemon_id ASC, name"
     quests2 = await execute(config, pool, query)
     
     return quests2
 
 async def get_dataitem(config, pool, area, item_id):
     if config['db_scan_schema'] == "mad":
-        query = f"SELECT quest_reward, quest_template, latitude, longitude, pokestop.name, pokestop.pokestop_id FROM trs_quest, pokestop WHERE layer = 1 AND trs_quest.GUID = pokestop.pokestop_id AND quest_item_id = {item_id} AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(latitude,longitude)) AND quest_timestamp >= UNIX_TIMESTAMP()-86400 ORDER BY quest_item_amount DESC, name;"
+        query = f"SELECT quest_reward, quest_template, latitude, longitude, pokestop.name, pokestop.pokestop_id FROM trs_quest, pokestop WHERE layer = 1 AND trs_quest.GUID = pokestop.pokestop_id AND quest_item_id = {item_id} AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(latitude,longitude)) AND quest_timestamp >= UNIX_TIMESTAMP()-86400 ORDER BY quest_item_amount DESC, name"
     elif config['db_scan_schema'] == "rdm":
-        query = f"SELECT quest_rewards, quest_template, lat, lon, name, id FROM pokestop WHERE quest_item_id = {item_id} AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(lat,lon)) AND updated >= UNIX_TIMESTAMP()-86400 ORDER BY quest_reward_amount DESC, name;"
+        query = f"SELECT quest_rewards, quest_template, lat, lon, name, id FROM pokestop WHERE quest_item_id = {item_id} AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(lat,lon)) AND updated >= UNIX_TIMESTAMP()-86400 ORDER BY quest_reward_amount DESC, name"
     quests = await execute(config, pool, query)
     
     return quests
 
 async def get_alt_dataitem(config, pool, area, item_id):
     if config['db_scan_schema'] == "mad":
-        query = f"SELECT quest_reward, quest_template, latitude, longitude, pokestop.name, pokestop.pokestop_id FROM trs_quest, pokestop WHERE layer = 2 AND trs_quest.GUID = pokestop.pokestop_id AND quest_item_id = {item_id} AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(latitude,longitude)) AND quest_timestamp >= UNIX_TIMESTAMP()-86400 ORDER BY quest_item_amount DESC, name;"
+        query = f"SELECT quest_reward, quest_template, latitude, longitude, pokestop.name, pokestop.pokestop_id FROM trs_quest, pokestop WHERE layer = 2 AND trs_quest.GUID = pokestop.pokestop_id AND quest_item_id = {item_id} AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(latitude,longitude)) AND quest_timestamp >= UNIX_TIMESTAMP()-86400 ORDER BY quest_item_amount DESC, name"
     elif config['db_scan_schema'] == "rdm":
-        query = f"SELECT alternative_quest_rewards, alternative_quest_template, lat, lon, name, id FROM pokestop WHERE alternative_quest_item_id = {item_id} AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(lat,lon)) AND updated >= UNIX_TIMESTAMP()-86400 ORDER BY alternative_quest_reward_amount DESC, name;"
+        query = f"SELECT alternative_quest_rewards, alternative_quest_template, lat, lon, name, id FROM pokestop WHERE alternative_quest_item_id = {item_id} AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(lat,lon)) AND updated >= UNIX_TIMESTAMP()-86400 ORDER BY alternative_quest_reward_amount DESC, name"
     quests2 = await execute(config, pool, query)
     
     return quests2
     
 async def get_datamega(config, pool, area):
     if config['db_scan_schema'] == "mad":
-        query = f"SELECT quest_reward, quest_template, latitude, longitude, pokestop.name, pokestop.pokestop_id FROM trs_quest, pokestop WHERE layer = 1 AND trs_quest.GUID = pokestop.pokestop_id AND quest_reward_type = 12 AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(latitude,longitude)) AND quest_timestamp >= UNIX_TIMESTAMP()-86400 ORDER BY quest_pokemon_id ASC, name;"
+        query = f"SELECT quest_reward, quest_template, latitude, longitude, pokestop.name, pokestop.pokestop_id FROM trs_quest, pokestop WHERE layer = 1 AND trs_quest.GUID = pokestop.pokestop_id AND quest_reward_type = 12 AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(latitude,longitude)) AND quest_timestamp >= UNIX_TIMESTAMP()-86400 ORDER BY quest_pokemon_id ASC, name"
     elif config['db_scan_schema'] == "rdm":
-        query = f"SELECT quest_rewards, quest_template, lat, lon, name, id FROM pokestop WHERE quest_reward_type = 12 AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(lat,lon)) AND updated >= UNIX_TIMESTAMP()-86400 ORDER BY quest_pokemon_id ASC, name;"
+        query = f"SELECT quest_rewards, quest_template, lat, lon, name, id FROM pokestop WHERE quest_reward_type = 12 AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(lat,lon)) AND updated >= UNIX_TIMESTAMP()-86400 ORDER BY quest_pokemon_id ASC, name"
     quests = await execute(config, pool, query)
     
     return quests
     
 async def get_alt_datamega(config, pool, area):
     if config['db_scan_schema'] == "mad":
-        query = f"SELECT quest_reward, quest_template, latitude, longitude, pokestop.name, pokestop.pokestop_id FROM trs_quest, pokestop WHERE layer = 2 AND trs_quest.GUID = pokestop.pokestop_id AND quest_reward_type = 12 AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(latitude,longitude)) AND quest_timestamp >= UNIX_TIMESTAMP()-86400 ORDER BY quest_pokemon_id ASC, name;"
+        query = f"SELECT quest_reward, quest_template, latitude, longitude, pokestop.name, pokestop.pokestop_id FROM trs_quest, pokestop WHERE layer = 2 AND trs_quest.GUID = pokestop.pokestop_id AND quest_reward_type = 12 AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(latitude,longitude)) AND quest_timestamp >= UNIX_TIMESTAMP()-86400 ORDER BY quest_pokemon_id ASC, name"
     elif config['db_scan_schema'] == "rdm":
-        query = f"SELECT alternative_quest_rewards, alternative_quest_template, lat, lon, name, id FROM pokestop WHERE alternative_quest_reward_type = 12 AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(lat,lon)) AND updated >= UNIX_TIMESTAMP()-86400 ORDER BY alternative_quest_pokemon_id ASC, name;"
+        query = f"SELECT alternative_quest_rewards, alternative_quest_template, lat, lon, name, id FROM pokestop WHERE alternative_quest_reward_type = 12 AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(lat,lon)) AND updated >= UNIX_TIMESTAMP()-86400 ORDER BY alternative_quest_pokemon_id ASC, name"
     quests2 = await execute(config, pool, query)
     
     return quests2
     
 async def get_datastar(config, pool, area):
     if config['db_scan_schema'] == "mad":
-        query = f"SELECT trs_quest.quest_stardust, trs_quest.quest_template, pokestop.latitude, pokestop.longitude, pokestop.name, pokestop.pokestop_id FROM pokestop, trs_quest WHERE pokestop.pokestop_id = trs_quest.GUID AND trs_quest.layer = 1 AND trs_quest.quest_reward_type = 3 AND trs_quest.quest_stardust >= 999 AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(latitude,longitude)) AND trs_quest.quest_timestamp >= UNIX_TIMESTAMP()-86400 ORDER BY trs_quest.quest_stardust DESC, name;"
+        query = f"SELECT trs_quest.quest_stardust, trs_quest.quest_template, pokestop.latitude, pokestop.longitude, pokestop.name, pokestop.pokestop_id FROM pokestop, trs_quest WHERE pokestop.pokestop_id = trs_quest.GUID AND trs_quest.layer = 1 AND trs_quest.quest_reward_type = 3 AND trs_quest.quest_stardust >= 999 AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(latitude,longitude)) AND trs_quest.quest_timestamp >= UNIX_TIMESTAMP()-86400 ORDER BY trs_quest.quest_stardust DESC, name"
     elif config['db_scan_schema'] == "rdm":
-        query = f"SELECT quest_reward_amount, quest_template, lat, lon, name, id FROM pokestop WHERE quest_reward_type = 3 AND quest_reward_amount >= 999 AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(lat,lon)) AND updated >= UNIX_TIMESTAMP()-86400 ORDER BY quest_reward_amount DESC, name;"
+        query = f"SELECT quest_reward_amount, quest_template, lat, lon, name, id FROM pokestop WHERE quest_reward_type = 3 AND quest_reward_amount >= 999 AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(lat,lon)) AND updated >= UNIX_TIMESTAMP()-86400 ORDER BY quest_reward_amount DESC, name"
     quests = await execute(config, pool, query)
     
     return quests
     
 async def get_alt_datastar(config, pool, area):
     if config['db_scan_schema'] == "mad":
-        query = f"SELECT trs_quest.quest_stardust, trs_quest.quest_template, pokestop.latitude, pokestop.longitude, pokestop.name, pokestop.pokestop_id FROM pokestop, trs_quest WHERE pokestop.pokestop_id = trs_quest.GUID AND trs_quest.layer = 2 AND trs_quest.quest_reward_type = 3 AND trs_quest.quest_stardust >= 999 AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(latitude,longitude)) AND trs_quest.quest_timestamp >= UNIX_TIMESTAMP()-86400 ORDER BY trs_quest.quest_stardust DESC, name;"
+        query = f"SELECT trs_quest.quest_stardust, trs_quest.quest_template, pokestop.latitude, pokestop.longitude, pokestop.name, pokestop.pokestop_id FROM pokestop, trs_quest WHERE pokestop.pokestop_id = trs_quest.GUID AND trs_quest.layer = 2 AND trs_quest.quest_reward_type = 3 AND trs_quest.quest_stardust >= 999 AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(latitude,longitude)) AND trs_quest.quest_timestamp >= UNIX_TIMESTAMP()-86400 ORDER BY trs_quest.quest_stardust DESC, name"
     elif config['db_scan_schema'] == "rdm":
-        query = f"SELECT alternative_quest_reward_amount, alternative_quest_template, lat, lon, name, id FROM pokestop WHERE alternative_quest_reward_type = 3 AND alternative_quest_reward_amount >= 999 AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(lat,lon)) AND updated >= UNIX_TIMESTAMP()-86400 ORDER BY alternative_quest_reward_amount DESC, name;"
+        query = f"SELECT alternative_quest_reward_amount, alternative_quest_template, lat, lon, name, id FROM pokestop WHERE alternative_quest_reward_type = 3 AND alternative_quest_reward_amount >= 999 AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(lat,lon)) AND updated >= UNIX_TIMESTAMP()-86400 ORDER BY alternative_quest_reward_amount DESC, name"
     quests2 = await execute(config, pool, query)
     
     return quests2
     
 async def get_datak(config, pool, area):
     if config['db_scan_schema'] == "mad":
-        query = f"SELECT pokestop.latitude, pokestop.longitude, pokestop.name, pokestop.pokestop_id, pokestop_incident.incident_expiration FROM pokestop, pokestop_incident WHERE pokestop.pokestop_id = pokestop_incident.pokestop_id AND pokestop_incident.incident_display_type =8 AND pokestop_incident.incident_expiration >= UNIX_TIMESTAMP()+300 AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(latitude,longitude)) ORDER BY pokestop_incident.incident_expiration DESC;"
+        query = f"SELECT pokestop.latitude, pokestop.longitude, pokestop.name, pokestop.pokestop_id, pokestop_incident.incident_expiration FROM pokestop, pokestop_incident WHERE pokestop.pokestop_id = pokestop_incident.pokestop_id AND pokestop_incident.incident_display_type =8 AND pokestop_incident.incident_expiration >= UNIX_TIMESTAMP()+300 AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(latitude,longitude)) ORDER BY pokestop_incident.incident_expiration DESC"
     elif config['db_scan_schema'] == "rdm":
-        query = f"SELECT pokestop.lat, pokestop.lon, pokestop.name, pokestop.id, incident.expiration FROM pokestop, incident WHERE pokestop.id = incident.pokestop_id AND incident.display_type =8 AND incident.expiration >= UNIX_TIMESTAMP()+300 AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(lat,lon)) ORDER BY incident.expiration DESC;"
+        query = f"SELECT pokestop.lat, pokestop.lon, pokestop.name, pokestop.id, incident.expiration FROM pokestop, incident WHERE pokestop.id = incident.pokestop_id AND incident.display_type =8 AND incident.expiration >= UNIX_TIMESTAMP()+300 AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(lat,lon)) ORDER BY incident.expiration DESC"
     quests = await execute(config, pool, query)
     
     return quests
 
 async def get_datacoin(config, pool, area):
     if config['db_scan_schema'] == "mad":
-        query = f"SELECT pokestop.latitude, pokestop.longitude, pokestop.name, pokestop.pokestop_id, pokestop_incident.incident_expiration FROM pokestop, pokestop_incident WHERE pokestop.pokestop_id = pokestop_incident.pokestop_id AND pokestop_incident.incident_display_type =7 AND pokestop_incident.incident_expiration >= UNIX_TIMESTAMP()+300 AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(latitude,longitude)) ORDER BY pokestop_incident.incident_expiration DESC;"
+        query = f"SELECT pokestop.latitude, pokestop.longitude, pokestop.name, pokestop.pokestop_id, pokestop_incident.incident_expiration FROM pokestop, pokestop_incident WHERE pokestop.pokestop_id = pokestop_incident.pokestop_id AND pokestop_incident.incident_display_type =7 AND pokestop_incident.incident_expiration >= UNIX_TIMESTAMP()+300 AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(latitude,longitude)) ORDER BY pokestop_incident.incident_expiration DESC"
     elif config['db_scan_schema'] == "rdm":
-        query = f"SELECT pokestop.lat, pokestop.lon, pokestop.name, pokestop.id, incident.expiration FROM pokestop, incident WHERE pokestop.id = incident.pokestop_id AND incident.display_type =7 AND incident.expiration >= UNIX_TIMESTAMP()+300 AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(lat,lon)) ORDER BY incident.expiration DESC;"
+        query = f"SELECT pokestop.lat, pokestop.lon, pokestop.name, pokestop.id, incident.expiration FROM pokestop, incident WHERE pokestop.id = incident.pokestop_id AND incident.display_type =7 AND incident.expiration >= UNIX_TIMESTAMP()+300 AND ST_Contains(ST_GeomFromText('POLYGON(({area}))'), POINT(lat,lon)) ORDER BY incident.expiration DESC"
     quests = await execute(config, pool, query)
     
     return quests

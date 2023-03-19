@@ -757,7 +757,7 @@ async def quest(ctx, areaname = "", *, reward):
 
 @bot.event
 async def on_ready():
-    pool = await aiomysql.create_pool(host=config['db_host'],user=config['db_user'],password=config['db_pass'],db=config['db_dbname'],port=config['db_port'])
+    pool = await aiomysql.create_pool(host=config['db_host'],user=config['db_user'],password=config['db_pass'],db=config['db_dbname'],port=config['db_port'], autocommit=True)
     bot.pool = pool
     print("DB Pool Done")
     for extension in extensions:
