@@ -473,7 +473,10 @@ async def quest(ctx, areaname = "", *, reward):
     embed.description = text
     if not item_found and mon.name == "Kecleon":
         for lat, lon, stop_name, stop_id, expiration in quests:
-            end = datetime.fromtimestamp(expiration).strftime(bot.locale['time_format_hm'])
+            tstamp1 = datetime.fromtimestamp(expiration)
+            tstamp2 = datetime.now()
+            td = tstamp1 - tstamp2
+            left = int(round(td.total_seconds() / 60))
             found_rewards = True
             mon_id = 352
             reward_mons.append([mon_id, lat, lon])
@@ -481,7 +484,7 @@ async def quest(ctx, areaname = "", *, reward):
             emote_img = f"{bot.config['mon_icon_repo']}pokemon/{str(mon.id)}.png"
     
             if found_rewards:
-                if len(stop_name)+len(end) >= 26:
+                if len(stop_name) >= 26:
                     stop_name = stop_name[0:25]
                 lat_list.append(lat)
                 lon_list.append(lon)
@@ -491,7 +494,7 @@ async def quest(ctx, areaname = "", *, reward):
                 else:
                     map_url = f"https://www.google.com/maps/search/?api=1&query={lat},{lon}"
 
-                entry = f"[{stop_name} **{end}**]({map_url})\n"
+                entry = f"[{stop_name} - **{left} Min**]({map_url})\n"
                 if length + len(entry) >= 2400:
                     theend = f"and more..."
                     text = text + theend
@@ -757,7 +760,7 @@ async def quest(ctx, areaname = "", *, reward):
 
 @bot.event
 async def on_ready():
-    pool = await aiomysql.create_pool(host=config['db_host'],user=config['db_user'],password=config['db_pass'],db=config['db_dbname'],port=config['db_port'])
+    pool = await aiomysql.create_pool(host=config['db_host'],user=config['db_user'],password=config['db_pass'],db=config['db_dbname'],port=config['db_port'], autocommit=True)
     bot.pool = pool
     print("DB Pool Done")
     for extension in extensions:
